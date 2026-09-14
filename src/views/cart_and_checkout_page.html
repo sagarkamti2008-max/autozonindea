@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart & Checkout | AutoGear Pro</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'auto-dark': '#0B0F17',
+            'auto-navy': '#0F172A',
+            'neon-orange': '#FF6B00',
+            'electric-blue': '#00E5FF',
+            'cyber-red': '#FF2A5F'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0B0F17] text-slate-100 font-sans selection:bg-[#FF6B00] selection:text-white min-h-screen pb-24">
+
+  <!-- Header Banner -->
+  <header class="bg-slate-950 border-b border-slate-800/80 py-4 px-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="#" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </a>
+        <div>
+          <h1 class="text-xl font-black text-white">🛒 Shopping Cart & Express Checkout</h1>
+          <p class="text-xs text-slate-400">Direct Store Cart for Auto Parts</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- LEFT SHOPPING CART & CHECKOUT STEPS -->
+      <div class="lg:col-span-8 space-y-6">
+        
+        <!-- Cart Items List -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="text-xs font-extrabold text-slate-300 uppercase tracking-wider">Cart Items (2)</span>
+          </div>
+
+          <!-- Item 1 -->
+          <div class="bg-slate-950 border border-slate-800/90 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img src="https://images.unsplash.com/photo-1600792580403-0550a1030699?auto=format&fit=crop&w=400&q=80" class="w-20 h-20 rounded-lg bg-slate-900 border border-slate-800 object-contain p-2">
+              <div>
+                <span class="text-[10px] font-black uppercase text-[#FF6B00]">BOSCH OEM</span>
+                <h3 class="font-bold text-white text-sm">Ceramic High-Performance Front Brake Pad Kit</h3>
+                <div class="text-[11px] text-[#00E5FF] font-extrabold">Fits Toyota Innova Crysta / Fortuner</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-black text-white">₹3,450</div>
+              <div class="flex items-center border border-slate-700 bg-slate-900 rounded-lg text-xs font-bold px-3 py-1 mt-1">Qty: 1</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 1: SHIPPING & WORKSHOP ADDRESS -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <i data-lucide="map-pin" class="w-5 h-5 text-[#FF6B00]"></i>
+            <h3 class="text-base font-black text-white">1. Shipping & Workshop Address</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-1">Full Name *</label>
+              <input type="text" value="Rahul Sharma" class="w-full bg-slate-950 border border-slate-800 text-white font-semibold text-xs rounded-xl p-3">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-1">Phone Number *</label>
+              <input type="text" value="+91 9876543210" class="w-full bg-slate-950 border border-slate-800 text-white font-semibold text-xs rounded-xl p-3">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-400 mb-1">Street Address *</label>
+              <input type="text" value="Flat 402, Green Acres Apt, Link Road" class="w-full bg-slate-950 border border-slate-800 text-white font-semibold text-xs rounded-xl p-3">
+            </div>
+          </div>
+
+          <!-- Mechanic / Workshop Checkbox -->
+          <div class="pt-3 border-t border-slate-800">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-950 text-[#FF6B00]">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="wrench" class="w-4 h-4 text-[#FF6B00]"></i> Ship directly to a Mechanic / Garage Workshop Address?
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 2: DELIVERY OPTIONS -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <i data-lucide="truck" class="w-5 h-5 text-[#00E5FF]"></i>
+            <h3 class="text-base font-black text-white">2. Delivery Options</h3>
+          </div>
+
+          <div class="p-4 rounded-xl border border-[#00E5FF] bg-slate-950 flex items-center justify-between">
+            <div>
+              <div class="font-extrabold text-white text-sm">⚡ Standard Air Express Shipping</div>
+              <div class="text-xs text-slate-400">Delivered within 1-2 Business Days via Blue Dart Air</div>
+            </div>
+            <span class="text-emerald-400 font-extrabold text-xs">FREE</span>
+          </div>
+        </div>
+
+        <!-- STEP 3: PAYMENT GATEWAY OPTIONS -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <i data-lucide="credit-card" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-base font-black text-white">3. Payment Gateway Options</h3>
+          </div>
+
+          <div class="p-4 rounded-xl border border-emerald-400 bg-slate-950 flex items-center justify-between">
+            <div>
+              <div class="font-extrabold text-white text-sm">📱 UPI (Google Pay, PhonePe, Paytm)</div>
+              <div class="text-xs text-slate-400">Fast 2% Cash Discount</div>
+            </div>
+            <span class="bg-emerald-500/20 text-emerald-400 font-black text-[10px] px-2 py-0.5 rounded">2% OFF</span>
+          </div>
+
+          <button onclick="alert('Order Placed!')" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-sm py-4 px-6 rounded-xl shadow-xl flex items-center justify-center gap-2 cursor-pointer mt-4">
+            <i data-lucide="lock" class="w-4 h-4"></i> Place Order & Pay ₹6,300
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT ORDER SUMMARY -->
+      <div class="lg:col-span-4 space-y-5">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
+          <h3 class="text-base font-black text-white border-b border-slate-800 pb-3">Order Summary</h3>
+          <div class="space-y-2 text-xs text-slate-300">
+            <div class="flex justify-between"><span>Subtotal:</span><span class="font-bold text-white">₹6,300</span></div>
+            <div class="flex justify-between"><span>Shipping:</span><span class="font-bold text-emerald-400">FREE</span></div>
+            <div class="flex justify-between"><span>GST Included:</span><span>₹961</span></div>
+            <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-800">
+              <span>Total Payable:</span><span>₹6,300</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
