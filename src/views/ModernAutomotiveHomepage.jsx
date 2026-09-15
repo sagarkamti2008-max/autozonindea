@@ -283,8 +283,26 @@ export const ModernAutomotiveHomepage = () => {
   // Top Categories Database
   const topCategories = [
     {
+      id: 'engine-parts',
+      title: 'Engine Parts',
+      count: '1,420+ Items',
+      icon: '⚙️',
+      image: '/images/synthetic_engine_oil.jpg',
+      badge: 'Core',
+      desc: 'Pistons, Spark Plugs, Belts & Mounts'
+    },
+    {
+      id: 'oils-fluids',
+      title: 'Engine Oil & Fluids',
+      count: '540+ Items',
+      icon: '🛢️',
+      image: '/images/synthetic_engine_oil.jpg',
+      badge: 'Fluids',
+      desc: 'Engine Oils, Coolants, Brake Fluids'
+    },
+    {
       id: 'brake-system',
-      title: 'Brake System',
+      title: 'Brakes',
       count: '890+ Items',
       icon: '🛑',
       image: '/images/brake_disc_rotor.jpg',
@@ -292,49 +310,49 @@ export const ModernAutomotiveHomepage = () => {
       desc: 'Brake Pads, Rotors, Calipers & Shoes'
     },
     {
-      id: 'engine-parts',
-      title: 'Engine Parts',
-      count: '1,420+ Items',
-      icon: '🔥',
-      image: '/images/synthetic_engine_oil.jpg',
-      badge: 'Performance',
-      desc: 'Pistons, Spark Plugs, Belts & Mounts'
-    },
-    {
-      id: 'suspension',
-      title: 'Suspension',
-      count: '540+ Items',
-      icon: '⚙️',
-      image: '/images/wheel_rim_exterior.jpg',
-      badge: 'Ride Comfort',
-      desc: 'Shock Absorbers, Struts & Control Arms'
-    },
-    {
       id: 'filters',
       title: 'Filters',
       count: '1,200+ Items',
       icon: '🧹',
-      image: '/images/autozon_warehouse_bg.jpg', // Fallback image
+      image: '/images/autozon_warehouse_bg.jpg',
       badge: 'Maintenance',
       desc: 'Air, Oil, Cabin & Fuel Filters'
     },
     {
-      id: 'lighting',
-      title: 'Lighting',
+      id: 'body-bumper',
+      title: 'Body & Bumper',
+      count: '950+ Items',
+      icon: '🚗',
+      image: '/images/wheel_rim_exterior.jpg',
+      badge: 'Exterior',
+      desc: 'Bumpers, Mirrors, Fenders & Grilles'
+    },
+    {
+      id: 'electrical',
+      title: 'Electrical',
       count: '1,150+ Items',
-      icon: '💡',
+      icon: '⚡',
       image: '/images/led_headlight_exterior.jpg',
-      badge: 'Visibility',
-      desc: 'LED Headlights, Fog Lamps & Bulbs'
+      badge: 'Power',
+      desc: 'Batteries, Alternators, Starters & Fuses'
     },
     {
       id: 'car-accessories',
-      title: 'Car Accessories',
+      title: 'Accessories',
       count: '2,640+ Items',
       icon: '✨',
       image: '/images/infotainment_installed.jpg',
       badge: 'Style',
-      desc: 'Infotainment, Mats, Covers & Chargers'
+      desc: 'Mats, Seat Covers, Dash Cams & Alloys'
+    },
+    {
+      id: 'car-care',
+      title: 'Car Care',
+      count: '320+ Items',
+      icon: '🧽',
+      image: '/images/autozon_warehouse_bg.jpg',
+      badge: 'Cleaning',
+      desc: 'Shampoos, Polishes, Microfibers & Wax'
     }
   ];
 
@@ -564,15 +582,34 @@ export const ModernAutomotiveHomepage = () => {
               </div>
 
               <h1 className="text-4xl sm:text-6xl font-black leading-[1.1] tracking-tight text-white">
-                Genuine Car Parts For <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">
-                  Maruti, Hyundai, Tata & More
+                India me Car Parts Online — <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500 text-3xl sm:text-5xl mt-2 block">
+                  Engine Parts, Oils, Bumper, Accessories
                 </span>
               </h1>
               
               <p className="text-slate-300 text-lg sm:text-xl font-medium max-w-lg">
-                Find exactly what fits your car. Over 2 Lakh+ genuine OEM & OES spare parts delivered PAN India.
+                Apni car select karein aur sahi parts ghar baithe mangwayein.
               </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <button 
+                  onClick={() => navigateTo('catalog')}
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-black text-sm sm:text-base px-6 py-3.5 rounded-xl shadow-lg shadow-orange-500/30 transition-all cursor-pointer flex items-center gap-2"
+                >
+                  Shop by Category
+                </button>
+                <button 
+                  onClick={() => {
+                    const selector = document.getElementById('vehicle-selector-widget');
+                    if (selector) selector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl transition-all cursor-pointer"
+                >
+                  Apni Car Chuno
+                </button>
+              </div>
 
               {/* Brand Logos (Visual Representation) */}
               <div className="pt-4 flex items-center gap-6 opacity-80">

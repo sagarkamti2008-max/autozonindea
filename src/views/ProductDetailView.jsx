@@ -25,29 +25,32 @@ export const ProductDetailView = () => {
 
   // Fallback Product if none selected
   const product = (products || []).find(p => p.id === activeProductId) || {
-    id: 'prod-ceramic-brake-pads',
-    name: 'Ceramic High-Performance Front Brake Pad Kit',
-    brand: 'BOSCH OEM ORIGINAL',
-    sku: 'AZI-BRK-994201',
-    oemPartNumber: '04465-0K280 / 04465-0K360',
-    price: 3450,
-    originalPrice: 4200,
-    rating: 4.9,
-    reviewsCount: 142,
+    id: 'prod-piston-set',
+    name: 'Piston Set — Maruti Swift 1.2L Petrol',
+    brand: 'Mahle',
+    sku: 'AZI-ENG-PS102',
+    oemPartNumber: '12111-M74L00',
+    price: 4500,
+    originalPrice: 6000,
+    rating: 4.8,
+    reviewsCount: 89,
     inStock: true,
-    stockCount: 24,
+    stockCount: 15,
     images: [
-      'https://images.unsplash.com/photo-1600792580403-0550a1030699?auto=format&fit=crop&w=800&q=80',
+      '/images/piston_set.jpg',
       'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1632823462573-097561f0e4b7?auto=format&fit=crop&w=800&q=80', // Angle shot
-      'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=800&q=80' // Installation shot
+      'https://images.unsplash.com/photo-1632823462573-097561f0e4b7?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=800&q=80'
     ],
     specs: {
-      material: 'Low-Metallic High Carbon Ceramic Compound',
-      weight: '1.85 kg',
-      axlePosition: 'Front Axle (Left & Right)',
-      operatingTemp: '0°C to 650°C (Fade Resistant)',
-      warranty: '1 Year / 20,000 KM Warranty'
+      'Fits': 'Maruti Swift 2018-2023, Baleno 2019-2022, Dzire 2018-2023',
+      'Engine': '1.2L K12 Petrol',
+      'Part Type': 'Piston with Rings',
+      'Quantity': 'Set of 4',
+      'Warranty': '6 months / 1 year',
+      'HSN Code': '84099191',
+      'Weight': '1.2 kg',
+      'Dimensions': '15 x 15 x 10 cm'
     }
   };
 
@@ -296,7 +299,9 @@ export const ProductDetailView = () => {
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[13px] font-bold text-slate-500 overflow-x-auto whitespace-nowrap">
           <span onClick={() => navigateTo('home')} className="hover:text-orange-500 cursor-pointer transition-colors">Home</span>
           <ChevronRight className="w-4 h-4 text-slate-300" />
-          <span onClick={() => navigateTo('catalog')} className="hover:text-orange-500 cursor-pointer transition-colors">Catalog</span>
+          <span onClick={() => navigateTo('catalog')} className="hover:text-orange-500 cursor-pointer transition-colors">Engine Parts</span>
+          <ChevronRight className="w-4 h-4 text-slate-300" />
+          <span onClick={() => navigateTo('catalog')} className="hover:text-orange-500 cursor-pointer transition-colors">Piston</span>
           <ChevronRight className="w-4 h-4 text-slate-300" />
           <span className="text-slate-800 font-black truncate">{product.name}</span>
         </div>
@@ -396,6 +401,11 @@ export const ProductDetailView = () => {
                     <span className="font-black text-amber-700">{reviewSummary.averageRating || product.rating || '4.9'}</span>
                     <span className="text-amber-600/70 font-semibold text-xs">({reviewSummary.totalReviews || product.reviewsCount || 0} reviews)</span>
                   </div>
+                  {product.oemPartNumber && (
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                      Part No: <strong className="text-slate-800">{product.oemPartNumber}</strong>
+                    </span>
+                  )}
                   {product.sku && (
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">SKU: {product.sku}</span>
                   )}
@@ -416,7 +426,12 @@ export const ProductDetailView = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-200/50 px-2 py-1 rounded">Inclusive of all taxes (18% GST)</span>
+                    <div className="flex flex-col gap-1 mt-1">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Inclusive of all taxes (+18% GST)</span>
+                      {product.originalPrice && product.price < product.originalPrice && (
+                        <span className="text-[13px] font-black text-emerald-600">You Save ₹{Number(product.originalPrice - product.price).toLocaleString('en-IN')}</span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="flex flex-col items-end gap-2">
@@ -426,10 +441,13 @@ export const ProductDetailView = () => {
                         <span className="text-xs font-black uppercase tracking-wider">Out of Stock</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                        <span className="text-xs font-black uppercase tracking-wider text-emerald-800">In Stock & Ready to Ship</span>
-                      </div>
+                      <>
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+                          <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          <span className="text-xs font-black uppercase tracking-wider text-emerald-800">In Stock</span>
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-500">Dispatched in 24 hours</span>
+                      </>
                     )}
                   </div>
                 </div>
@@ -678,15 +696,19 @@ export const ProductDetailView = () => {
             <div className="p-6 lg:p-10 bg-slate-50/50">
               {activeTab === 'specs' ? (
                 <div>
-                  <h3 className="font-black text-lg text-slate-900 mb-6">Technical Specifications</h3>
+                  <h3 className="font-black text-lg text-slate-900 mb-6">Specifications & Fitment</h3>
                   {product.specs ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-                      {Object.entries(product.specs).map(([key, value]) => (
-                        <div key={key} className="flex justify-between py-3 border-b border-slate-200 last:border-0">
-                          <span className="font-bold text-slate-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                          <span className="font-bold text-slate-900 text-right">{value}</span>
-                        </div>
-                      ))}
+                    <div className="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-sm">
+                      <table className="w-full text-left text-sm">
+                        <tbody>
+                          {Object.entries(product.specs).map(([key, value], idx) => (
+                            <tr key={key} className={idx % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}>
+                              <th className="py-4 px-6 font-bold text-slate-500 border-b border-slate-100 w-1/3 align-top">{key.replace(/([A-Z])/g, ' $1').trim()}</th>
+                              <td className="py-4 px-6 font-bold text-slate-900 border-b border-slate-100">{value}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   ) : (
                     <p className="text-slate-500 font-medium">No specifications provided for this product.</p>

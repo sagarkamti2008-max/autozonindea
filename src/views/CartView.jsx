@@ -26,6 +26,19 @@ export const CartView = () => {
 
   const [inputCoupon, setInputCoupon] = useState(appliedCouponCode || '');
   const [shippingMethod, setShippingMethod] = useState('standard'); // 'standard' | 'express'
+  const [pincode, setPincode] = useState('');
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+
+  const handleCheckPincode = (e) => {
+    e.preventDefault();
+    if (pincode.length === 6) {
+      setDeliveryInfo({ valid: true, time: '2-4 Days', cod: true });
+      showToast('Delivery available to this pincode!', 'success');
+    } else {
+      setDeliveryInfo({ valid: false });
+      showToast('Please enter a valid 6-digit pincode.', 'error');
+    }
+  };
 
   // Server-Side Revalidated Cart Summary
   const summary = calculateCartSummary({
@@ -330,6 +343,37 @@ export const CartView = () => {
               <span onClick={() => { setInputCoupon('BOSCH15'); setAppliedCouponCode('BOSCH15'); }} style={{ fontSize: '0.68rem', background: '#F1F5F9', border: '1px dashed #94A3B8', borderRadius: '4px', padding: '0.15rem 0.4rem', cursor: 'pointer', fontWeight: 700 }}>BOSCH15</span>
               <span onClick={() => { setInputCoupon('FIRST500'); setAppliedCouponCode('FIRST500'); }} style={{ fontSize: '0.68rem', background: '#F1F5F9', border: '1px dashed #94A3B8', borderRadius: '4px', padding: '0.15rem 0.4rem', cursor: 'pointer', fontWeight: 700 }}>FIRST500</span>
             </div>
+          </div>
+
+          {/* Pincode Check Card */}
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '1.25rem', marginBottom: '1.25rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0F2167', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Truck size={16} color="#059669" /> Check Delivery & COD
+            </h3>
+            <form onSubmit={handleCheckPincode} style={{ display: 'flex', gap: '0.5rem', marginBottom: deliveryInfo ? '0.75rem' : '0' }}>
+              <input
+                type="text"
+                placeholder="Enter 6-digit Pincode"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                style={{ flex: 1, border: '1px solid #CBD5E1', borderRadius: '8px', padding: '0.5rem 0.75rem', fontSize: '0.82rem', outline: 'none' }}
+              />
+              <button type="submit" style={{ background: '#0F2167', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer' }}>
+                Check
+              </button>
+            </form>
+            {deliveryInfo && deliveryInfo.valid && (
+              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '0.75rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#065F46', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <CheckCircle2 size={14} /> Delivery in {deliveryInfo.time}
+                </div>
+                {deliveryInfo.cod && (
+                  <div style={{ fontSize: '0.75rem', color: '#065F46', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <CheckCircle2 size={14} /> Cash on Delivery (COD) Available
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Order Summary Bill */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, Users, TrendingUp, Zap, MapPin } from 'lucide-react';
+import { ShieldCheck, Award, Users, TrendingUp, Zap, MapPin, CheckCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 
 export function AboutView() {
@@ -10,20 +10,20 @@ export function AboutView() {
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto mb-16 text-center">
         <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-          Revolutionizing the <span className="text-orange-500">Indian Aftermarket</span>
+          Who We Are: <span className="text-orange-500">AutoZonIndia</span>
         </h1>
         <p className="text-lg text-slate-600 font-medium max-w-3xl mx-auto leading-relaxed">
-          AutoZonIndia is the premier B2B and B2C marketplace for genuine automotive spare parts, accessories, and expert mechanic services across India. We bridge the gap between quality manufacturers and passionate vehicle owners.
+          Hum ek passionate team hain jinhone AutoZonIndia isliye shuru kiya taaki har car owner aur mechanic ko bina kisi pareshani ke 100% Genuine aur OEM quality spare parts mil sakein. 
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
         {[
-          { label: 'Genuine Parts', value: '1.2M+', icon: Zap, color: 'text-orange-500' },
+          { label: 'Genuine Parts', value: '100%', icon: Zap, color: 'text-orange-500' },
           { label: 'Happy Customers', value: '500K+', icon: Users, color: 'text-blue-500' },
           { label: 'Partner Garages', value: '2,500+', icon: Award, color: 'text-emerald-500' },
-          { label: 'Cities Covered', value: '120+', icon: MapPin, color: 'text-purple-500' },
+          { label: 'Cities Covered', value: 'Pan India', icon: MapPin, color: 'text-purple-500' },
         ].map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -42,10 +42,32 @@ export function AboutView() {
           <div className="bg-orange-100 w-12 h-12 rounded-2xl flex items-center justify-center mb-6">
             <ShieldCheck className="w-6 h-6 text-orange-600" />
           </div>
-          <h2 className="text-3xl font-black text-slate-900 mb-4">Our Mission</h2>
-          <p className="text-slate-600 font-medium leading-relaxed mb-6">
-            To provide a transparent, 100% genuine, and highly accessible ecosystem for automotive parts. We believe that maintaining a vehicle shouldn't be a gamble. Every part shipped from AutoZonIndia undergoes rigorous quality checks.
-          </p>
+          <h2 className="text-3xl font-black text-slate-900 mb-4">Our Promise</h2>
+          
+          <ul className="space-y-4 mb-8">
+            <li className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-emerald-500 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block">Genuine / OEM Quality Parts</strong>
+                <span className="text-slate-600 text-sm">Sirf trusted brands aur manufacturers se direct supply. No fake parts guarantee.</span>
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-emerald-500 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block">Sahi Fitment (100% Compatibility)</strong>
+                <span className="text-slate-600 text-sm">Aapki car ke make & model ke hisaab se exact fitment parts, zero guesswork.</span>
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-emerald-500 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block">Fast Delivery</strong>
+                <span className="text-slate-600 text-sm">Express dispatch taaki aapki gaadi jaldi se theek hoke sadak par wapas aa sake.</span>
+              </div>
+            </li>
+          </ul>
+
           <button 
             onClick={() => navigateTo('catalog')}
             className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-xl w-max transition-colors"

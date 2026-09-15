@@ -61,10 +61,16 @@ export const Header = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <ShieldCheck size={14} /> 100% Genuine OEM & OES Parts
+              🚚 Free shipping above ₹999
             </span>
-            <span className="hidden md:inline-block text-slate-500">•</span>
-            <span className="hidden md:inline-block text-slate-400">Pan-India Express Delivery in 2-4 Days</span>
+            <span className="hidden md:inline-block text-slate-500">|</span>
+            <span className="hidden md:inline-block text-amber-400 font-semibold">
+              💵 COD available
+            </span>
+            <span className="hidden lg:inline-block text-slate-500">|</span>
+            <span className="hidden lg:inline-block text-slate-300 font-semibold">
+              ✅ 100% Genuine Parts
+            </span>
           </div>
 
           <div className="flex items-center gap-4 font-semibold">

@@ -5,6 +5,7 @@ import { ChevronDown, Menu, ShieldCheck, Wrench, Layers, Shield, Filter, Grid, S
 export const Navigation = () => {
   const { navigateTo, setSelectedCategory } = useStore();
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const [showExploreMenu, setShowExploreMenu] = useState(false);
 
   // Exact 7 categories requested in user requirements
   const categoryItems = [
@@ -110,6 +111,51 @@ export const Navigation = () => {
             >
               Contact
             </button>
+
+            {/* 6. Explore Dropdown */}
+            <div 
+              className="relative h-full flex items-center"
+              onMouseEnter={() => setShowExploreMenu(true)}
+              onMouseLeave={() => setShowExploreMenu(false)}
+            >
+              <button 
+                className="flex items-center gap-1.5 text-sm font-bold text-slate-200 hover:text-white py-3 transition-colors"
+              >
+                <span>Explore</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showExploreMenu ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+              </button>
+
+              {showExploreMenu && (
+                <div className="absolute top-full left-0 w-56 bg-white border border-slate-200 shadow-2xl rounded-b-2xl overflow-hidden text-slate-900 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="px-4 py-2 bg-slate-50 border-b border-slate-100">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Discover More</span>
+                  </div>
+                  
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('sitemap'); }} className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                    🗺️ Full Website Sitemap
+                  </button>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('blog'); }} className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                    📝 Blog & Maintenance Tips
+                  </button>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('faq'); }} className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                    ❓ FAQs
+                  </button>
+                  <div className="border-t border-slate-100 my-1"></div>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('shipping-policy'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    Shipping Policy
+                  </button>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('return-policy'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    Returns & Refunds
+                  </button>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('privacy-policy'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    Privacy Policy
+                  </button>
+                  <button onClick={() => { setShowExploreMenu(false); navigateTo('terms'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    Terms & Conditions
+                  </button>
+                </div>
+              )}
+            </div>
 
           </div>
 

@@ -9,14 +9,17 @@ export const PrivacyPolicyView = () => (
         <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Privacy Policy</h2>
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
-        <p className="text-sm text-slate-500 uppercase tracking-widest font-bold mb-8">Last Updated: August 2026</p>
-        <p>AutoZonIndia Marketplaces Ltd is committed to protecting your privacy. We collect personal information such as name, shipping address, vehicle registration numbers, and phone numbers strictly for order fulfillment, compatibility verification, and express delivery updates.</p>
+        <h3>Aapka Data Aur Uski Security</h3>
+        <p>AutoZonIndia par hum aapki privacy ki bohot qadar karte hain. Order process karne ke liye hum sirf zaroori data collect karte hain jaise ki aapka <strong>Name, Address, Email, aur Phone number</strong>.</p>
         
-        <h3>Data Protection & Encryption</h3>
-        <p>All transaction data is encrypted using 256-Bit SSL protocols. We never sell or lease customer vehicle ownership data to third-party advertisers. Your garage and vehicle data remains strictly confidential and is only used to ensure 100% fitment accuracy for the spare parts you order.</p>
+        <h3>Payment Security (Razorpay)</h3>
+        <p>Payments ke liye hum India ka most trusted gateway, <strong>Razorpay</strong> use karte hain. Aapki card details, UPI ID, ya netbanking information directly Razorpay secure servers par process hoti hai. Hum aapka payment data apne servers par store nahi karte.</p>
         
-        <h3>Cookies and Tracking</h3>
-        <p>We use essential cookies to maintain your session and cart data. We do not use third-party invasive trackers.</p>
+        <h3>Cookies</h3>
+        <p>Humari website aapke cart, login session, aur past browsed items ko yaad rakhne ke liye essential cookies ka use karti hai taaki aapka shopping experience smooth rahe.</p>
+
+        <h3>Data Protection</h3>
+        <p>Aapka sara personal data industry-standard encryption se secure rakha jata hai. Hum aapka data kisi third-party advertisers ko nahi bechte.</p>
       </div>
     </div>
   </div>
@@ -27,16 +30,20 @@ export const TermsView = () => (
     <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 p-8 sm:p-12">
       <div className="flex items-center gap-4 mb-8">
         <div className="bg-blue-100 p-4 rounded-2xl"><FileText className="w-8 h-8 text-blue-600" /></div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Terms of Service</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Terms & Conditions</h2>
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
-        <p>By accessing AutoZonIndia, customers and garages agree to comply with our platform policies regarding genuine OEM spare parts, vehicle fitment accuracy, and payment terms.</p>
+        <h3>Site Use</h3>
+        <p>AutoZonIndia ka istemal sirf genuine spare parts kharidne ke liye kiya jaa sakta hai. Website content, images, ya data ko copy ya misuse karna sakht mana hai.</p>
         
-        <h3>Platform Usage</h3>
-        <p>You agree to use this platform only for lawful automotive eCommerce purposes. Our AI Parts Assistant is provided "as is" and its recommendations should always be double-checked against your vehicle's manual.</p>
+        <h3>Pricing & GST</h3>
+        <p>Website par dikhne wale sabhi products ke prices mein GST (Goods and Services Tax) already included hota hai. B2B customers checkout ke baad GST invoice download kar sakte hain.</p>
         
-        <h3>Pricing and Errors</h3>
-        <p>While we strive for 100% accuracy, pricing errors may occasionally occur. AutoZonIndia reserves the right to cancel any orders placed for products with incorrect pricing or availability data.</p>
+        <h3>Product Images Indicative</h3>
+        <p>Website par products ki jo images hain wo reference ke liye (indicative) hain. Actual part, brand ki nayi packaging ya update ke hisaab se slightly alag dikh sakta hai, par fitment 100% same rahega.</p>
+
+        <h3>Liability Limited</h3>
+        <p>Part lagane (installation) ke waqt kisi mechanic ki galti se part tootna ya gaadi mein kisi aur tarah ka nuksaan hone ki zimmedari AutoZonIndia ki nahi hogi. Hum sirf defective parts ki guarantee dete hain.</p>
       </div>
     </div>
   </div>
@@ -47,16 +54,23 @@ export const ShippingPolicyView = () => (
     <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 p-8 sm:p-12">
       <div className="flex items-center gap-4 mb-8">
         <div className="bg-emerald-100 p-4 rounded-2xl"><Truck className="w-8 h-8 text-emerald-600" /></div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Shipping Policy</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Shipping & Delivery</h2>
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
-        <p>We deliver spare parts across 19,000+ pincodes in India via Bluedart, Delhivery, and Express Logistics. Standard delivery timeline is 2-4 business days.</p>
+        <h3>Dispatch & Delivery Time</h3>
+        <p>Sahi parts deliver karna humari pehli priority hai. 
+          <br/><strong>Dispatch:</strong> Sabhi confirmed orders 24 se 48 working hours ke andar warehouse se dispatch kar diye jate hain.
+          <br/><strong>Delivery:</strong> Dispatch hone ke baad, aapke pincode ke hisaab se order deliver hone me usually <strong>3 se 7 din</strong> lagte hain.
+        </p>
         
-        <h3>Free Shipping</h3>
-        <p>Orders above ₹499 qualify for free standard shipping. Bulky items (like windshields or large body panels) may incur specialized freight charges.</p>
+        <h3>Shipping Charges</h3>
+        <p>
+          - <strong>₹999 se upar ke orders:</strong> FREE Delivery!<br/>
+          - <strong>₹999 se kam ke orders:</strong> Nominal shipping charge (jaise ₹49) apply hoga jo checkout par dikhaya jayega.
+        </p>
         
-        <h3>Tracking</h3>
-        <p>All orders come with real-time GPS tracking. You will receive SMS and WhatsApp updates as your order moves from our warehouse to your doorstep.</p>
+        <h3>COD (Cash On Delivery)</h3>
+        <p>COD ki suvidha available hai! Aap checkout ke dauran apna pincode daalkar check kar sakte hain ki aapke area mein COD available hai ya nahi.</p>
       </div>
     </div>
   </div>
@@ -67,20 +81,31 @@ export const ReturnPolicyView = () => (
     <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 p-8 sm:p-12">
       <div className="flex items-center gap-4 mb-8">
         <div className="bg-purple-100 p-4 rounded-2xl"><RefreshCw className="w-8 h-8 text-purple-600" /></div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Return & Refund Policy</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900">Returns, Refund & Replacement</h2>
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
-        <p>If a spare part does not fit your registered vehicle, request a free reverse pickup within 7 days of delivery for a 100% full refund or instant replacement.</p>
+        <h3>7-Days Return Policy</h3>
+        <p>Agar aapne galat part order kar diya hai, toh aap delivery ke 7 din ke andar return kar sakte hain. Part bilkul <strong>unused hona chahiye aur original brand packing</strong> ke sath return karna zaroori hai.</p>
         
-        <h3>Conditions for Return</h3>
-        <ul>
-          <li>The part must be unused and in its original, sealed OEM packaging.</li>
-          <li><b>Important:</b> Electrical components (ECUs, sensors, wiring harnesses) are strictly non-returnable once the seal is broken.</li>
-          <li>Parts damaged during DIY installation are not eligible for refunds.</li>
-        </ul>
+        <h3>Wrong / Damaged Part?</h3>
+        <p>Agar humari taraf se koi galat part bheja gaya hai ya part raste me toot gaya (damaged in transit), toh hum aapko <strong>Free Replacement</strong> denge.</p>
         
-        <h3>Refund Processing</h3>
-        <p>Refunds are initiated within 24 hours of the returned item passing quality check at our warehouse. It may take 3-5 business days for the amount to reflect in your original payment method.</p>
+        <h3>Return Process</h3>
+        <p>
+          Return bahut asaan hai:<br/>
+          1. <strong>Contact Us:</strong> Hame WhatsApp ya Email par order ID aur problem ki photo bhejein.<br/>
+          2. <strong>Pickup:</strong> Humara courier partner 24-48 hours me free reverse pickup karega.<br/>
+          3. <strong>Refund/Replace:</strong> Jaise hi part hamare warehouse phochta hai, aapka refund ya replacement process kar diya jayega.
+        </p>
+
+        <h3>Non-Returnable Items (Please Note)</h3>
+        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+          <p className="m-0 text-red-800 font-bold mb-2">Neeche diye gaye items wapas nahi honge agar unki seal khul gayi hai ya install koshish hui hai:</p>
+          <ul className="text-red-700 m-0">
+            <li><strong>Engine Oil & Lubricants</strong> (Agar seal tuti hui hai)</li>
+            <li><strong>Electrical Items</strong> (Jaise ki ECU, Sensors, Relays, Wiring, Modules - clear installation issue ki wajah se return allowed nahi hai)</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

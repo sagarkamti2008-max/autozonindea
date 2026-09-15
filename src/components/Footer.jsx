@@ -46,72 +46,82 @@ export const Footer = () => {
       <div className="container mx-auto px-4 lg:px-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
           
-          {/* Brand Info (Takes up 4 columns on large screens) */}
-          <div className="lg:col-span-4">
+          {/* Column 1: Brand & Address */}
+          <div className="lg:col-span-3">
             <div className="flex items-center gap-1 mb-6">
               <span className="font-black text-2xl text-white tracking-tight">AutoZon<span className="text-orange-500">India</span></span>
             </div>
-            <p className="text-sm leading-relaxed mb-8 pr-4">
-              AutoZonIndia is India's leading automotive marketplace for Car Spare Parts, OEM Clutch Assembly, Brake Oils, Dash Cams, and Vehicle Accessories. We bridge the gap between car owners and genuine parts.
+            <p className="text-sm leading-relaxed mb-4 pr-4">
+              India me Car Parts Online — Engine Parts, Oils, Bumper, Accessories. Apni car select karein aur sahi parts ghar baithe mangwayein.
             </p>
-            <div className="space-y-4 text-sm">
-              <div className="flex items-start gap-3">
-                <Phone size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                <span><b className="text-white">Helpline:</b> +91 8591719499<br/><span className="text-slate-500 text-xs">(Mon-Sat 9AM-8PM)</span></span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail size={18} className="text-orange-500 shrink-0" />
-                <span><b className="text-white">Support:</b> support@autozonindia.com</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <MapPin size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                <div className="flex flex-col">
-                  <span><b className="text-white">HQ / Store:</b> AutoZon Plaza, Connaught Place, New Delhi 110001</span>
-                  <a href="https://maps.google.com/?q=Connaught+Place+New+Delhi" target="_blank" rel="noreferrer" className="text-orange-500 text-xs font-bold mt-1 hover:underline flex items-center gap-1">
-                    View on Google Maps ↗
-                  </a>
-                </div>
+            <p className="text-xs text-slate-500 mb-6 uppercase tracking-widest font-bold">GSTIN: (Awaiting Registration)</p>
+            <div className="flex items-start gap-3 text-sm">
+              <MapPin size={18} className="text-orange-500 shrink-0 mt-0.5" />
+              <div className="flex flex-col">
+                <span><b className="text-white">HQ / Store:</b> AutoZon Plaza, Connaught Place, New Delhi 110001</span>
+                <a href="https://maps.google.com/?q=Connaught+Place+New+Delhi" target="_blank" rel="noreferrer" className="text-orange-500 text-xs font-bold mt-1 hover:underline flex items-center gap-1">
+                  View on Google Maps ↗
+                </a>
               </div>
             </div>
           </div>
 
-          {/* Quick Shop Links */}
-          <div className="lg:col-span-2 lg:col-start-6">
-            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Marketplace</h4>
+          {/* Column 2: Categories quick links */}
+          <div className="lg:col-span-3 lg:col-start-4">
+            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Top Categories</h4>
             <ul className="space-y-4 text-sm font-medium">
-              <li><button onClick={() => { setSelectedCategory('service_parts'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Service Parts</button></li>
-              <li><button onClick={() => { setSelectedCategory('brakes'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Brakes & Fluid</button></li>
-              <li><button onClick={() => { setSelectedCategory('clutch_transmission'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Clutch Assemblies</button></li>
-              <li><button onClick={() => { setSelectedCategory('engine'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Oils & Coolants</button></li>
-              <li><button onClick={() => { setSelectedCategory('interiors'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>7D Mats & Holders</button></li>
-              <li><button onClick={() => { setSelectedCategory('electronics'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Dash Cameras</button></li>
+              <li><button onClick={() => { setSelectedCategory('engine-parts'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Engine Parts</button></li>
+              <li><button onClick={() => { setSelectedCategory('oils-fluids'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Oils & Fluids</button></li>
+              <li><button onClick={() => { setSelectedCategory('brake-system'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Brakes</button></li>
+              <li><button onClick={() => { setSelectedCategory('filters'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Filters</button></li>
+              <li><button onClick={() => { setSelectedCategory('body-bumper'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Body & Bumper</button></li>
+              <li><button onClick={() => { setSelectedCategory('electrical'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Electrical</button></li>
+              <li><button onClick={() => { setSelectedCategory('car-accessories'); navigateTo('catalog'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-orange-500 transition-colors"></span>Accessories</button></li>
             </ul>
           </div>
 
-          {/* Enterprise Solutions & Portals */}
+          {/* Column 3: Information Links */}
           <div className="lg:col-span-3">
-            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Platform Portals</h4>
-            <ul className="space-y-4 text-sm font-medium">
-              <li><button onClick={() => { setCurrentRole('customer'); navigateTo('my-account'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-800/50"><LayoutDashboard size={12} className="text-orange-500" /></span> Account & Orders</button></li>
-              <li><button onClick={() => { setCurrentRole('garage'); navigateTo('garage-portal'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-800/50"><Wrench size={12} className="text-orange-500" /></span> Mechanic Hub</button></li>
-              <li><button onClick={() => { setCurrentRole('seller'); navigateTo('seller-portal'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-800/50"><Building size={12} className="text-orange-500" /></span> Merchant Portal</button></li>
-              <li><button onClick={() => { setCurrentRole('manufacturer'); navigateTo('manufacturer-portal'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-800/50"><Cpu size={12} className="text-orange-500" /></span> OEM Hub</button></li>
-              <li><button onClick={() => { setCurrentRole('admin'); navigateTo('admin'); }} className="hover:text-white transition-colors duration-200 flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-800/50"><ShieldCheck size={12} className="text-orange-500" /></span> Admin Console</button></li>
-            </ul>
-          </div>
-
-          {/* Customer Care & Legal Policies */}
-          <div className="lg:col-span-2">
-            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Legal & Care</h4>
+            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Information</h4>
             <ul className="space-y-4 text-sm font-medium">
               <li><button onClick={() => navigateTo('about')} className="hover:text-white transition-colors duration-200">About Us</button></li>
+              <li><button onClick={() => navigateTo('contact')} className="hover:text-white transition-colors duration-200">Contact Us</button></li>
+              <li><button onClick={() => navigateTo('shipping-policy')} className="hover:text-white transition-colors duration-200">Shipping & Delivery Policy</button></li>
+              <li><button onClick={() => navigateTo('return-policy')} className="hover:text-white transition-colors duration-200">Returns / Refund Policy</button></li>
               <li><button onClick={() => navigateTo('privacy-policy')} className="hover:text-white transition-colors duration-200">Privacy Policy</button></li>
               <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors duration-200">Terms & Conditions</button></li>
-              <li><button onClick={() => navigateTo('shipping-policy')} className="hover:text-white transition-colors duration-200">Shipping Policy</button></li>
-              <li><button onClick={() => navigateTo('return-policy')} className="hover:text-white transition-colors duration-200">Return & Refund</button></li>
-              <li><button onClick={() => navigateTo('faq')} className="hover:text-white transition-colors duration-200">FAQs</button></li>
-              <li><button onClick={() => navigateTo('contact')} className="hover:text-white transition-colors duration-200">Contact Support</button></li>
-              <li><button onClick={() => navigateTo('sitemap')} className="text-orange-400 font-bold hover:underline flex items-center gap-1.5 mt-1">🗺️ Complete Website Sitemap</button></li>
+              <li><button onClick={() => navigateTo('faq')} className="hover:text-white transition-colors duration-200">FAQ</button></li>
+            </ul>
+          </div>
+
+          {/* Column 4: Contact & Socials */}
+          <div className="lg:col-span-3">
+            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Contact Us</h4>
+            <ul className="space-y-5 text-sm font-medium">
+              <li className="flex items-start gap-3">
+                <Phone size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                <div className="flex flex-col">
+                  <span className="text-white font-bold text-base">1800-AZ-INDIA</span>
+                  <span className="text-xs text-slate-500">Toll-Free Helpline</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp" className="w-[18px] h-[18px] shrink-0 mt-0.5 opacity-90" />
+                <div className="flex flex-col">
+                  <span className="text-white font-bold text-base">+91 85917 19499</span>
+                  <span className="text-xs text-slate-500">WhatsApp Support</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <Mail size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                <div className="flex flex-col">
+                  <span className="text-white font-bold">support@autozonindia.com</span>
+                </div>
+              </li>
+              <li className="pt-2 border-t border-slate-800">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-3">Timings</span>
+                <span className="text-sm">Monday to Saturday: 9:00 AM - 8:00 PM<br/>Sunday: Closed</span>
+              </li>
             </ul>
           </div>
         </div>

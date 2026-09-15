@@ -60,6 +60,7 @@ export const CheckoutView = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [addressErrors, setAddressErrors] = useState({});
+  const [showRazorpay, setShowRazorpay] = useState(false);
 
   // Recalculate Cart Summary Server-Side Source of Truth (Rule 23, 67)
   const summary = calculateCartSummary({
@@ -101,27 +102,11 @@ export const CheckoutView = () => {
     setCheckoutStep(2);
   };
 
-  const handlePlaceOrderSubmit = async (e) => {
-    e.preventDefault();
-    if (summary.availableItems.length === 0) {
-      showToast('Cannot checkout with an empty cart.', 'error');
-      return;
-    }
-
-    if (paymentMethod === 'cod') {
-      const codVal = validateCOD(shippingAddress.postalCode, summary.grandTotal, summary.availableItems);
-      if (!codVal.eligible) {
-        showToast(codVal.message, 'error');
-        return;
-      }
-    }
-
+  const executeOrderCreation = async () => {
     setIsSubmitting(true);
-
     try {
       const idempotencyKey = `SGR-IDEMP-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // Execute Order Creation via Backend API Layer
       const response = BackendAPI.createCheckoutOrder({
         customerInfo: contactInfo,
         cartItems: cart,
@@ -147,71 +132,125 @@ export const CheckoutView = () => {
 
       if (response.success) {
         setCheckoutStep(4);
-        showToast(`🎉 Order #${response.data.order.orderNumber} Confirmed! Notification sent to +91 8591719499.`);
+        setShowRazorpay(false);
+        showToast(`🎉 Order Placed Successfully!`);
       } else {
         showToast(response.error?.message || 'Order creation failed.', 'error');
+        setShowRazorpay(false);
       }
     } catch (err) {
       showToast('Error placing order. Please try again.', 'error');
+      setShowRazorpay(false);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handlePlaceOrderSubmit = async (e) => {
+    e.preventDefault();
+    if (summary.availableItems.length === 0) {
+      showToast('Cannot checkout with an empty cart.', 'error');
+      return;
+    }
+
+    if (paymentMethod === 'cod') {
+      const codVal = validateCOD(shippingAddress.postalCode, summary.grandTotal, summary.availableItems);
+      if (!codVal.eligible) {
+        showToast(codVal.message, 'error');
+        return;
+      }
+      // COD bypasses Razorpay
+      executeOrderCreation();
+    } else {
+      // Simulate Razorpay Overlay for Online
+      setShowRazorpay(true);
+      setTimeout(() => {
+        executeOrderCreation();
+      }, 2500); // Wait 2.5s to simulate payment processing
     }
   };
 
   // Order Confirmation View (Rule 38)
   if (checkoutStep === 4 && confirmedOrder) {
     return (
-      <div className="container" style={{ maxWidth: '800px', padding: '3rem 1rem', margin: '0 auto', textAlign: 'center' }}>
+      <div className="container" style={{ maxWidth: '900px', padding: '3rem 1rem', margin: '0 auto', textAlign: 'center' }}>
         <div style={{ background: '#FFFFFF', borderRadius: '24px', border: '1px solid #E2E8F0', padding: '3rem 2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
           <div style={{ background: '#ECFDF5', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: '#059669' }}>
             <CheckCircle2 size={54} />
           </div>
 
           <span style={{ background: '#DCFCE7', color: '#15803D', fontSize: '0.8rem', fontWeight: 900, padding: '0.3rem 0.85rem', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            ORDER CONFIRMED & INVENTORY RESERVED
+            ORDER CONFIRMED
           </span>
 
           <h1 style={{ fontFamily: 'Outfit', fontSize: '2.2rem', fontWeight: 900, color: '#0F2167', marginTop: '0.75rem', marginBottom: '0.25rem' }}>
-            Thank You For Your Order!
+            Order Placed Successfully!
           </h1>
-          <p style={{ color: '#64748B', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+          <p style={{ color: '#64748B', fontSize: '0.95rem', marginBottom: '2rem' }}>
             Order Number: <strong style={{ color: '#FF6B00', fontSize: '1.1rem' }}>#{confirmedOrder.orderNumber}</strong>
           </p>
 
-          {/* Delivery & Tracking Info Card */}
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '1.5rem', textAlign: 'left', marginBottom: '2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', fontSize: '0.85rem' }}>
-              <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+            {/* Delivery & Tracking Info Card */}
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '1.5rem', textAlign: 'left' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0F2167', marginBottom: '1rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.5rem' }}>Delivery Details</h3>
+              <div style={{ fontSize: '0.85rem', lineHeight: '1.5' }}>
                 <strong style={{ color: '#0F2167', display: 'block', marginBottom: '0.4rem' }}>Shipping Address:</strong>
                 <div>{confirmedOrder.shippingAddress.fullName}</div>
                 <div>{confirmedOrder.shippingAddress.addressLine1}, {confirmedOrder.shippingAddress.addressLine2}</div>
                 <div>{confirmedOrder.shippingAddress.city}, {confirmedOrder.shippingAddress.state} - {confirmedOrder.shippingAddress.postalCode}</div>
-                <div style={{ color: '#64748B', marginTop: '0.2rem' }}>📱 Phone: {confirmedOrder.shippingAddress.phone}</div>
-              </div>
-
-              <div>
-                <strong style={{ color: '#0F2167', display: 'block', marginBottom: '0.4rem' }}>Shipment Tracking:</strong>
-                <div>Courier: <strong>{confirmedOrder.trackingInfo.carrier}</strong></div>
-                <div>AWB Number: <code style={{ background: '#E2E8F0', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{confirmedOrder.trackingInfo.awbNumber}</code></div>
-                <div>Payment Status: <strong style={{ color: confirmedOrder.paymentInfo.status === 'Paid' ? '#059669' : '#D97706' }}>{confirmedOrder.paymentInfo.status} ({confirmedOrder.paymentInfo.method})</strong></div>
-                <div style={{ color: '#64748B', marginTop: '0.2rem' }}>⏱ Est. Delivery: {confirmedOrder.trackingInfo.estimatedDelivery}</div>
+                <div style={{ color: '#64748B', marginTop: '0.5rem' }}>📱 Phone: {confirmedOrder.shippingAddress.phone}</div>
+                
+                <div style={{ marginTop: '1rem' }}>
+                  <strong style={{ color: '#0F2167', display: 'block', marginBottom: '0.2rem' }}>Estimated Delivery:</strong>
+                  <div style={{ color: '#059669', fontWeight: 800 }}>{confirmedOrder.trackingInfo?.estimatedDelivery || '3-5 Business Days'}</div>
+                </div>
               </div>
             </div>
 
-            {/* Notification Badge */}
-            <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E40AF', padding: '0.65rem 0.85rem', borderRadius: '8px', marginTop: '1.25rem', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Smartphone size={16} />
-              <span>Order confirmation & SMS tracking dispatch notification sent to <strong>{confirmedOrder.customer.phone}</strong> and <strong>{confirmedOrder.customer.email}</strong>.</span>
+            {/* Order Summary Info Card */}
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '1.5rem', textAlign: 'left' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0F2167', marginBottom: '1rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.5rem' }}>Order Details</h3>
+              <div style={{ fontSize: '0.85rem', lineHeight: '1.5' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ color: '#64748B' }}>Total Amount Paid:</span>
+                  <strong style={{ color: '#0F2167', fontSize: '1rem' }}>₹{confirmedOrder.totalAmount.toLocaleString('en-IN')}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <span style={{ color: '#64748B' }}>Payment Method:</span>
+                  <strong style={{ color: confirmedOrder.paymentInfo.status === 'Paid' ? '#059669' : '#D97706' }}>{confirmedOrder.paymentInfo.method.toUpperCase()} ({confirmedOrder.paymentInfo.status})</strong>
+                </div>
+
+                <strong style={{ color: '#0F2167', display: 'block', marginBottom: '0.4rem' }}>Items Ordered ({confirmedOrder.items.length}):</strong>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '120px', overflowY: 'auto' }}>
+                  {confirmedOrder.items.map((item, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#FFFFFF', padding: '0.4rem', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                      <img src={item.image} alt={item.title} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+                      <div style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <span style={{ fontWeight: 800, color: '#0F2167', display: 'block' }}>{item.title}</span>
+                        <span style={{ fontSize: '0.7rem', color: '#64748B' }}>Qty: {item.quantity}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button
-              onClick={() => navigateTo('my-account')}
+              onClick={() => navigateTo('track-order')}
+              style={{ background: '#FF6B00', color: '#FFFFFF', border: 'none', borderRadius: '12px', padding: '0.85rem 1.75rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(255, 107, 0, 0.3)' }}
+            >
+              Track Order <Truck size={18} />
+            </button>
+
+            <button
+              onClick={() => showToast('Invoice downloaded successfully!', 'success')}
               style={{ background: '#0F2167', color: '#FFFFFF', border: 'none', borderRadius: '12px', padding: '0.85rem 1.75rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              Track Order & View Invoice <FileText size={18} />
+              Download Invoice (GST) <FileText size={18} />
             </button>
 
             <button
@@ -686,6 +725,31 @@ export const CheckoutView = () => {
           </div>
         </div>
       </div>
+
+      {/* Razorpay Mock Modal */}
+      {showRazorpay && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: '#FFFFFF', width: '380px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <div style={{ background: '#0F2167', color: '#FFFFFF', padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>Razorpay Secure</span>
+              <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Test Mode</span>
+            </div>
+            <div style={{ padding: '2rem 1.5rem', textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: '50px', height: '50px', border: '4px solid #F1F5F9', borderTopColor: '#0F2167', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+              </div>
+              <h3 style={{ margin: '0 0 0.5rem 0', color: '#0F2167', fontWeight: 900 }}>Processing Payment...</h3>
+              <p style={{ margin: 0, color: '#64748B', fontSize: '0.85rem' }}>Please do not close or refresh this window.</p>
+              
+              <div style={{ marginTop: '2rem', padding: '1rem', background: '#F8FAFC', borderRadius: '8px', border: '1px dashed #CBD5E1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#475569', fontSize: '0.85rem' }}>Amount Payable</span>
+                <span style={{ color: '#0F2167', fontWeight: 900, fontSize: '1.1rem' }}>₹{summary.grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

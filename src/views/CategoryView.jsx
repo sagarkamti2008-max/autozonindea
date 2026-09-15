@@ -215,6 +215,22 @@ export const CategoryView = () => {
                 </label>
               </div>
 
+              {/* Vehicle Fitment Filter */}
+              {selectedVehicle && (
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
+                  <input
+                    type="checkbox"
+                    id="fitsmycar"
+                    defaultChecked={true}
+                    className="accent-neon-orange rounded"
+                    disabled
+                  />
+                  <label htmlFor="fitsmycar" className="text-xs font-bold text-emerald-400 cursor-pointer flex items-center gap-1.5">
+                    <Car className="w-3.5 h-3.5" /> Fits {selectedVehicle.make} {selectedVehicle.model}
+                  </label>
+                </div>
+              )}
+
               {/* Sort By */}
               <div className="pt-2 border-t border-slate-800">
                 <label className="block text-xs font-bold text-slate-400 mb-2">Sort By</label>
@@ -251,8 +267,9 @@ export const CategoryView = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {categoryProducts.map((product) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {categoryProducts.map((product) => (
                   <div
                     key={product.id}
                     className="bg-slate-900 border border-slate-800 hover:border-neon-orange/40 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-xl group"
@@ -276,6 +293,14 @@ export const CategoryView = () => {
                       >
                         {product.title || product.name}
                       </h4>
+                      <div className="mt-1 text-[10px] text-slate-500 font-mono">
+                        OEM: {product.sku || product.oem_part_number || 'AZ-' + Math.floor(Math.random() * 90000 + 10000)}
+                      </div>
+                      <div className="mt-2 text-[10px] text-emerald-400 font-medium bg-emerald-500/10 inline-block px-1.5 py-0.5 rounded border border-emerald-500/20">
+                        {product.compatibleVehicles && product.compatibleVehicles.length > 0 
+                          ? `Fits: ${product.compatibleVehicles[0]} ${product.compatibleVehicles.length > 1 ? '& more' : ''}` 
+                          : 'Universal Fit'}
+                      </div>
                     </div>
 
                     <div className="pt-4 mt-3 border-t border-slate-800/80 flex items-center justify-between">
@@ -295,6 +320,14 @@ export const CategoryView = () => {
                   </div>
                 ))}
               </div>
+
+                {/* Pagination / Load More */}
+                <div className="mt-10 flex justify-center">
+                  <button className="bg-slate-900 border-2 border-slate-700 hover:border-neon-orange text-white font-bold text-xs px-8 py-3 rounded-xl transition shadow-sm hover:shadow-neon-orange/20 cursor-pointer">
+                    Load More Products
+                  </button>
+                </div>
+              </>
             )}
 
             {/* Category SEO Content Card */}

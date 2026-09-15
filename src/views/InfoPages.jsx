@@ -40,7 +40,28 @@ export const BlogView = () => {
 };
 
 export const FAQView = () => {
-  const { faqs } = useStore();
+  const faqs = [
+    {
+      q: "Mujhe kaise pata chalega ye part meri car me fit hoga?",
+      a: "Aap humare 'AI Parts Assistant' ya catalog me apni car ka Make, Model, aur Year select karke 100% accurate parts dhund sakte hain. Humara system sirf wahi parts dikhayega jo aapki car ke liye compatible hain."
+    },
+    {
+      q: "Kya COD available hai?",
+      a: "Haan! COD (Cash On Delivery) ki suvidha available hai. Aap checkout ke waqt apna pincode daalkar check kar sakte hain ki aapke area me COD hai ya nahi."
+    },
+    {
+      q: "Delivery kitne din me hogi?",
+      a: "Dispatch 24-48 working hours me hota hai. Aapke pincode ke hisaab se delivery me usually 3 se 7 din lagte hain. ₹999 ke upar order par shipping bilkul free hai."
+    },
+    {
+      q: "GST invoice milega?",
+      a: "Ji haan, sabhi parts par GST invoice milta hai. B2B customers aur Garages order confirmation page se apna GST invoice download kar sakte hain."
+    },
+    {
+      q: "Return kaise karun?",
+      a: "Agar part fit nahi hota, toh aap 7 din ke andar return kar sakte hain. Bas dhyan rahe ki part unused aur original packing me ho. Hame WhatsApp ya Email karein, hum free pickup arrange karenge aur aapka refund ya replacement process kar denge."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-20 pt-10 px-4 sm:px-6 lg:px-8">
@@ -50,7 +71,7 @@ export const FAQView = () => {
             <HelpCircle className="w-8 h-8 text-blue-600" />
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Frequently Asked Questions</h2>
-          <p className="text-slate-500 font-medium">Quick answers to common questions about orders, shipping, and returns.</p>
+          <p className="text-slate-500 font-medium">Aapke sabhi sawalon ke asaan jawab.</p>
         </div>
 
         <div className="space-y-4">
@@ -81,7 +102,7 @@ export const ContactView = () => {
     <div className="min-h-screen bg-slate-50 font-sans pb-20 pt-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Contact Support</h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Contact Us</h2>
           <p className="text-slate-500 font-medium">We're here to help with your vehicle fitment, order queries, and more.</p>
         </div>
 
@@ -91,15 +112,15 @@ export const ContactView = () => {
           <div className="md:col-span-2 space-y-4">
             <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
               <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl"></div>
-              <h3 className="text-xl font-black mb-6">Store HQ & Helpline</h3>
+              <h3 className="text-xl font-black mb-6">HQ & Helpline</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/10 p-3 rounded-xl shrink-0"><Phone className="w-5 h-5 text-orange-400" /></div>
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Call / WhatsApp</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Phone & WhatsApp</div>
                     <div className="font-black text-lg">+91 8591719499</div>
-                    <div className="text-sm font-medium text-slate-400 mt-0.5">Mon-Sat 9AM-8PM</div>
+                    <div className="text-sm font-medium text-slate-400 mt-0.5">Mon-Sat 10AM-7PM</div>
                   </div>
                 </div>
                 
@@ -107,25 +128,32 @@ export const ContactView = () => {
                   <div className="bg-white/10 p-3 rounded-xl shrink-0"><Mail className="w-5 h-5 text-blue-400" /></div>
                   <div>
                     <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email Us</div>
-                    <div className="font-bold">support@autozonindia.com</div>
+                    <div className="font-bold text-sm">support@autozonindia.com</div>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="bg-white/10 p-3 rounded-xl shrink-0"><MapPin className="w-5 h-5 text-emerald-400" /></div>
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Headquarters</div>
-                    <div className="font-medium text-sm text-slate-300 leading-relaxed">AutoZon Plaza,<br/>Connaught Place,<br/>New Delhi - 110001</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Business Address</div>
+                    <div className="font-medium text-sm text-slate-300 leading-relaxed">AutoZonIndia Head Office,<br/>Sector 15, Part 2,<br/>Gurugram, Haryana - 122001</div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Google Maps Visual Representation */}
+            <div className="bg-slate-200 rounded-3xl h-48 w-full flex flex-col items-center justify-center text-slate-500 shadow-inner border border-slate-300 relative overflow-hidden">
+              <MapPin className="w-8 h-8 text-slate-400 mb-2 z-10" />
+              <span className="font-bold text-sm z-10">Google Maps View</span>
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #94a3b8 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="md:col-span-3 bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm">
             <h3 className="text-2xl font-black text-slate-900 mb-2">Send us a message</h3>
-            <p className="text-slate-500 font-medium mb-8">Fill out the form below and our team will get back to you shortly.</p>
+            <p className="text-slate-500 font-medium mb-8">Hume message karein aur humari team jald hi aapse contact karegi.</p>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

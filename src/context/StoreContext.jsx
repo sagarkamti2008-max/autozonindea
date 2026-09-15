@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 import {
   VEHICLE_DATABASE,
   SAMPLE_VIN_DATABASE,
@@ -101,21 +102,22 @@ export const StoreProvider = ({ children }) => {
 
   const [currentView, setCurrentView] = useState(getInitialView);
   const [activeProductId, setActiveProductId] = useState(null);
+  const [activeOrderId, setActiveOrderId] = useState(null);
 
-  const [products, setProducts] = useState(() => safeGetStorage('autozon_products', INITIAL_PRODUCTS));
-  const [orders, setOrders] = useState(() => safeGetStorage('autozon_orders', INITIAL_ORDERS));
-  const [customers, setCustomers] = useState(() => safeGetStorage('autozon_customers', INITIAL_CUSTOMERS));
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [cars] = useState(mockCars);
   const [categories] = useState(CATEGORIES_DATABASE);
   const [academy] = useState(academyModules);
   const [enquiries, setEnquiries] = useState(() => safeGetStorage('autozon_enquiries', INITIAL_ENQUIRIES));
   const [quotations, setQuotations] = useState(() => safeGetStorage('autozon_quotations', INITIAL_QUOTATIONS));
   const [reviews, setReviews] = useState(() => safeGetStorage('autozon_reviews', INITIAL_REVIEWS));
-  const [coupons, setCoupons] = useState(() => safeGetStorage('autozon_coupons_db', INITIAL_COUPONS));
+  const [coupons, setCoupons] = useState([]);
   const [payments, setPayments] = useState(() => safeGetStorage('autozon_payments_db', INITIAL_PAYMENTS));
   const [shippingRecords, setShippingRecords] = useState(() => safeGetStorage('autozon_shipping_db', INITIAL_SHIPPING));
   const [adminUsers, setAdminUsers] = useState(() => safeGetStorage('autozon_admin_users_db', INITIAL_ADMIN_USERS));
-  const [websiteSettings, setWebsiteSettings] = useState(() => safeGetStorage('autozon_website_settings_db', INITIAL_WEBSITE_SETTINGS));
+  const [websiteSettings, setWebsiteSettings] = useState([]);
 
   const [savedGarage, setSavedGarage] = useState(() => safeGetStorage('autozon_garage', [
     { id: 'gar-01', makeId: 'maruti', makeName: 'Maruti Suzuki', modelId: 'swift', modelName: 'Swift', year: '2020-2024', variant: 'ZXi Plus (1.2L K12N DualJet Petrol)', isPrimary: true }
@@ -152,6 +154,31 @@ export const StoreProvider = ({ children }) => {
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
 
+  // Supabase Fetch Initial Data
+  useEffect(() => {
+    const fetchSupabaseData = async () => {
+      try {
+        const { data: pData } = await supabase.from('products').select('*');
+        if (pData) setProducts(pData);
+        
+        const { data: oData } = await supabase.from('orders').select('*');
+        if (oData) setOrders(oData);
+
+        const { data: cData } = await supabase.from('customers').select('*');
+        if (cData) setCustomers(cData);
+
+        const { data: coupData } = await supabase.from('coupons').select('*');
+        if (coupData) setCoupons(coupData);
+
+        const { data: wsData } = await supabase.from('website_settings').select('*');
+        if (wsData) setWebsiteSettings(wsData);
+      } catch (err) {
+        console.error("Supabase fetch error:", err);
+      }
+    };
+    fetchSupabaseData();
+  }, []);
+
   // Auto-merge guest wishlist when customer logs in
   useEffect(() => {
     if (user?.id) {
@@ -183,6 +210,46 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => { try { localStorage.setItem('autozon_wishlist', JSON.stringify(wishlist)); } catch(e){} }, [wishlist]);
   useEffect(() => { try { localStorage.setItem('autozon_recently_viewed', JSON.stringify(recentlyViewed)); } catch(e){} }, [recentlyViewed]);
   useEffect(() => { try { localStorage.setItem('autozon_recent_searches', JSON.stringify(recentSearches)); } catch(e){} }, [recentSearches]);
+
+  // Supabase update order status
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const { error } = await supabase.from('orders').update({ order_status: newStatus }).eq('id', orderId);
+      if (error) throw error;
+      setOrders(orders.map(o => o.id === orderId ? { ...o, order_status: newStatus } : o));
+      showToast(`Order status updated to ${newStatus}`);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to update order status', 'error');
+    }
+  };
+
+  // Supabase update website settings
+  const updateWebsiteSetting = async (key, value) => {
+    try {
+      // First check if it exists
+      const existing = websiteSettings.find(s => s.setting_key === key);
+      let error;
+      if (existing) {
+        ({ error } = await supabase.from('website_settings').update({ setting_value: value }).eq('setting_key', key));
+      } else {
+        ({ error } = await supabase.from('website_settings').insert([{ setting_key: key, setting_value: value }]));
+      }
+      
+      if (error) throw error;
+
+      setWebsiteSettings(prev => {
+        if (prev.find(s => s.setting_key === key)) {
+          return prev.map(s => s.setting_key === key ? { ...s, setting_value: value } : s);
+        }
+        return [...prev, { setting_key: key, setting_value: value }];
+      });
+      showToast(`Setting ${key} updated successfully`);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to update setting', 'error');
+    }
+  };
 
   const showToast = (message, type = 'success') => {
     const id = Date.now();
@@ -407,6 +474,7 @@ export const StoreProvider = ({ children }) => {
       navigateTo,
       products,
       orders,
+      updateOrderStatus,
       customers,
       cars,
       categories,
@@ -419,6 +487,7 @@ export const StoreProvider = ({ children }) => {
       shippingRecords,
       adminUsers,
       websiteSettings,
+      updateWebsiteSetting,
       // New state exposed
       selectedCar,
       setSelectedCar,

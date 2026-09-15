@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 import { useStore } from '../context/StoreContext';
 import { VEHICLE_MAKES } from '../data/vehicles';
 import { BRANDS_DATABASE } from '../data/brands';
@@ -162,11 +163,12 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
       { id: 'compat-001', vehicle_id: 'v801a1e2-1001-4000-8000-000000000001', make: 'Maruti', model: 'Swift', variant: 'VXi', yearFrom: '2018', yearTo: '2024', fuelType: 'Petrol', transmission: 'Manual', notes: 'Front Axle Disc Brake Pad Fitment for 2018-2024 Swift' }
     ],
 
-    // Pricing, Tax & Inventory Control (Postgres Schema Parity)
     mrp: '',
     sellingPrice: '',
     costPrice: '',
     taxPercent: 18,
+    hsnCode: '',
+    weight: '',
     warranty: '12 Months Manufacturer Warranty',
     categoryId: 'cat-brakes',
     brandId: 'brand-bosch',
@@ -438,7 +440,7 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
   };
 
   // Save Product (Draft vs Published based on Role)
-  const handleSaveProduct = (targetStatus) => {
+  const handleSaveProduct = async (targetStatus) => {
     // Auto-generate SKU if blank
     let generatedSku = productForm.sku.trim();
     if (!generatedSku) {
@@ -478,6 +480,8 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
       price: parseFloat(productForm.mrp) || parseFloat(productForm.sellingPrice) * 1.2,
       sale_price: parseFloat(productForm.sellingPrice),
       tax_percent: parseFloat(productForm.taxPercent) || 18.0,
+      hsn_code: productForm.hsnCode,
+      weight: productForm.weight,
       warranty: productForm.warranty || '12 Months Manufacturer Warranty',
       status: isPublished, // boolean for SQL schema parity (true = active/published)
       statusText: finalStatus,
@@ -529,12 +533,44 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
       updatedAt: new Date().toISOString()
     };
 
-    if (editingProductId) {
-      setProducts(products.map(p => p.id === editingProductId ? newProductObj : p));
-      showToast(`✅ Product "${newProductObj.title}" updated successfully (${finalStatus})!`);
-    } else {
-      setProducts([newProductObj, ...products]);
-      showToast(`🎉 New Part "${newProductObj.title}" created (${finalStatus})!`);
+    const supabasePayload = {
+      id: newProductObj.id,
+      title: newProductObj.title,
+      slug: newProductObj.slug,
+      category: newProductObj.category,
+      sub_category: newProductObj.subCategory,
+      brand: newProductObj.brand,
+      sku: newProductObj.sku,
+      part_number: newProductObj.partNumber,
+      oem_numbers: newProductObj.oemNumber,
+      hsn_code: newProductObj.hsn_code,
+      mrp: newProductObj.mrp,
+      selling_price: newProductObj.sale_price,
+      tax_percent: newProductObj.tax_percent,
+      weight: newProductObj.weight,
+      stock: newProductObj.stock,
+      short_description: newProductObj.shortDescription,
+      long_description: newProductObj.description,
+      images: newProductObj.images,
+      status: newProductObj.status
+    };
+
+    try {
+      if (editingProductId) {
+        const { error } = await supabase.from('products').update(supabasePayload).eq('id', editingProductId);
+        if (error) throw error;
+        setProducts(products.map(p => p.id === editingProductId ? newProductObj : p));
+        showToast(`✅ Product "${newProductObj.title}" updated successfully (${finalStatus})!`);
+      } else {
+        const { error } = await supabase.from('products').insert([supabasePayload]);
+        if (error) throw error;
+        setProducts([newProductObj, ...products]);
+        showToast(`🎉 New Part "${newProductObj.title}" created (${finalStatus})!`);
+      }
+    } catch (err) {
+      console.error("Supabase Error:", err);
+      showToast(`❌ Error saving to database: ${err.message}`, 'error');
+      return;
     }
 
     // Add Audit Log
@@ -2006,6 +2042,33 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                     onChange={(e) => setProductForm({ ...productForm, taxPercent: e.target.value })}
                     placeholder="18.00"
                     className="w-full bg-slate-950 border border-amber-500/60 text-amber-300 rounded-xl px-3 py-2.5 font-mono font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-300">
+                    HSN Code
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.hsnCode}
+                    onChange={(e) => setProductForm({ ...productForm, hsnCode: e.target.value })}
+                    placeholder="e.g. 8708"
+                    className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-2.5 font-mono font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-300">
+                    Weight (kg)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={productForm.weight}
+                    onChange={(e) => setProductForm({ ...productForm, weight: e.target.value })}
+                    placeholder="e.g. 1.5"
+                    className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-2.5 font-mono font-bold"
                   />
                 </div>
 
