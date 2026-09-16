@@ -10,7 +10,7 @@ import { Footer } from '../components/Footer';
 import CustomSelect from '../components/CustomSelect';
 
 export const ModernAutomotiveHomepage = () => {
-  const { navigateTo, addToCart, wishlist, cartItemCount, products, showToast } = useStore();
+  const { navigateTo, addToCart, wishlist, cartItemCount, filteredProducts: products, showToast } = useStore();
   const profileData = getCustomerProfile();
 
   // Search Mode state (Vehicle vs Number Plate)

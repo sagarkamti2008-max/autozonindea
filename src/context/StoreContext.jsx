@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import { supabase } from '../supabaseClient';
 import {
   VEHICLE_DATABASE,
@@ -33,6 +33,7 @@ import {
   removeFromWishlistDB,
   mergeGuestWishlistOnLogin
 } from '../services/engagementService';
+import { checkVehicleProductCompatibility } from '../services/catalogEngine';
 
 const StoreContext = createContext();
 
@@ -146,7 +147,7 @@ export const StoreProvider = ({ children }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [selectedClassification, setSelectedClassification] = useState('all');
-  const [filterFitsVehicle, setFilterFitsVehicle] = useState(false);
+  const [filterFitsVehicle, setFilterFitsVehicle] = useState(!!safeGetStorage('autozon_selected_vehicle', savedGarage[0] || null));
   const [priceRange, setPriceRange] = useState(10000);
   const [sortBy, setSortBy] = useState('featured');
 
@@ -202,7 +203,10 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => { try { localStorage.setItem('autozon_admin_users_db', JSON.stringify(adminUsers)); } catch(e){} }, [adminUsers]);
   useEffect(() => { try { localStorage.setItem('autozon_website_settings_db', JSON.stringify(websiteSettings)); } catch(e){} }, [websiteSettings]);
   useEffect(() => { try { localStorage.setItem('autozon_garage', JSON.stringify(savedGarage)); } catch(e){} }, [savedGarage]);
-  useEffect(() => { try { localStorage.setItem('autozon_selected_vehicle', JSON.stringify(selectedVehicle)); } catch(e){} }, [selectedVehicle]);
+  useEffect(() => { 
+    try { localStorage.setItem('autozon_selected_vehicle', JSON.stringify(selectedVehicle)); } catch(e){} 
+    if (selectedVehicle) setFilterFitsVehicle(true);
+  }, [selectedVehicle]);
   useEffect(() => { try { localStorage.setItem('autozon_cart', JSON.stringify(cart)); } catch(e){} }, [cart]);
   useEffect(() => { try { localStorage.setItem('autozon_saved_later', JSON.stringify(savedForLater)); } catch(e){} }, [savedForLater]);
   useEffect(() => { try { localStorage.setItem('autozon_coupon', JSON.stringify(appliedCouponCode)); } catch(e){} }, [appliedCouponCode]);
@@ -456,6 +460,16 @@ export const StoreProvider = ({ children }) => {
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const globalFilteredProducts = useMemo(() => {
+    if (!products) return [];
+    if (!selectedVehicle) return products;
+    
+    return products.filter(prod => {
+      const comp = checkVehicleProductCompatibility(prod, selectedVehicle);
+      return comp.isCompatible;
+    });
+  }, [products, selectedVehicle]);
+
   return (
     <StoreContext.Provider value={{
       // expose Buy Now state and action
@@ -544,7 +558,7 @@ export const StoreProvider = ({ children }) => {
       setPriceRange,
       sortBy,
       setSortBy,
-      filteredProducts: products,
+      filteredProducts: globalFilteredProducts,
       isVehicleModalOpen,
       setIsVehicleModalOpen,
       isCartDrawerOpen,
