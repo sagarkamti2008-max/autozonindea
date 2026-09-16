@@ -298,17 +298,6 @@ export const Header = () => {
               )}
             </button>
 
-            {/* Account / Login Icon */}
-            <button 
-              onClick={() => navigateTo('my-account')}
-              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
-              title="Login / My Account"
-            >
-              <User className="w-4 h-4 text-orange-400" />
-              <span className="hidden sm:inline">
-                {user ? (profileData.firstName || 'Account') : 'Login / Account'}
-              </span>
-            </button>
 
           </div>
 
