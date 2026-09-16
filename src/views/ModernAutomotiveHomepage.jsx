@@ -531,28 +531,6 @@ export const ModernAutomotiveHomepage = () => {
                 <Car className="w-6 h-6" />
               </button>
 
-              {/* Prime Button */}
-              <button
-                onClick={() => showToast('👑 AutoZon Prime Membership Activated! 5% Extra Cashback On All Orders')}
-                className="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 border-2 border-[#FFB74D] rounded-lg text-xs font-black text-[#D97706] hover:bg-[#FEF3C7] transition"
-              >
-                <Crown className="w-4 h-4 fill-[#F59E0B]" />
-                <span>Prime</span>
-              </button>
-
-              {/* Profile Pill */}
-              <div 
-                onClick={() => navigateTo('my-account')}
-                className="flex items-center gap-3 cursor-pointer hover:bg-slate-100 p-1.5 pr-4 rounded-full transition-colors border border-transparent hover:border-slate-200 ml-2"
-              >
-                <div className="w-[38px] h-[38px] bg-[#1E293B] rounded-full flex items-center justify-center shrink-0">
-                  <span className="text-[15px] font-black text-[#FF5722]">{profileData.firstName?.charAt(0) || 'U'}</span>
-                </div>
-                <div className="hidden lg:block">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-1">Hello,</div>
-                  <div className="text-[14px] font-black text-[#1E293B] leading-none">{profileData.firstName || 'User'}</div>
-                </div>
-              </div>
 
             </div>
           </div>
