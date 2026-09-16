@@ -6,6 +6,8 @@ import {
   User, PhoneCall, Truck, CreditCard, Wallet, Lock, Sparkles, Filter
 } from 'lucide-react';
 import { getCustomerProfile } from '../services/customerAccountEngine';
+import { Footer } from '../components/Footer';
+import CustomSelect from '../components/CustomSelect';
 
 export const ModernAutomotiveHomepage = () => {
   const { navigateTo, addToCart, wishlist, cartItemCount, products, showToast } = useStore();
@@ -633,52 +635,37 @@ export const ModernAutomotiveHomepage = () => {
 
               <form onSubmit={handleVehicleSearch} className="space-y-4">
                 {/* Brand Select */}
-                <div className="relative">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">1. Select Brand</label>
-                  <select
-                    value={selectedBrand}
-                    onChange={(e) => {
-                      setSelectedBrand(e.target.value);
-                      setSelectedModel('');
-                      setSelectedYear('');
-                    }}
-                    className="w-full bg-slate-50 border-2 border-slate-100 text-slate-800 font-bold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:border-orange-500 transition-colors cursor-pointer"
-                  >
-                    <option value="">e.g. Maruti Suzuki</option>
-                    {Object.keys(carDatabase).map(b => <option key={b} value={b}>{b}</option>)}
-                  </select>
-                  <ChevronDown className="w-5 h-5 text-slate-400 absolute right-4 top-9 pointer-events-none" />
-                </div>
+                <CustomSelect
+                  label="1. Select Brand"
+                  placeholder="e.g. Maruti Suzuki"
+                  value={selectedBrand}
+                  onChange={(val) => {
+                    setSelectedBrand(val);
+                    setSelectedModel('');
+                    setSelectedYear('');
+                  }}
+                  options={Object.keys(carDatabase)}
+                />
 
                 {/* Model & Year Select Row */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="relative">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">2. Select Model</label>
-                    <select
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
-                      disabled={!selectedBrand}
-                      className="w-full bg-slate-50 border-2 border-slate-100 text-slate-800 font-bold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:border-orange-500 disabled:opacity-50 cursor-pointer"
-                    >
-                      <option value="">e.g. Swift</option>
-                      {selectedBrand && carDatabase[selectedBrand]?.models.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <ChevronDown className="w-5 h-5 text-slate-400 absolute right-4 top-9 pointer-events-none" />
-                  </div>
+                  <CustomSelect
+                    label="2. Select Model"
+                    placeholder="e.g. Swift"
+                    value={selectedModel}
+                    onChange={setSelectedModel}
+                    options={selectedBrand && carDatabase[selectedBrand] ? carDatabase[selectedBrand].models : []}
+                    disabled={!selectedBrand}
+                  />
 
-                  <div className="relative">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">3. Select Year</label>
-                    <select
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      disabled={!selectedModel}
-                      className="w-full bg-slate-50 border-2 border-slate-100 text-slate-800 font-bold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:border-orange-500 disabled:opacity-50 cursor-pointer"
-                    >
-                      <option value="">e.g. 2022</option>
-                      {selectedBrand && carDatabase[selectedBrand]?.years.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                    <ChevronDown className="w-5 h-5 text-slate-400 absolute right-4 top-9 pointer-events-none" />
-                  </div>
+                  <CustomSelect
+                    label="3. Select Year"
+                    placeholder="e.g. 2022"
+                    value={selectedYear}
+                    onChange={setSelectedYear}
+                    options={selectedBrand && carDatabase[selectedBrand] ? carDatabase[selectedBrand].years : []}
+                    disabled={!selectedModel}
+                  />
                 </div>
 
                 <button

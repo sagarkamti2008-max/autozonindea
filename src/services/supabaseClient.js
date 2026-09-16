@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-supabase-url.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.SUPABASE_URL || 'https://placeholder-supabase-url.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
 export const isSupabaseConfigured = () => {
   return Boolean(
-    import.meta.env.VITE_SUPABASE_URL && 
-    import.meta.env.VITE_SUPABASE_ANON_KEY &&
-    import.meta.env.VITE_SUPABASE_URL !== 'https://placeholder-supabase-url.supabase.co'
+    supabaseUrl && 
+    supabaseAnonKey &&
+    supabaseUrl !== 'https://placeholder-supabase-url.supabase.co'
   );
 };
 
