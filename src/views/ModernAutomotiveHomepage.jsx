@@ -800,7 +800,7 @@ export const ModernAutomotiveHomepage = () => {
                 </div>
                 <div 
                   className="relative h-48 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-3 mb-3 cursor-pointer"
-                  onClick={() => navigateTo('product-detail')}
+                  onClick={() => navigateTo('product-detail', prod)}
                 >
                   <img src={prod.image} alt={prod.title} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform" />
                   <span className="absolute top-2 left-2 bg-slate-900 text-white text-[10px] font-black px-2 py-0.5 rounded">
@@ -812,7 +812,7 @@ export const ModernAutomotiveHomepage = () => {
                   <div className="inline-block text-[10px] font-extrabold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">
                     {prod.compatibility}
                   </div>
-                  <h3 className="font-bold text-slate-900 text-sm line-clamp-2 hover:text-orange-500 transition-colors cursor-pointer" onClick={() => navigateTo('product-detail')}>
+                  <h3 className="font-bold text-slate-900 text-sm line-clamp-2 hover:text-orange-500 transition-colors cursor-pointer" onClick={() => navigateTo('product-detail', prod)}>
                     {prod.title}
                   </h3>
 
@@ -903,7 +903,7 @@ export const ModernAutomotiveHomepage = () => {
                 </div>
                 <div 
                   className="relative h-48 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-3 mb-3 cursor-pointer"
-                  onClick={() => navigateTo('product-detail')}
+                  onClick={() => navigateTo('product-detail', prod)}
                 >
                   <img src={prod.image} alt={prod.title} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform" />
                   <span className="absolute top-2 left-2 bg-slate-900 text-white text-[10px] font-black px-2 py-0.5 rounded">
@@ -915,7 +915,7 @@ export const ModernAutomotiveHomepage = () => {
                   <div className="inline-block text-[10px] font-extrabold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">
                     {prod.compatibility}
                   </div>
-                  <h3 className="font-bold text-slate-900 text-sm line-clamp-2 hover:text-orange-500 transition-colors cursor-pointer" onClick={() => navigateTo('product-detail')}>
+                  <h3 className="font-bold text-slate-900 text-sm line-clamp-2 hover:text-orange-500 transition-colors cursor-pointer" onClick={() => navigateTo('product-detail', prod)}>
                     {prod.title}
                   </h3>
 

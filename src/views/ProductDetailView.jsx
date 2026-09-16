@@ -24,7 +24,9 @@ export const ProductDetailView = () => {
   const { products, activeProductId, addToCart, navigateTo, showToast, selectedVehicle, user, isInWishlist, toggleWishlist, toggleCompare, recentlyViewed, addToRecentlyViewed } = useStore();
 
   // Fallback Product if none selected
-  const product = (products || []).find(p => p.id === activeProductId) || {
+  const storeProduct = (typeof activeProductId === 'object' && activeProductId !== null) ? activeProductId : ((products || []).find(p => p.id === activeProductId));
+  
+  const rawProduct = storeProduct || {
     id: 'prod-piston-set',
     name: 'Piston Set — Maruti Swift 1.2L Petrol',
     brand: 'Mahle',
@@ -52,6 +54,12 @@ export const ProductDetailView = () => {
       'Weight': '1.2 kg',
       'Dimensions': '15 x 15 x 10 cm'
     }
+  };
+
+  const product = {
+    ...rawProduct,
+    name: rawProduct.name || rawProduct.title,
+    originalPrice: rawProduct.originalPrice || rawProduct.mrp
   };
 
   // Image Gallery Helpers
