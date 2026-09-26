@@ -798,12 +798,27 @@ h4 { font-size: 1rem; font-weight: 700; }
   width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(15, 23, 42, 0.6);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: rgba(255, 87, 34, 0.4);
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: rgba(255, 87, 34, 0.8);
 }
+
+/* Hide scrollbars for navigation elements */
+.no-scrollbar::-webkit-scrollbar,
+.mobile-nav-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.mobile-nav-scroll {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+

@@ -26,12 +26,12 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-[#073763] text-white shadow-md relative z-40 font-sans overflow-hidden">
+    <nav className="bg-[#073763] text-white shadow-md relative z-40 font-sans overflow-visible">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
         <div className="flex items-center justify-between h-12 min-w-0">
           
           {/* Left Navigation Links Group */}
-          <div className="mobile-nav-scroll flex items-center gap-6 md:gap-8 h-full min-w-0 overflow-x-auto">
+          <div className="mobile-nav-scroll no-scrollbar flex items-center gap-6 md:gap-8 h-full min-w-0 overflow-x-auto overflow-y-hidden">
             
             {/* 1. Home Link */}
             <button
