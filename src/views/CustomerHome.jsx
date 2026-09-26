@@ -191,6 +191,7 @@ export const CustomerHome = () => {
     selectedVehicle,
     setIsVehicleModalOpen,
     addToCart,
+    buyNow,
     toggleWishlist,
     wishlist,
     navigateTo,
@@ -1322,10 +1323,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#D97706', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1435,7 +1433,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => { addToCart({ ...prod, title: prod.name }); navigateTo('checkout'); }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#B45309', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1519,7 +1517,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => { addToCart({ ...prod, title: prod.name }); navigateTo('checkout'); }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#1D4ED8', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1603,7 +1601,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => { addToCart({ ...prod, title: prod.name }); navigateTo('checkout'); }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#DC2626', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1687,7 +1685,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => { addToCart({ ...prod, title: prod.name }); navigateTo('checkout'); }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#B45309', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1789,10 +1787,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#DC2626', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -1902,7 +1897,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => { addToCart({ ...prod, title: prod.name }); navigateTo('checkout'); }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#C2410C', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2030,10 +2025,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#C2410C', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2135,10 +2127,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#059669', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2240,10 +2229,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#16A34A', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2345,10 +2331,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#D97706', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2450,10 +2433,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#1D4ED8', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2555,10 +2535,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#9333EA', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2660,10 +2637,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#DC2626', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2765,10 +2739,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#047857', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2870,10 +2841,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#B91C1C', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -2975,10 +2943,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3080,10 +3045,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#334155', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3185,10 +3147,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#DC2626', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3290,10 +3249,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#047857', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3395,10 +3351,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#4338CA', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3500,10 +3453,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#BE185D', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3605,10 +3555,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#2563EB', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3710,10 +3657,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3815,10 +3759,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#16A34A', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -3920,10 +3861,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#D97706', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -4025,10 +3963,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#0D9488', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now
@@ -4130,10 +4065,7 @@ export const CustomerHome = () => {
                         <ShoppingCart size={13} /> Add
                       </button>
                       <button
-                        onClick={() => {
-                          addToCart({ ...prod, title: prod.name });
-                          navigateTo('checkout');
-                        }}
+                        onClick={() => buyNow(prod)}
                         style={{ background: '#7C3AED', color: '#FFFFFF', border: 'none', padding: '0.45rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}
                       >
                         Buy Now

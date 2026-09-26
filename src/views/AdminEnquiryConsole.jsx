@@ -474,7 +474,7 @@ export const AdminEnquiryConsole = () => {
                 <Calendar size={16} /> Schedule Follow-up
               </button>
               <a
-                href={`https://wa.me/91${selectedEnquiry.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${selectedEnquiry.customer_name}, regarding your AutoZoneIndia enquiry (${selectedEnquiry.enquiry_number})...`)}`}
+                href={`https://wa.me/91${selectedEnquiry.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${selectedEnquiry.customer_name}, regarding your SAGAR TRAVELS / KAMTI AUTOMOTIVE enquiry (${selectedEnquiry.enquiry_number})...`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ background: '#25D366', color: '#ffffff', border: 'none', padding: '0.6rem 1rem', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}

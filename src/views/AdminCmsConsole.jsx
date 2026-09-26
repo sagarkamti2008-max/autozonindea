@@ -252,7 +252,7 @@ export const AdminCmsConsole = ({ pageId = null, isNew = false }) => {
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Canonical URL</label>
                   <input
                     type="text"
-                    placeholder="https://autozonindia.vercel.app/page/..."
+                    placeholder="https://sagar-travels-4de3b.web.app/page/..."
                     value={formData.canonical_url || ''}
                     onChange={(e) => setFormData({ ...formData, canonical_url: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none"
@@ -374,7 +374,7 @@ export const AdminCmsConsole = ({ pageId = null, isNew = false }) => {
 
               <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 space-y-1">
                 <div className="text-[11px] text-emerald-400 truncate">
-                  https://autozonindia.vercel.app/page/{formData.slug || 'your-slug'}
+                  https://sagar-travels-4de3b.web.app/page/{formData.slug || 'your-slug'}
                 </div>
                 <div className="text-sm font-medium text-blue-400 hover:underline line-clamp-1 cursor-pointer">
                   {formData.meta_title || formData.title || 'Page Title Placeholder'} | AutoZoneIndia

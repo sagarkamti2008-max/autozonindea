@@ -9,47 +9,75 @@
    ========================================================================== */
 
 :root {
-  /* Color System */
-  --primary-navy: #0F2167;
-  --primary-navy-dark: #0B192C;
-  --primary-navy-light: #1E3E62;
-  --secondary-white: #FFFFFF;
-  --accent-orange: #FF6B00;
-  --accent-orange-hover: #E05E00;
-  --accent-orange-light: #FFF3EB;
-  --neutral-bg: #F8FAFC;
-  --neutral-surface: #FFFFFF;
-  --neutral-light-gray: #F3F4F6;
-  --neutral-border: #E5E7EB;
-  --neutral-medium-gray: #9CA3AF;
-  --neutral-text-secondary: #4B5563;
-  --neutral-text-main: #111827;
-  --neutral-dark-gray: #1F2937;
+  /* Dark Luxury Automotive Theme */
+  --primary-navy: #0b0b0b;
+  --primary-navy-dark: #050505;
+  --primary-navy-light: #1a1a1a;
+  --secondary-white: #F5F1E8;
+  --accent-orange: #d4af37;
+  --accent-orange-hover: #b98b1a;
+  --accent-orange-light: #f8e7b6;
+  --neutral-bg: #0b0b0b;
+  --neutral-surface: #121212;
+  --neutral-light-gray: #181818;
+  --neutral-border: rgba(212, 175, 55, 0.2);
+  --neutral-medium-gray: #b3a98d;
+  --neutral-text-secondary: #d8d0bf;
+  --neutral-text-main: #f5f1e8;
+  --neutral-dark-gray: #1d1d1d;
   
   /* Semantic Tokens */
-  --semantic-success: #10B981;
-  --semantic-success-light: #D1FAE5;
-  --semantic-warning: #F59E0B;
-  --semantic-warning-light: #FEF3C7;
-  --semantic-error: #EF4444;
-  --semantic-error-light: #FEE2E2;
-  --semantic-info: #2563EB;
-  --semantic-info-light: #DBEAFE;
+  --semantic-success: #22c55e;
+  --semantic-success-light: #d1fae5;
+  --semantic-warning: #f59e0b;
+  --semantic-warning-light: #fef3c7;
+  --semantic-error: #ef4444;
+  --semantic-error-light: #fee2e2;
+  --semantic-info: #60a5fa;
+  --semantic-info-light: #dbeafe;
 
   /* Typography Tokens */
   --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Outfit', sans-serif;
   
   /* Shadows & Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-pill: 50px;
   
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 33, 103, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 33, 103, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(15, 33, 103, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 16px -2px rgba(11, 83, 148, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 16px 24px -4px rgba(11, 83, 148, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 24px 38px -6px rgba(11, 83, 148, 0.16), 0 12px 18px -4px rgba(0, 0, 0, 0.06);
+}
+
+/* Glassmorphism & Metallic Gradient Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.premium-card-shadow {
+  box-shadow: 0 10px 30px -5px rgba(11, 83, 148, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+}
+
+.premium-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px -8px rgba(11, 83, 148, 0.16), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -58,13 +86,25 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   font-family: var(--font-main);
-  background-color: var(--neutral-bg);
+  background:
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.08), transparent 35%),
+    #0b0b0b;
   color: var(--neutral-text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   padding-bottom: 70px; /* Space for fixed mobile bottom nav */
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+  display: block;
 }
 
 @media (min-width: 993px) {
@@ -101,16 +141,16 @@ h4 { font-size: 1rem; font-weight: 700; }
 
 /* Buttons System */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-hover));
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #d4af37, #b98b1a);
+  color: #0b0b0b;
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
-  font-weight: 800;
+  font-weight: 900;
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
 }
 
 .btn-primary:hover {

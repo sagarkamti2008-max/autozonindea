@@ -20,7 +20,7 @@ const WA_CONFIG = {
   apiUrl: import.meta.env.WHATSAPP_API_URL || '',
   accessToken: import.meta.env.WHATSAPP_ACCESS_TOKEN || '',
   phoneNumberId: import.meta.env.WHATSAPP_PHONE_NUMBER_ID || '',
-  supportNumber: import.meta.env.VITE_WHATSAPP_SUPPORT_NUMBER || '+91 98765 43210'
+  supportNumber: import.meta.env.VITE_WHATSAPP_SUPPORT_NUMBER || '+91 8591719499'
 };
 
 export const NOTIFICATION_EVENTS = {

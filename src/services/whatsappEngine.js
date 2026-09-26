@@ -74,7 +74,7 @@ const SEED_WA_AUTOMATIONS = [
     name: 'Order Status Keyword Auto-Reply',
     keyword: 'order',
     matchType: 'CONTAINS',
-    replyText: 'Hi! To check your AutoZonIndia order status, please reply with your Order Number (e.g. AZ-904812) or track live at https://autozonindia.vercel.app/account.',
+    replyText: 'Hi! To check your AutoZonIndia order status, please reply with your Order Number (e.g. AZ-904812) or track live at https://sagar-travels-4de3b.web.app/account.',
     enabled: true,
     triggerCount: 88
   },
@@ -92,7 +92,7 @@ const SEED_WA_AUTOMATIONS = [
     name: 'Warranty Claim Keyword Auto-Reply',
     keyword: 'warranty',
     matchType: 'CONTAINS',
-    replyText: 'All AutoZonIndia spare parts carry 100% Manufacturer Warranty. Submit your claim on https://autozonindia.vercel.app/account with serial number photo.',
+    replyText: 'All AutoZonIndia spare parts carry 100% Manufacturer Warranty. Submit your claim on https://sagar-travels-4de3b.web.app/account with serial number photo.',
     enabled: true,
     triggerCount: 31
   }

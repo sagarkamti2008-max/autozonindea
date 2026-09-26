@@ -45,7 +45,7 @@ export const RazorpayPaymentModal = ({ isOpen, onClose, grandTotal, customerInfo
               <Zap size={20} />
             </div>
             <div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#FFFFFF' }}>Sagar Travels Razorpay Checkout</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#FFFFFF' }}>KAMTI AUTOMOTIVE Payment Gateway</div>
               <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>256-Bit SSL Encrypted Online Payment Gateway</div>
             </div>
           </div>

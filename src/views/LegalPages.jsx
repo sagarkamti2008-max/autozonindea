@@ -10,7 +10,7 @@ export const PrivacyPolicyView = () => (
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
         <h3>Aapka Data Aur Uski Security</h3>
-        <p>AutoZonIndia par hum aapki privacy ki bohot qadar karte hain. Order process karne ke liye hum sirf zaroori data collect karte hain jaise ki aapka <strong>Name, Address, Email, aur Phone number</strong>.</p>
+        <p>KAMTI AUTOMOTIVE par hum aapki privacy ki bohot qadar karte hain. Order process karne ke liye hum sirf zaroori data collect karte hain jaise ki aapka <strong>Name, Address, Email, aur Phone number</strong>.</p>
         
         <h3>Payment Security (Razorpay)</h3>
         <p>Payments ke liye hum India ka most trusted gateway, <strong>Razorpay</strong> use karte hain. Aapki card details, UPI ID, ya netbanking information directly Razorpay secure servers par process hoti hai. Hum aapka payment data apne servers par store nahi karte.</p>
@@ -34,7 +34,7 @@ export const TermsView = () => (
       </div>
       <div className="prose prose-slate max-w-none prose-p:font-medium prose-p:text-slate-600 prose-headings:font-black prose-headings:text-slate-900">
         <h3>Site Use</h3>
-        <p>AutoZonIndia ka istemal sirf genuine spare parts kharidne ke liye kiya jaa sakta hai. Website content, images, ya data ko copy ya misuse karna sakht mana hai.</p>
+        <p>KAMTI AUTOMOTIVE ka istemal sirf genuine spare parts kharidne ke liye kiya jaa sakta hai. Website content, images, ya data ko copy ya misuse karna sakht mana hai.</p>
         
         <h3>Pricing & GST</h3>
         <p>Website par dikhne wale sabhi products ke prices mein GST (Goods and Services Tax) already included hota hai. B2B customers checkout ke baad GST invoice download kar sakte hain.</p>
@@ -43,7 +43,7 @@ export const TermsView = () => (
         <p>Website par products ki jo images hain wo reference ke liye (indicative) hain. Actual part, brand ki nayi packaging ya update ke hisaab se slightly alag dikh sakta hai, par fitment 100% same rahega.</p>
 
         <h3>Liability Limited</h3>
-        <p>Part lagane (installation) ke waqt kisi mechanic ki galti se part tootna ya gaadi mein kisi aur tarah ka nuksaan hone ki zimmedari AutoZonIndia ki nahi hogi. Hum sirf defective parts ki guarantee dete hain.</p>
+        <p>Part lagane (installation) ke waqt kisi mechanic ki galti se part tootna ya gaadi mein kisi aur tarah ka nuksaan hone ki zimmedari KAMTI AUTOMOTIVE ki nahi hogi. Hum sirf defective parts ki guarantee dete hain.</p>
       </div>
     </div>
   </div>

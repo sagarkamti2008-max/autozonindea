@@ -31,6 +31,7 @@ export const CategoryView = () => {
 
   // Filters State
   const [selectedSubPill, setSelectedSubPill] = useState(activeSubcategory ? activeSubcategory.name : 'all');
+  const [selectedCarBrand, setSelectedCarBrand] = useState('all');
   const [selectedBrandFilter, setSelectedBrandFilter] = useState('all');
   const [priceMaxFilter, setPriceMaxFilter] = useState(25000);
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -39,31 +40,59 @@ export const CategoryView = () => {
   // Generate Dynamic SEO Metadata
   const seo = generateCategorySEO(mainCategory.name, activeSubcategory ? activeSubcategory.name : null);
 
-  // Filter Products
+  // Filter Products strictly by Category and Car Brand
   let categoryProducts = products.filter(p => {
-    const matchCat = p.category === mainCategory.id || p.category === mainCategory.slug || p.category === 'brakes' || p.category === 'braking_system';
-    if (!matchCat) return false;
+    if (!p || !p.category) return false;
+    
+    // Category match
+    const pCatLower = p.category.toLowerCase().trim();
+    const mainCatLower = (mainCategory.name || mainCategory.id || mainCategory.slug || '').toLowerCase().trim();
+    
+    const isCatMatch = pCatLower === mainCatLower ||
+                       pCatLower.includes(mainCatLower) ||
+                       mainCatLower.includes(pCatLower) ||
+                       (mainCatLower.includes('brake') && pCatLower.includes('brake')) ||
+                       (mainCatLower.includes('filter') && pCatLower.includes('filter')) ||
+                       (mainCatLower.includes('engine') && pCatLower.includes('engine')) ||
+                       (mainCatLower.includes('electrical') && pCatLower.includes('electrical')) ||
+                       (mainCatLower.includes('suspension') && pCatLower.includes('suspension')) ||
+                       (mainCatLower.includes('body') && pCatLower.includes('body')) ||
+                       (mainCatLower.includes('ac') && pCatLower.includes('ac')) ||
+                       (mainCatLower.includes('light') && pCatLower.includes('light')) ||
+                       (mainCatLower.includes('transmission') && pCatLower.includes('transmission')) ||
+                       (mainCatLower.includes('steering') && pCatLower.includes('steering')) ||
+                       (mainCatLower.includes('lubricant') && pCatLower.includes('lubricant')) ||
+                       (mainCatLower.includes('accessories') && pCatLower.includes('accessories')) ||
+                       (mainCatLower.includes('tyre') && pCatLower.includes('tyre')) ||
+                       (mainCatLower.includes('battery') && pCatLower.includes('battery'));
 
-    if (selectedSubPill !== 'all' && p.subCategory && p.subCategory.toLowerCase() !== selectedSubPill.toLowerCase()) {
-      return false;
+    if (!isCatMatch) return false;
+
+    // Subcategory Filter
+    if (selectedSubPill !== 'all' && p.subCategory) {
+      if (p.subCategory.toLowerCase().trim() !== selectedSubPill.toLowerCase().trim()) {
+        return false;
+      }
     }
 
-    if (selectedBrandFilter !== 'all' && p.brand.toLowerCase() !== selectedBrandFilter.toLowerCase()) {
+    // Car Brand Filter (e.g. Maruti, Hyundai, Tata, Mahindra, Toyota)
+    if (selectedCarBrand !== 'all') {
+      const brandLower = selectedCarBrand.toLowerCase();
+      const fitmentMatch = Array.isArray(p.fitments) && p.fitments.some(f => (f.make || f.model || '').toLowerCase().includes(brandLower));
+      const compatMatch = Array.isArray(p.compatibleVehicles) && p.compatibleVehicles.some(v => typeof v === 'string' ? v.toLowerCase().includes(brandLower) : (v.makeName || v.modelName || '').toLowerCase().includes(brandLower));
+      const prodBrandMatch = (p.brand || '').toLowerCase().includes(brandLower) || (p.title || '').toLowerCase().includes(brandLower);
+      
+      if (!fitmentMatch && !compatMatch && !prodBrandMatch && !p.isUniversal) {
+        return false;
+      }
+    }
+
+    if (selectedBrandFilter !== 'all' && p.brand && p.brand.toLowerCase() !== selectedBrandFilter.toLowerCase()) {
       return false;
     }
 
     if (p.price > priceMaxFilter) return false;
-
     if (inStockOnly && (p.stock <= 0 && (!p.stockCount || p.stockCount <= 0))) return false;
-
-    // Vehicle compatibility filter if selectedVehicle is active
-    if (selectedVehicle && p.compatibleVehicles) {
-      const vMatch = p.compatibleVehicles.some(v => 
-        v.toLowerCase().includes(selectedVehicle.make.toLowerCase()) || 
-        v.toLowerCase().includes(selectedVehicle.model.toLowerCase())
-      );
-      if (!vMatch && !p.isUniversal) return false;
-    }
 
     return true;
   });
@@ -127,6 +156,50 @@ export const CategoryView = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        {/* Step 1: Car Brand Selection Bar (Category -> Car Brand -> Products) */}
+        <div className="mb-6 bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-black uppercase text-slate-400 flex items-center gap-1.5">
+              <Car className="w-4 h-4 text-orange-500" /> Select Car Brand for {mainCategory.name}
+            </span>
+            {selectedCarBrand !== 'all' && (
+              <button
+                onClick={() => setSelectedCarBrand('all')}
+                className="text-[11px] font-bold text-orange-400 hover:underline cursor-pointer"
+              >
+                Reset Car Brand Filter
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {[
+              { id: 'all', name: 'All Car Brands', icon: '🚘' },
+              { id: 'maruti', name: 'Maruti Suzuki', icon: '🚗' },
+              { id: 'hyundai', name: 'Hyundai', icon: '🚙' },
+              { id: 'tata', name: 'Tata Motors', icon: '🚜' },
+              { id: 'mahindra', name: 'Mahindra', icon: '🛻' },
+              { id: 'toyota', name: 'Toyota', icon: '🚘' },
+              { id: 'honda', name: 'Honda', icon: '🏎️' },
+              { id: 'kia', name: 'Kia', icon: '🚙' },
+              { id: 'ford', name: 'Ford', icon: '🚗' }
+            ].map((b) => (
+              <button
+                key={b.id}
+                onClick={() => setSelectedCarBrand(b.id)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                  selectedCarBrand === b.id
+                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 font-black'
+                    : 'bg-slate-950 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
+                }`}
+              >
+                <span>{b.icon}</span>
+                <span>{b.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
         
         {/* Subcategories Horizontal Scroll Bar */}
         <div className="mb-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">

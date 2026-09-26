@@ -178,12 +178,20 @@ export const SAMPLE_REGISTRATION_DATABASE = {
 };
 
 export const CATEGORIES_DATABASE = [
-  { id: 'engine_parts', name: 'Engine Parts', icon: '⚙️', subcategories: ['Gaskets', 'Timing Belts', 'Pistons', 'Valves', 'Spark Plugs', 'Fuel Injectors', 'Clutch Plates'] },
-  { id: 'braking_system', name: 'Braking System', icon: '🛑', subcategories: ['Brake Pads', 'Brake Discs & Rotors', 'Brake Drums', 'Brake Shoes', 'Brake Fluid', 'Brake Calipers'] },
-  { id: 'suspension_steering', name: 'Suspension & Steering', icon: '🔩', subcategories: ['Shock Absorbers', 'Struts', 'Control Arms', 'Ball Joints', 'Tie Rod Ends', 'Steering Racks'] },
-  { id: 'filters_oils', name: 'Filters & Oils', icon: '🛢️', subcategories: ['Engine Oil', 'Air Filters', 'Oil Filters', 'Cabin AC Filters', 'Fuel Filters', 'Transmission Fluid', 'Coolant'] },
-  { id: 'lighting_electrical', name: 'Lighting & Electrical', icon: '💡', subcategories: ['Headlight Assemblies', 'Tail Lights', 'LED Bulbs', 'Car Batteries', 'Alternators', 'Starters', 'Horns', 'Fuses & Relays'] },
-  { id: 'interior_exterior_accessories', name: 'Interior & Exterior Accessories', icon: '📱', subcategories: ['7D Floor Mats', 'Seat Covers', 'Mobile Holders', 'Dash Cameras', 'Body Covers', 'Wiper Blades', 'Roof Racks'] }
+  { id: 'Brake Parts', name: 'Brake Parts', icon: '🛑', subcategories: ['Brake Pads', 'Brake Discs & Rotors', 'Brake Drums', 'Brake Shoes', 'Brake Fluid', 'Brake Calipers'] },
+  { id: 'Engine Parts', name: 'Engine Parts', icon: '⚙️', subcategories: ['Gaskets', 'Timing Belts', 'Pistons', 'Valves', 'Spark Plugs', 'Fuel Injectors', 'Engine Oil'] },
+  { id: 'Electrical', name: 'Electrical', icon: '⚡', subcategories: ['Batteries', 'Alternators', 'Starters', 'Horns', 'Relays', 'Fuses', 'Ignition Coils'] },
+  { id: 'Suspension', name: 'Suspension', icon: '🔩', subcategories: ['Shock Absorbers', 'Struts', 'Control Arms', 'Ball Joints', 'Tie Rod Ends', 'Coil Springs'] },
+  { id: 'Body Parts', name: 'Body Parts', icon: '🚘', subcategories: ['Bumpers', 'Fenders', 'Doors', 'Mirrors', 'Grilles', 'Bonnets', 'Wiper Blades'] },
+  { id: 'Filters', name: 'Filters', icon: '🌀', subcategories: ['Engine Air Filters', 'Oil Filters', 'Cabin AC Filters', 'Fuel Filters', 'Transmission Filters'] },
+  { id: 'AC Parts', name: 'AC Parts', icon: '❄️', subcategories: ['AC Compressors', 'Condensers', 'Expansion Valves', 'Evaporator Cores', 'AC Gas & Oils'] },
+  { id: 'Lights', name: 'Lights', icon: '💡', subcategories: ['Headlight Assemblies', 'Tail Lights', 'Fog Lights', 'LED Bulbs', 'Turn Indicators'] },
+  { id: 'Transmission', name: 'Transmission', icon: '🔄', subcategories: ['Clutch Plates', 'Pressure Plates', 'Flywheels', 'Gearboxes', 'Drive Shafts', 'Axles'] },
+  { id: 'Steering', name: 'Steering', icon: '🎯', subcategories: ['Steering Racks', 'Power Steering Pumps', 'Tie Rod Ends', 'Steering Columns', 'EPS Modules'] },
+  { id: 'Lubricants', name: 'Lubricants', icon: '🛢️', subcategories: ['Engine Oil 5W-30', 'Synthetic Oils', 'Gear Oils', 'Brake Fluid DOT 4', 'Coolants & Antifreeze'] },
+  { id: 'Car Accessories', name: 'Car Accessories', icon: '📱', subcategories: ['7D Floor Mats', 'Seat Covers', 'Mobile Holders', 'Dash Cameras', 'Body Covers', 'Car Wash & Wax'] },
+  { id: 'Tyres', name: 'Tyres', icon: '🛞', subcategories: ['Tubeless Tyres', 'Alloy Wheels', 'Tyre Pressure Sensors (TPMS)', 'Valves & Caps'] },
+  { id: 'Batteries', name: 'Batteries', icon: '🔋', subcategories: ['Car Batteries (Amaron, Exide)', 'Inverter Batteries', 'Battery Jump Cables', 'Terminals'] }
 ];
 
 export const BRANDS_DATABASE = [
@@ -198,7 +206,8 @@ export const BRANDS_DATABASE = [
   { id: 'exide', name: 'Exide Batteries', type: 'OEM Electrical', logo: '🔋', country: 'India', category: 'Car Batteries' }
 ];
 
-export const INITIAL_PRODUCTS = [
+export const INITIAL_PRODUCTS = [];
+const OLD_PRODUCTS_DATA = [
   {
     id: 'AZ-PROD-001',
     title: 'AutoZon Pro Ultra-Grip 360° Dashboard Car Mobile Holder',
@@ -476,103 +485,7 @@ export const INITIAL_PRODUCTS = [
   }
 ];
 
-export const INITIAL_ORDERS = [
-  {
-    id: 'o801a1e2-1001-4000-8000-000000000001',
-    customer_id: 'c801a1e2-1001-4000-8000-000000000001',
-    order_number: 'AZ-ORD-98421',
-    subtotal: 4220,
-    discount: 0,
-    tax: 760,
-    shipping_charge: 0,
-    total_amount: 4220,
-    status: 'Shipped', // Pending, Confirmed, Packed, Shipped, Delivered, Cancelled
-    payment_status: 'Paid',
-    shipping_status: 'In Transit',
-    created_at: '2026-08-24T10:30:00.000Z',
-    // UI Aliases
-    customerName: 'Rahul Sharma',
-    customerEmail: 'rahul.sharma@example.com',
-    customerPhone: '+91 9876543210',
-    shippingAddress: 'Flat 402, Green Park Apartments, Connaught Place, New Delhi - 110001',
-    date: '2026-08-24',
-    orderStatus: 'Shipped',
-    paymentMethod: 'UPI (Google Pay)',
-    items: [
-      {
-        id: 'i801a1e2-1001-4000-8000-000000000001',
-        order_id: 'o801a1e2-1001-4000-8000-000000000001',
-        product_id: 'AZ-PROD-002',
-        product_name: 'BOSCH Genuine OE Clutch Assembly Kit',
-        quantity: 1,
-        unit_price: 3450,
-        total_price: 3450,
-        // UI Aliases
-        title: 'BOSCH Genuine OE Clutch Assembly Kit',
-        price: 3450
-      },
-      {
-        id: 'i801a1e2-1001-4000-8000-000000000002',
-        order_id: 'o801a1e2-1001-4000-8000-000000000001',
-        product_id: 'AZ-PROD-003',
-        product_name: 'Castrol Brake Fluid DOT 4 (500ml)',
-        quantity: 2,
-        unit_price: 385,
-        total_price: 770,
-        // UI Aliases
-        title: 'Castrol Brake Fluid DOT 4 (500ml)',
-        price: 385
-      }
-    ],
-    gstAmount: 760,
-    shippingFee: 0,
-    totalAmount: 4220,
-    trackingNumber: 'BLUEDART-88291039',
-    expectedDelivery: '2026-08-26'
-  },
-  {
-    id: 'o801a1e2-1001-4000-8000-000000000002',
-    customer_id: 'c801a1e2-1001-4000-8000-000000000003',
-    order_number: 'AZ-ORD-98422',
-    subtotal: 3870,
-    discount: 0,
-    tax: 696,
-    shipping_charge: 0,
-    total_amount: 3870,
-    status: 'Confirmed',
-    payment_status: 'Pending',
-    shipping_status: 'Pending Dispatch',
-    created_at: '2026-08-24T14:15:00.000Z',
-    // UI Aliases
-    customerName: 'Vikram Singh (Guru Auto Garage)',
-    customerEmail: 'guruauto@example.com',
-    customerPhone: '+91 9811223344',
-    shippingAddress: 'Plot 12, Industrial Area Phase 2, Okhla, New Delhi - 110020',
-    date: '2026-08-24',
-    orderStatus: 'Confirmed',
-    paymentMethod: 'Cash on Delivery',
-    paymentStatus: 'Pending',
-    items: [
-      {
-        id: 'i801a1e2-1001-4000-8000-000000000003',
-        order_id: 'o801a1e2-1001-4000-8000-000000000002',
-        product_id: 'AZ-PROD-006',
-        product_name: 'Bosch Low-Metallic Front Disc Brake Pad Set',
-        quantity: 3,
-        unit_price: 1290,
-        total_price: 3870,
-        // UI Aliases
-        title: 'Bosch Low-Metallic Front Disc Brake Pad Set',
-        price: 1290
-      }
-    ],
-    gstAmount: 696,
-    shippingFee: 0,
-    totalAmount: 3870,
-    trackingNumber: 'DELHIVERY-992014',
-    expectedDelivery: '2026-08-25'
-  }
-];
+export const INITIAL_ORDERS = [];
 
 export const INITIAL_BLOGS = [
   {
@@ -587,7 +500,7 @@ export const INITIAL_BLOGS = [
   {
     id: 'blog-02',
     title: '5 Warning Signs Your Car Clutch Plate Needs Immediate Replacement',
-    author: 'AutoZon Technical Team',
+    author: 'Kamti Automotive Technical Team',
     date: '2026-08-18',
     category: 'Troubleshooting',
     image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&auto=format&fit=crop&q=80',
@@ -595,315 +508,16 @@ export const INITIAL_BLOGS = [
   }
 ];
 
-export const INITIAL_FAQS = [
-  { q: 'How do I check if a spare part fits my car?', a: 'Use our Vehicle Selector tool at the top of the page to choose your Car Make, Model, and Year. All compatible products will display a green "Fits Your Vehicle" badge.' },
-  { q: 'Are all parts listed on AutoZonIndia 100% Genuine?', a: 'Yes! We source directly from authorized OEM & OES manufacturers like BOSCH, Castrol, Uno Minda, TVS Lucas, and Gabriel.' },
-  { q: 'What is your return and fitment exchange policy?', a: 'We offer a 7-Day Hassle-Free Return policy. If a part does not fit your vehicle, we provide free pickup and instant replacement.' }
-];
+export const INITIAL_CUSTOMERS = [];
 
-export const INITIAL_CUSTOMERS = [
-  {
-    id: 'c801a1e2-1001-4000-8000-000000000001',
-    name: 'Rahul Sharma',
-    email: 'rahul.sharma@example.com',
-    phone: '+91 9876543210',
-    created_at: '2026-08-01T10:00:00.000Z'
-  },
-  {
-    id: 'c801a1e2-1001-4000-8000-000000000002',
-    name: 'Sagar Kamti',
-    email: 'sagarkamti2008@gmail.com',
-    phone: '+91 8591719499',
-    created_at: '2026-01-15T09:30:00.000Z'
-  },
-  {
-    id: 'c801a1e2-1001-4000-8000-000000000003',
-    name: 'Vikram Singh',
-    email: 'guruauto@example.com',
-    phone: '+91 9811223344',
-    created_at: '2026-07-20T14:15:00.000Z'
-  },
-  {
-    id: 'c801a1e2-1001-4000-8000-000000000004',
-    name: 'Anish Verma',
-    email: 'anish.verma@example.com',
-    phone: '+91 9765432109',
-    created_at: '2026-08-12T11:45:00.000Z'
-  },
-  {
-    id: 'c801a1e2-1001-4000-8000-000000000005',
-    name: 'Pooja Patel',
-    email: 'pooja.patel@example.com',
-    phone: '+91 9822334455',
-    created_at: '2026-08-22T16:20:00.000Z'
-  }
-];
+export const INITIAL_ADDRESSES = [];
 
-export const INITIAL_ADDRESSES = [
-  {
-    id: 'a801a1e2-1001-4000-8000-000000000001',
-    customer_id: 'c801a1e2-1001-4000-8000-000000000002',
-    name: 'Sagar Kamti',
-    phone: '+91 8591719499',
-    address_line: 'Flat 402, AutoZon Tech Park, Connaught Place',
-    area: 'Near Metro Gate 3',
-    city: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110001',
-    is_default: true
-  },
-  {
-    id: 'a801a1e2-1001-4000-8000-000000000002',
-    customer_id: 'c801a1e2-1001-4000-8000-000000000001',
-    name: 'Rahul Sharma',
-    phone: '+91 9876543210',
-    address_line: 'House 14, Green Park Extension',
-    area: 'Hauz Khas',
-    city: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110016',
-    is_default: true
-  },
-  {
-    id: 'a801a1e2-1001-4000-8000-000000000003',
-    customer_id: 'c801a1e2-1001-4000-8000-000000000003',
-    name: 'Vikram Singh (Guru Auto Garage)',
-    phone: '+91 9811223344',
-    address_line: 'Plot 12, Industrial Area Phase 2',
-    area: 'Okhla Industrial Estate',
-    city: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110020',
-    is_default: true
-  }
-];
-
-export const INITIAL_ENQUIRIES = [
-  {
-    id: 'e801a1e2-1001-4000-8000-000000000001',
-    customer_name: 'Amit Verma',
-    phone: '+91 9876543210',
-    vehicle_id: 'creta-sx-d',
-    product_id: 'AZ-PROD-006',
-    message: 'Mujhe Hyundai Creta ka brake pad chahiye. Delivery kitne din me milegi?',
-    quantity: 2,
-    status: 'New', // New, In Progress, Quoted, Resolved, Closed
-    created_at: '2026-09-10T11:20:00.000Z',
-    vehicleName: 'Hyundai Creta (2020-2024)',
-    productName: 'Bosch Low-Metallic Front Disc Brake Pad Set'
-  },
-  {
-    id: 'e801a1e2-1001-4000-8000-000000000002',
-    customer_name: 'Rajesh Kumar',
-    phone: '+91 9811223344',
-    vehicle_id: 'swift-vxi',
-    product_id: 'AZ-PROD-002',
-    message: 'Maruti Swift VXi 2021 model ke liye BOSCH Genuine OE Clutch Kit available hai kya?',
-    quantity: 1,
-    status: 'In Progress',
-    created_at: '2026-09-09T16:45:00.000Z',
-    vehicleName: 'Maruti Suzuki Swift VXi (2018-2024)',
-    productName: 'BOSCH Genuine OE Clutch Assembly Kit'
-  },
-  {
-    id: 'e801a1e2-1001-4000-8000-000000000003',
-    customer_name: 'Vikram Singh (Garage Owner)',
-    phone: '+91 9899887766',
-    vehicle_id: 'nexon-xz-d',
-    product_id: 'AZ-PROD-004',
-    message: 'Tata Nexon Diesel ke liye Motul 8100 5W-40 4L engine oil ke 5 cans ki bulk enquiry.',
-    quantity: 5,
-    status: 'Quoted',
-    created_at: '2026-09-08T14:10:00.000Z',
-    vehicleName: 'Tata Nexon 1.5L Diesel',
-    productName: 'Motul 8100 X-cess 5W-40 Fully Synthetic Engine Oil (4L)'
-  }
-];
-
-export const INITIAL_QUOTATIONS = [
-  {
-    id: 'q901b2f3-2002-5000-9000-000000000001',
-    enquiry_id: 'e801a1e2-1001-4000-8000-000000000003',
-    customer_id: 'cust-101',
-    quotation_number: 'QT-2026-09-001',
-    subtotal: 13500.00,
-    discount: 1350.00,
-    tax: 2187.00,
-    total: 14337.00,
-    valid_until: '2026-09-25',
-    status: 'Sent', // Draft, Sent, Accepted, Rejected, Expired
-    created_at: '2026-09-09T10:30:00.000Z',
-    customerName: 'Vikram Singh (Garage Owner)',
-    phone: '+91 9899887766',
-    itemsSummary: '5x Motul 8100 X-cess 5W-40 Synthetic Engine Oil (4L)'
-  },
-  {
-    id: 'q901b2f3-2002-5000-9000-000000000002',
-    enquiry_id: 'e801a1e2-1001-4000-8000-000000000001',
-    customer_id: 'cust-102',
-    quotation_number: 'QT-2026-09-002',
-    subtotal: 4500.00,
-    discount: 450.00,
-    tax: 729.00,
-    total: 4779.00,
-    valid_until: '2026-09-20',
-    status: 'Draft',
-    created_at: '2026-09-10T12:00:00.000Z',
-    customerName: 'Amit Verma',
-    phone: '+91 9876543210',
-    itemsSummary: '2x Bosch Low-Metallic Front Disc Brake Pad Set (Hyundai Creta)'
-  }
-];
-
-export const INITIAL_REVIEWS = [
-  {
-    id: 'r101c3d4-3003-6000-1000-000000000001',
-    product_id: 'AZ-PROD-001',
-    customer_id: 'cust-101',
-    rating: 5,
-    title: 'Excellent Original Bosch Quality!',
-    comment: 'Fitted on my Maruti Swift 2021 model. Brake noise is completely gone and pedal bite feels solid like brand new vehicle.',
-    status: 'Approved', // Pending, Approved, Rejected, Flagged
-    created_at: '2026-09-08T09:15:00.000Z',
-    customerName: 'Rohan Sharma',
-    productName: 'BOSCH Genuine OE Front Brake Disc Pad Set'
-  },
-  {
-    id: 'r101c3d4-3003-6000-1000-000000000002',
-    product_id: 'AZ-PROD-004',
-    customer_id: 'cust-102',
-    rating: 5,
-    title: 'Smooth Engine Performance',
-    comment: 'Motul 8100 oil improved engine refinement significantly on my Nexon Diesel. Fast delivery by AutoZon India team.',
-    status: 'Approved',
-    created_at: '2026-09-09T14:20:00.000Z',
-    customerName: 'Vikram Singh',
-    productName: 'Motul 8100 X-cess 5W-40 Fully Synthetic Engine Oil (4L)'
-  },
-  {
-    id: 'r101c3d4-3003-6000-1000-000000000003',
-    product_id: 'AZ-PROD-002',
-    customer_id: 'cust-103',
-    rating: 4,
-    title: 'Good clutch bite, fast shipping',
-    comment: 'Package arrived in 2 days with authentic QR verification code. Installation at local garage went smooth.',
-    status: 'Pending',
-    created_at: '2026-09-10T10:00:00.000Z',
-    customerName: 'Pankaj Mehta',
-    productName: 'BOSCH Genuine OE Clutch Assembly Kit'
-  }
-];
-
-export const INITIAL_COUPONS = [
-  {
-    id: 'c101d4e5-4004-7000-1000-000000000001',
-    code: 'AUTOZON10',
-    discount_type: 'percentage', // percentage or flat
-    discount_value: 10,
-    minimum_order: 1500,
-    maximum_discount: 500,
-    start_date: '2026-09-01',
-    end_date: '2026-12-31',
-    usage_limit: 500,
-    status: 'Active' // Active, Inactive, Expired
-  },
-  {
-    id: 'c101d4e5-4004-7000-1000-000000000002',
-    code: 'FESTIVE250',
-    discount_type: 'flat',
-    discount_value: 250,
-    minimum_order: 2500,
-    maximum_discount: 250,
-    start_date: '2026-09-05',
-    end_date: '2026-10-30',
-    usage_limit: 200,
-    status: 'Active'
-  },
-  {
-    id: 'c101d4e5-4004-7000-1000-000000000003',
-    code: 'B2BGARAGE',
-    discount_type: 'percentage',
-    discount_value: 15,
-    minimum_order: 10000,
-    maximum_discount: 2500,
-    start_date: '2026-08-01',
-    end_date: '2026-12-31',
-    usage_limit: 100,
-    status: 'Active'
-  }
-];
-
-export const INITIAL_PAYMENTS = [
-  {
-    id: 'p202e5f6-5005-8000-1000-000000000001',
-    order_id: 'ord-1001',
-    orderNumber: 'AZ-2026-8801',
-    customerName: 'Rahul Sharma',
-    payment_method: 'UPI (GPay / PhonePe)',
-    transaction_id: 'pay_Nz81kL29XmP0', // Gateway reference token only
-    amount: 3450.00,
-    status: 'Captured', // Pending, Authorized, Captured, Failed, Refunded
-    paid_at: '2026-09-08T14:32:00.000Z'
-  },
-  {
-    id: 'p202e5f6-5005-8000-1000-000000000002',
-    order_id: 'ord-1002',
-    orderNumber: 'AZ-2026-8802',
-    customerName: 'Anil Gupta',
-    payment_method: 'Credit/Debit Card (Razorpay Token)',
-    transaction_id: 'pay_Kq92mA38ZpL9',
-    amount: 7200.00,
-    status: 'Captured',
-    paid_at: '2026-09-09T11:15:00.000Z'
-  },
-  {
-    id: 'p202e5f6-5005-8000-1000-000000000003',
-    order_id: 'ord-1003',
-    orderNumber: 'AZ-2026-8803',
-    customerName: 'Suresh Patel',
-    payment_method: 'Cash On Delivery (COD)',
-    transaction_id: 'cod_ref_AZ8803',
-    amount: 1850.00,
-    status: 'Pending',
-    paid_at: '2026-09-10T09:45:00.000Z'
-  }
-];
-
-export const INITIAL_SHIPPING = [
-  {
-    id: 's303f6a7-6006-9000-1000-000000000001',
-    order_id: 'ord-1001',
-    orderNumber: 'AZ-2026-8801',
-    customerName: 'Rahul Sharma',
-    courier: 'Bluedart Express',
-    tracking_number: 'AWB987654321IN',
-    status: 'In Transit', // Manifested, Picked Up, In Transit, Out for Delivery, Delivered, Returned
-    shipped_at: '2026-09-09T08:30:00.000Z',
-    delivered_at: null
-  },
-  {
-    id: 's303f6a7-6006-9000-1000-000000000002',
-    order_id: 'ord-1002',
-    orderNumber: 'AZ-2026-8802',
-    customerName: 'Anil Gupta',
-    courier: 'Delhivery Surface',
-    tracking_number: 'DEL881234567',
-    status: 'Delivered',
-    shipped_at: '2026-09-07T10:15:00.000Z',
-    delivered_at: '2026-09-09T16:00:00.000Z'
-  },
-  {
-    id: 's303f6a7-6006-9000-1000-000000000003',
-    order_id: 'ord-1003',
-    orderNumber: 'AZ-2026-8803',
-    customerName: 'Suresh Patel',
-    courier: 'DTDC Express',
-    tracking_number: 'DTDC77341290',
-    status: 'Manifested',
-    shipped_at: '2026-09-10T11:00:00.000Z',
-    delivered_at: null
-  }
-];
+export const INITIAL_ENQUIRIES = [];
+export const INITIAL_QUOTATIONS = [];
+export const INITIAL_REVIEWS = [];
+export const INITIAL_COUPONS = [];
+export const INITIAL_PAYMENTS = [];
+export const INITIAL_SHIPPING = [];
 
 export const INITIAL_ADMIN_USERS = [
   {
@@ -951,6 +565,245 @@ export const INITIAL_WEBSITE_SETTINGS = [
   { id: 'ws-108', setting_key: 'shipping_settings', setting_value: '{"flatRate": 99, "freeShippingMin": 1499}', updated_at: '2026-09-10T12:00:00.000Z' },
   { id: 'ws-109', setting_key: 'tax_settings', setting_value: '{"gstPercent": 18, "inclusiveTax": true}', updated_at: '2026-09-10T12:00:00.000Z' }
 ];
+
+export const INITIAL_FAQS = [
+  // Product & Compatibility
+  {
+    id: 'faq-pc-1',
+    category: 'Product & Compatibility',
+    question: 'Will this part fit my car?',
+    answer: 'Select your car Brand, Model, Variant, and Year using our <strong>Check Compatibility</strong> selector tool on the homepage or product page to verify exact fitment before ordering.',
+    status: 'published',
+    sort_order: 1
+  },
+  {
+    id: 'faq-pc-2',
+    category: 'Product & Compatibility',
+    question: 'What if I cannot find my car model?',
+    answer: 'Contact our support team via WhatsApp or Email (+91 98765 43210 / support@autozonindia.com) and share your car details or 17-digit VIN number for manual verification.',
+    status: 'published',
+    sort_order: 2
+  },
+  {
+    id: 'faq-pc-3',
+    category: 'Product & Compatibility',
+    question: 'Are the products genuine?',
+    answer: 'Each product clearly mentions whether it is Genuine/OEM (Original Equipment Manufacturer) or a high-quality Aftermarket certified part with manufacturer warranty.',
+    status: 'published',
+    sort_order: 3
+  },
+  {
+    id: 'faq-pc-4',
+    category: 'Product & Compatibility',
+    question: 'What is the OEM/Part Number?',
+    answer: 'The OEM or Part Number is displayed on the product details page under specifications. You can use it to cross-check exact fitment.',
+    status: 'published',
+    sort_order: 4
+  },
+  {
+    id: 'faq-pc-5',
+    category: 'Product & Compatibility',
+    question: 'Can I see product images before ordering?',
+    answer: 'Yes. Multiple high-resolution product images from various angles are available on every product details page.',
+    status: 'published',
+    sort_order: 5
+  },
+
+  // Price & Payment
+  {
+    id: 'faq-pp-1',
+    category: 'Price & Payment',
+    question: 'What is the final price of the product?',
+    answer: 'The final price of the product includes product price, GST, and any applicable shipping charges displayed transparently at checkout.',
+    status: 'published',
+    sort_order: 6
+  },
+  {
+    id: 'faq-pp-2',
+    category: 'Price & Payment',
+    question: 'Is Cash on Delivery (COD) available?',
+    answer: 'Yes, Cash on Delivery (COD) is available for eligible pin codes across India.',
+    status: 'published',
+    sort_order: 7
+  },
+  {
+    id: 'faq-pp-3',
+    category: 'Price & Payment',
+    question: 'What payment methods are available?',
+    answer: 'We accept UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, Net Banking, and Cash on Delivery (COD).',
+    status: 'published',
+    sort_order: 8
+  },
+  {
+    id: 'faq-pp-4',
+    category: 'Price & Payment',
+    question: 'Will I receive a GST invoice?',
+    answer: 'Yes, an official tax invoice with GST breakdown is provided for every order.',
+    status: 'published',
+    sort_order: 9
+  },
+  {
+    id: 'faq-pp-5',
+    category: 'Price & Payment',
+    question: 'Are discounts available?',
+    answer: 'Yes, active coupon codes (such as AUTOZON10 or FESTIVE250) can be applied at checkout for discounts.',
+    status: 'published',
+    sort_order: 10
+  },
+
+  // Shipping & Delivery
+  {
+    id: 'faq-sd-1',
+    category: 'Shipping & Delivery',
+    question: 'How long will my order take to arrive?',
+    answer: 'Standard delivery across India usually takes 3 to 7 business days depending on your location.',
+    status: 'published',
+    sort_order: 11
+  },
+  {
+    id: 'faq-sd-2',
+    category: 'Shipping & Delivery',
+    question: 'Do you deliver across India?',
+    answer: 'Yes, we deliver auto spare parts to over 19,000+ pincodes across India.',
+    status: 'published',
+    sort_order: 12
+  },
+  {
+    id: 'faq-sd-3',
+    category: 'Shipping & Delivery',
+    question: 'How much are the shipping charges?',
+    answer: 'Shipping charges depend on weight and location, calculated transparently at checkout. Free shipping is available on orders above ₹999.',
+    status: 'published',
+    sort_order: 13
+  },
+  {
+    id: 'faq-sd-4',
+    category: 'Shipping & Delivery',
+    question: 'How can I track my order?',
+    answer: 'You can track your order using the <strong>Track Order</strong> page on our website by entering your Order ID or tracking number.',
+    status: 'published',
+    sort_order: 14
+  },
+  {
+    id: 'faq-sd-5',
+    category: 'Shipping & Delivery',
+    question: 'What should I do if my order is delayed?',
+    answer: 'Contact our support team or check real-time courier tracking updates via your account dashboard.',
+    status: 'published',
+    sort_order: 15
+  },
+
+  // Returns & Replacement
+  {
+    id: 'faq-rr-1',
+    category: 'Returns & Replacement',
+    question: 'Can I return a product?',
+    answer: 'Yes, we offer a 7-day return policy for unopened, unused parts in their original packaging.',
+    status: 'published',
+    sort_order: 16
+  },
+  {
+    id: 'faq-rr-2',
+    category: 'Returns & Replacement',
+    question: 'What should I do if I receive the wrong part?',
+    answer: 'Raise a return or replacement request via support with photos within 48 hours. We will arrange pickup and ship the correct part.',
+    status: 'published',
+    sort_order: 17
+  },
+  {
+    id: 'faq-rr-3',
+    category: 'Returns & Replacement',
+    question: 'What should I do if the product arrives damaged?',
+    answer: 'Report damaged packages within 24 hours of delivery along with unboxing images for an immediate replacement.',
+    status: 'published',
+    sort_order: 18
+  },
+  {
+    id: 'faq-rr-4',
+    category: 'Returns & Replacement',
+    question: 'How long does a replacement take?',
+    answer: 'Once verified, replacement parts are dispatched within 2 to 3 business days.',
+    status: 'published',
+    sort_order: 19
+  },
+  {
+    id: 'faq-rr-5',
+    category: 'Returns & Replacement',
+    question: 'How does the refund process work?',
+    answer: 'Refunds are processed back to your original payment method or bank account within 5 to 7 business days after return verification.',
+    status: 'published',
+    sort_order: 20
+  },
+
+  // Installation
+  {
+    id: 'faq-in-1',
+    category: 'Installation',
+    question: 'Do you provide installation services?',
+    answer: 'We provide doorstep and partner garage installation services in select major cities.',
+    status: 'published',
+    sort_order: 21
+  },
+  {
+    id: 'faq-in-2',
+    category: 'Installation',
+    question: 'Can I get help finding a mechanic for installation?',
+    answer: 'Yes, contact our support team or use our Mechanic Locator tool to find verified partner garages near your location.',
+    status: 'published',
+    sort_order: 22
+  },
+  {
+    id: 'faq-in-3',
+    category: 'Installation',
+    question: 'Does the product come with installation instructions?',
+    answer: 'Most OEM and major aftermarket products include printed user manuals or downloadable digital installation guides.',
+    status: 'published',
+    sort_order: 23
+  },
+
+  // Orders
+  {
+    id: 'faq-ord-1',
+    category: 'Orders',
+    question: 'How do I place an order?',
+    answer: 'Follow our easy flow: <strong>Select Car → Brand → Model → Variant → Year → Compatible Parts → Product Details → Add to Cart → Checkout → Payment → Order Confirmation → Order Tracking</strong>.',
+    status: 'published',
+    sort_order: 24
+  },
+  {
+    id: 'faq-ord-2',
+    category: 'Orders',
+    question: 'How can I cancel my order?',
+    answer: 'You can cancel directly from your "My Orders" section before the order is dispatched.',
+    status: 'published',
+    sort_order: 25
+  },
+  {
+    id: 'faq-ord-3',
+    category: 'Orders',
+    question: 'Can I change my delivery address after placing an order?',
+    answer: 'Address changes are allowed prior to shipment by contacting our customer support team immediately.',
+    status: 'published',
+    sort_order: 26
+  },
+  {
+    id: 'faq-ord-4',
+    category: 'Orders',
+    question: 'How can I check my order status?',
+    answer: 'Log in and visit "My Orders" or use the "Track Order" page with your Order ID.',
+    status: 'published',
+    sort_order: 27
+  },
+  {
+    id: 'faq-ord-5',
+    category: 'Orders',
+    question: 'What should I do if I did not receive my order confirmation?',
+    answer: 'Check your email spam folder, check your account dashboard, or contact support with your mobile number.',
+    status: 'published',
+    sort_order: 28
+  }
+];
+
 
 
 

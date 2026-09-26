@@ -13,12 +13,12 @@ export const SMSWhatsAppSimulatorModal = ({ isOpen, onClose }) => {
   const eventTemplates = {
     ORDER_CONFIRMED: {
       title: '📦 Order Confirmation Alert',
-      whatsapp: '🚗 *AutoZon India Order Confirmed!*\n\nHi Sagar! Your spare parts order #ORD-98214 (KEVL 5W-30 Synthetic Oil & Ceramic Brake Pads) has been successfully placed.\n\n*Amount Paid:* ₹2,499 via UPI\n*Estimated Delivery:* Tomorrow 2:00 PM\n\nTrack Order: https://autozonindia.vercel.app',
-      sms: 'AUTOZN: Hi Sagar! Your AutoZon Order #ORD-98214 for ₹2,499 is CONFIRMED. Express dispatch in progress. Track: https://autozonindia.vercel.app'
+      whatsapp: '🚗 *AutoZon India Order Confirmed!*\n\nHi Sagar! Your spare parts order #ORD-98214 (KEVL 5W-30 Synthetic Oil & Ceramic Brake Pads) has been successfully placed.\n\n*Amount Paid:* ₹2,499 via UPI\n*Estimated Delivery:* Tomorrow 2:00 PM\n\nTrack Order: https://sagar-travels-4de3b.web.app',
+      sms: 'AUTOZN: Hi Sagar! Your AutoZon Order #ORD-98214 for ₹2,499 is CONFIRMED. Express dispatch in progress. Track: https://sagar-travels-4de3b.web.app'
     },
     ORDER_SHIPPED: {
       title: '🚚 Express Shipping Dispatch Alert',
-      whatsapp: '⚡ *AutoZon Dispatch Update*\n\nGreat news! Your order #ORD-98214 has been dispatched via *Delhivery Express Air Courier*.\n\n*AWB Tracking #:* DEL98214012\n*Courier Contact:* +91 9821098210\n\nLive Delivery Status: https://autozonindia.vercel.app',
+      whatsapp: '⚡ *AutoZon Dispatch Update*\n\nGreat news! Your order #ORD-98214 has been dispatched via *Delhivery Express Air Courier*.\n\n*AWB Tracking #:* DEL98214012\n*Courier Contact:* +91 9821098210\n\nLive Delivery Status: https://sagar-travels-4de3b.web.app',
       sms: 'AUTOZN: Order #ORD-98214 SHIPPED via Delhivery AWB# DEL98214012. Expected delivery tomorrow by 2 PM.'
     },
     OUT_FOR_DELIVERY: {
@@ -33,7 +33,7 @@ export const SMSWhatsAppSimulatorModal = ({ isOpen, onClose }) => {
     },
     WARRANTY_APPROVED: {
       title: '🛡️ 12-Month Warranty Replacement Dispatched',
-      whatsapp: '🛡️ *Warranty Replacement Approved!*\n\nHi Sagar! Your warranty claim #WRN-8812 for Ceramic Brake Pads has been approved under 100% Fitment Guarantee.\n\nNew Replacement Unit Dispatched via Express Courier. Tracking: https://autozonindia.vercel.app',
+      whatsapp: '🛡️ *Warranty Replacement Approved!*\n\nHi Sagar! Your warranty claim #WRN-8812 for Ceramic Brake Pads has been approved under 100% Fitment Guarantee.\n\nNew Replacement Unit Dispatched via Express Courier. Tracking: https://sagar-travels-4de3b.web.app',
       sms: 'AUTOZN: Warranty Claim #WRN-8812 Approved! Free replacement unit dispatched via Express Air Courier.'
     }
   };

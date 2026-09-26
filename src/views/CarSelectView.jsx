@@ -9,30 +9,32 @@ export const CarSelectView = () => {
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
 
+  const ALL_YEARS = ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'];
+
   const carDatabase = {
     'MARUTI': {
       models: ['ALTO', 'BALENO', 'BREZZA', 'SWIFT', 'WAGON R', 'DZIRE', 'ERTIGA'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018']
+      years: ALL_YEARS
     },
     'HYUNDAI': {
       models: ['CRETA', 'VENUE', 'I20', 'VERNA', 'TUCSON', 'ALCAZAR', 'EXTER'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018']
+      years: ALL_YEARS
     },
     'TATA': {
       models: ['NEXON', 'PUNCH', 'HARRIER', 'SAFARI', 'ALTROZ', 'TIAGO', 'CURVV'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019']
+      years: ALL_YEARS
     },
     'MAHINDRA': {
       models: ['THAR', 'XUV700', 'SCORPIO-N', 'BOLERO', 'XUV300'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020']
+      years: ALL_YEARS
     },
     'TOYOTA': {
-      models: ['FORTUNER', 'INNOVA CRYSTA', 'INNOVA HYCROSS', 'GLANZA', 'URBAN CRUISER'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020']
+      models: ['CAMRY', 'COROLLA', 'COROLLA ALTIS', 'ETIOS', 'ETIOS LIVA', 'FORTUNER', 'GLANZA', 'HILUX', 'INNOVA', 'INNOVA CRYSTA', 'INNOVA HYCROSS', 'LANDCRUISER', 'LANDCRUISER PRADO', 'PLATINUM ETIOS', 'QUALIS', 'RUMION', 'URBAN CRUISER', 'URBAN CRUISER HYRYDER', 'VELLFIRE', 'YARIS'],
+      years: ALL_YEARS
     },
     'KIA': {
       models: ['SELTOS', 'SONET', 'CARENS', 'EV6', 'CARNIVAL'],
-      years: ['2026', '2025', '2024', '2023', '2022', '2021', '2020']
+      years: ALL_YEARS
     }
   };
 
@@ -50,7 +52,7 @@ export const CarSelectView = () => {
     <div className="min-h-screen bg-slate-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8 pb-safe mb-24">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 text-orange-500 mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-[#0B5394] mb-4">
             <Car className="w-8 h-8" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-3 tracking-tight">Select Your Car</h1>
@@ -72,7 +74,7 @@ export const CarSelectView = () => {
                     setSelectedModel('');
                     setSelectedYear('');
                   }}
-                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-orange-500 focus:bg-white transition-colors cursor-pointer text-lg"
+                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-[#0B5394] focus:bg-white transition-colors cursor-pointer text-lg"
                 >
                   <option value="">Select Brand</option>
                   {Object.keys(carDatabase).map(b => (
@@ -90,7 +92,7 @@ export const CarSelectView = () => {
                   value={selectedModel}
                   onChange={(e) => setSelectedModel(e.target.value)}
                   disabled={!selectedBrand}
-                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-orange-500 focus:bg-white disabled:opacity-50 transition-colors cursor-pointer text-lg"
+                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-[#0B5394] focus:bg-white disabled:opacity-50 transition-colors cursor-pointer text-lg"
                 >
                   <option value="">Select Model</option>
                   {selectedBrand && carDatabase[selectedBrand]?.models.map(m => (
@@ -108,7 +110,7 @@ export const CarSelectView = () => {
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
                   disabled={!selectedModel}
-                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-orange-500 focus:bg-white disabled:opacity-50 transition-colors cursor-pointer text-lg"
+                  className="w-full bg-slate-50 border-2 border-slate-200 text-slate-800 font-bold rounded-xl px-5 py-4 appearance-none focus:outline-none focus:border-[#0B5394] focus:bg-white disabled:opacity-50 transition-colors cursor-pointer text-lg"
                 >
                   <option value="">Select Year</option>
                   {selectedBrand && carDatabase[selectedBrand]?.years.map(y => (
@@ -129,7 +131,7 @@ export const CarSelectView = () => {
 
               <button
                 type="submit"
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-5 rounded-xl shadow-xl shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+                className="w-full bg-[#0B5394] hover:bg-[#073763] text-white font-black text-lg py-5 rounded-xl shadow-xl shadow-blue-900/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
               >
                 <span>Find Compatible Parts</span>
                 <ArrowRight className="w-6 h-6" />

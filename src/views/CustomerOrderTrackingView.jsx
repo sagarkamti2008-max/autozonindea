@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getShipmentByOrder } from '../services/shippingService';
 import { supabase } from '../services/supabaseClient';
 import { useStore } from '../context/StoreContext';
-import { Truck, Package, CheckCircle2, Clock, MapPin, ArrowLeft, ExternalLink, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Truck, Package, CheckCircle2, Clock, MapPin, ArrowLeft, ExternalLink, AlertCircle, ShieldCheck, MessageCircle } from 'lucide-react';
 
 const TRACKING_STEPS = [
   { id: 'placed', label: 'Order Placed', icon: Package },
@@ -119,7 +119,7 @@ export default function CustomerOrderTrackingView() {
             <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
               <Truck className="w-6 h-6 text-amber-500" /> Order Tracking & Status
             </h1>
-            <p className="text-slate-400 text-sm mt-1">Real-time courier checkpoints and package updates</p>
+            <p className="text-slate-400 text-sm mt-1">SAGAR TRAVELS / KAMTI AUTOMOTIVE Live Shipment Updates</p>
           </div>
 
           <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-right">
@@ -136,28 +136,32 @@ export default function CustomerOrderTrackingView() {
         <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
           <div>
             <span className="text-xs text-slate-500 uppercase font-semibold block mb-1">Courier Partner</span>
-            <span className="font-bold text-white text-base">{shipment?.courier || 'AutoZon Express Logistics'}</span>
+            <span className="font-bold text-white text-base">{shipment?.courier || 'Delhivery Express Logistics'}</span>
           </div>
 
           <div>
             <span className="text-xs text-slate-500 uppercase font-semibold block mb-1">Tracking AWB #</span>
-            <span className="font-mono font-bold text-amber-400 text-base">{shipment?.tracking_number || 'AZI-TRK-PENDING'}</span>
+            <span className="font-mono font-bold text-amber-400 text-base">{shipment?.tracking_number || 'KMT-TRK-PENDING'}</span>
           </div>
 
-          <div className="flex items-center sm:justify-end">
-            {shipment?.tracking_url ? (
+          <div className="flex items-center sm:justify-end gap-2">
+            <a
+              href={`https://wa.me/918591719499?text=${encodeURIComponent(`Hi SAGAR TRAVELS, please send live WhatsApp status updates for Order #${orderNumber}`)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-emerald-600/20"
+            >
+              <MessageCircle className="w-3.5 h-3.5 mr-1.5" /> WhatsApp Update
+            </a>
+            {shipment?.tracking_url && (
               <a
                 href={shipment.tracking_url}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-amber-500/20"
               >
-                Direct Partner Tracking <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+                Tracking <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
               </a>
-            ) : (
-              <span className="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
-                Official Tracking Verified
-              </span>
             )}
           </div>
         </div>

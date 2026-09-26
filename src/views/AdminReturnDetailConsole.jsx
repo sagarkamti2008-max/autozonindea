@@ -177,6 +177,15 @@ export const AdminReturnDetailConsole = ({ returnNumber: propNumber, onNavigate 
         <div style={{ padding: '1.25rem 2rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F2167' }}>Workflow Actions:</span>
 
+          <a
+            href={`https://wa.me/91${(returnReq.customers?.phone || '8591719499').replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${returnReq.customers?.name || 'Customer'},\nUpdate from SAGAR TRAVELS / KAMTI AUTOMOTIVE regarding your Return Request #${returnReq.return_number}:\nStatus: ${returnReq.status.toUpperCase()}\nOrder #: ${returnReq.orders?.order_number || 'N/A'}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ background: '#25D366', color: '#ffffff', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+          >
+            💬 WhatsApp Customer Update
+          </a>
+
           {returnReq.status === 'requested' && (
             <>
               <button

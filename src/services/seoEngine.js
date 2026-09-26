@@ -1,6 +1,6 @@
 // Enterprise SEO, Structured Data (JSON-LD), Dynamic XML Sitemap & Robots.txt Engine for AutoZoneIndia
 
-export const BASE_URL = 'https://autozonindia.vercel.app';
+export const BASE_URL = 'https://sagar-travels-4de3b.web.app';
 
 /**
  * Requirement #21: Dynamic XML Sitemap Generator

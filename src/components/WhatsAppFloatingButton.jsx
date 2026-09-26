@@ -30,52 +30,20 @@ export const WhatsAppFloatingButton = () => {
 
   return (
     <>
-      {/* Floating Green WhatsApp Trigger Button */}
+      {/* Floating Green WhatsApp Trigger Button - Positioned on bottom-left on desktop to avoid blocking cart order summary */}
       <button
+        className="whatsapp-floating-trigger fixed bottom-[76px] left-3 md:bottom-6 md:left-6 md:right-auto z-[9999] bg-[#25D366] text-white border-2 border-white rounded-full px-3.5 py-2.5 sm:px-5 sm:py-3 font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-[0_8px_25px_rgba(37,211,102,0.45)] cursor-pointer hover:scale-105 transition-transform"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 99999,
-          background: '#25D366',
-          color: '#FFFFFF',
-          border: '2px solid #FFFFFF',
-          borderRadius: '50px',
-          padding: '0.65rem 1.25rem',
-          fontWeight: 900,
-          fontSize: '0.85rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          boxShadow: '0 8px 25px rgba(37,211,102,0.45)',
-          cursor: 'pointer',
-          transition: 'transform 0.2s ease'
-        }}
-        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
-        <MessageCircle size={22} color="#FFFFFF" fill="#FFFFFF" />
-        <span>WhatsApp Order & Help</span>
-        <span style={{ width: '10px', height: '10px', background: '#FFFFFF', borderRadius: '50%', border: '2px solid #25D366' }}></span>
+        <MessageCircle size={20} color="#FFFFFF" fill="#FFFFFF" className="shrink-0" />
+        <span className="font-extrabold tracking-tight">WhatsApp Order &amp; Help</span>
+        <span className="w-2.5 h-2.5 bg-white rounded-full border-2 border-[#25D366] shrink-0"></span>
       </button>
 
       {/* WhatsApp Interactive Quick Drawer / Modal */}
       {isOpen && (
         <div
-          style={{
-            position: 'fixed',
-            bottom: '85px',
-            right: '24px',
-            width: '360px',
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            boxShadow: '0 15px 35px rgba(0,0,0,0.2)',
-            border: '1px solid #E2E8F0',
-            zIndex: 99999,
-            overflow: 'hidden',
-            animation: 'fadeInUp 0.3s ease'
-          }}
+          className="whatsapp-floating-drawer fixed bottom-[130px] left-3 md:bottom-[85px] md:left-6 md:right-auto w-[calc(100vw-24px)] sm:w-[360px] max-w-[360px] bg-white rounded-2xl shadow-2xl border border-slate-200 z-[99999] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300"
         >
           {/* Header */}
           <div style={{ background: '#075E54', color: '#FFFFFF', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -85,7 +53,7 @@ export const WhatsAppFloatingButton = () => {
               </div>
               <div>
                 <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: '#FFFFFF' }}>
-                  AutoZon WhatsApp Desk
+                  KAMTI AUTOMOTIVE Support Desk
                 </h4>
                 <span style={{ fontSize: '0.72rem', color: '#86EFAC', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   ● Online (+91 8591719499)
@@ -105,7 +73,7 @@ export const WhatsAppFloatingButton = () => {
           <div style={{ padding: '1rem', background: '#E5DDD5', minHeight: '260px' }}>
             {/* Simulated Chat Bubble */}
             <div style={{ background: '#FFFFFF', padding: '0.75rem 0.85rem', borderRadius: '0 12px 12px 12px', fontSize: '0.8rem', color: '#0F172A', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '1rem', maxWidth: '90%' }}>
-              <b>👋 Hello! Welcome to AutoZon India Spare Parts Desk.</b>
+              <b>👋 Hello! Welcome to KAMTI AUTOMOTIVE Support Desk.</b>
               <div style={{ marginTop: '0.35rem', color: '#475569', fontSize: '0.75rem', lineHeight: 1.4 }}>
                 Send us a photo of your required part, VIN number, or return claim proof on WhatsApp for 2-Minute instant verification!
               </div>
@@ -166,7 +134,7 @@ export const WhatsAppFloatingButton = () => {
           {/* Footer Guarantee */}
           <div style={{ background: '#F8FAFC', padding: '0.5rem 1rem', fontSize: '0.7rem', color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', borderTop: '1px solid #E2E8F0' }}>
             <ShieldCheck size={14} color="#16A34A" />
-            <span>Official AutoZon WhatsApp Support Desk (+91 8591719499)</span>
+            <span>Official KAMTI AUTOMOTIVE Support Desk (+91 8591719499)</span>
           </div>
         </div>
       )}

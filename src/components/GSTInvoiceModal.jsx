@@ -80,16 +80,16 @@ export const GSTInvoiceModal = ({ isOpen, onClose, orderData }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #e2e8f0', paddingBottom: '30px', marginBottom: '30px' }}>
               <div>
                 <h1 style={{ margin: '0 0 5px 0', fontSize: '28px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>
-                  AutoZon<span style={{ color: '#f97316' }}>India</span>
+                  KAMTI<span style={{ color: '#f97316' }}> AUTOMOTIVE</span>
                 </h1>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '15px' }}>
-                  Autonaut Automotive India Pvt. Ltd.
+                  KAMTI AUTOMOTIVE PVT. LTD.
                 </div>
                 <div style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6 }}>
-                  Plot 402, AutoZon Tech Park, MIDC Zone,<br />
-                  Andheri East, Mumbai - 400093, India<br />
-                  <span style={{ color: '#0f172a', fontWeight: 600 }}>GSTIN:</span> 27AAAAA0000A1Z5 | <span style={{ color: '#0f172a', fontWeight: 600 }}>State:</span> 27 (MH)<br />
-                  billing@autozonindia.com | +91 8591719499
+                  Main Market, Auto Parts Hub,<br />
+                  New Delhi - 110001, India<br />
+                  <span style={{ color: '#0f172a', fontWeight: 600 }}>Phone/WhatsApp:</span> +91 8591719499<br />
+                  kamtiautomotive@gmail.com
                 </div>
               </div>
 

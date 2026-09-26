@@ -5,14 +5,7 @@ import { Car, X, Check, Search, ShieldCheck, ArrowRight, HelpCircle } from 'luci
 import CustomSelect from './CustomSelect';
 
 export const VehicleModal = () => {
-  const {
-    isVehicleModalOpen,
-    setIsVehicleModalOpen,
-    setSelectedVehicle,
-    addVehicleToGarage,
-    navigateTo,
-    showToast
-  } = useStore();
+  return null;
 
   const [modalTab, setModalTab] = useState('manual'); // 'manual' | 'plate' | 'unlisted'
   

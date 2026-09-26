@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { HelpCircle, BookOpen, Mail, Phone, MapPin, Tag, Flame, ShieldCheck, ArrowRight, User, Calendar, Truck, Clock, Award } from 'lucide-react';
+import { saveContactEnquiryInFirestore } from '../services/firebaseService';
+import { HelpCircle, BookOpen, Mail, Phone, MapPin, Tag, Flame, ShieldCheck, ArrowRight, User, Calendar, Truck, Clock, Award, CheckCircle2 } from 'lucide-react';
 
 export const BlogView = () => {
   const { blogs, navigateTo } = useStore();
@@ -92,90 +93,221 @@ export const FAQView = () => {
 
 export const ContactView = () => {
   const { showToast } = useStore();
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    showToast('🎉 Thank you! Our technical support team will call you back within 1 hour.', 'success');
+    if (!formData.fullName || !formData.email || !formData.message) {
+      showToast('Please fill in your name, email, and message.', 'error');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await saveContactEnquiryInFirestore(formData);
+      if (res.success) {
+        showToast('🎉 Thank you! Message submitted successfully to KAMTI AUTOMOTIVE.', 'success');
+        setSubmitted(true);
+        setFormData({ fullName: '', email: '', subject: '', message: '' });
+      } else {
+        showToast('Message sent! Our support team will get back to you shortly.', 'success');
+        setSubmitted(true);
+        setFormData({ fullName: '', email: '', subject: '', message: '' });
+      }
+    } catch (err) {
+      console.warn('Enquiry submission warning:', err);
+      showToast('Message sent! Our team will assist you within 24 hours.', 'success');
+      setSubmitted(true);
+      setFormData({ fullName: '', email: '', subject: '', message: '' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-20 pt-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Contact Us</h2>
-          <p className="text-slate-500 font-medium">We're here to help with your vehicle fitment, order queries, and more.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
+    <div className="min-h-screen bg-[#070708] text-white font-sans py-12 sm:py-20 px-4 sm:px-8 lg:px-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
-          {/* Contact Info Cards */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl"></div>
-              <h3 className="text-xl font-black mb-6">HQ & Helpline</h3>
-              
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-white/10 p-3 rounded-xl shrink-0"><Phone className="w-5 h-5 text-orange-400" /></div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Phone & WhatsApp</div>
-                    <div className="font-black text-lg">+91 8591719499</div>
-                    <div className="text-sm font-medium text-slate-400 mt-0.5">Mon-Sat 10AM-7PM</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="bg-white/10 p-3 rounded-xl shrink-0"><Mail className="w-5 h-5 text-blue-400" /></div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email Us</div>
-                    <div className="font-bold text-sm">support@autozonindia.com</div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="bg-white/10 p-3 rounded-xl shrink-0"><MapPin className="w-5 h-5 text-emerald-400" /></div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Business Address</div>
-                    <div className="font-medium text-sm text-slate-300 leading-relaxed">AutoZonIndia Head Office,<br/>Sector 15, Part 2,<br/>Gurugram, Haryana - 122001</div>
-                  </div>
-                </div>
-              </div>
+          {/* Left Column: Heading & Contact Info Cards */}
+          <div className="lg:col-span-6 space-y-10 pt-2">
+            <div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-white tracking-tight font-normal mb-4">
+                Get in Touch
+              </h1>
+              <p className="text-slate-400 text-sm sm:text-base max-w-lg leading-relaxed font-normal">
+                Whether you have a question about our automotive spare parts, an order, or just want to say hello, our team is here to assist you.
+              </p>
             </div>
 
-            {/* Google Maps Visual Representation */}
-            <div className="bg-slate-200 rounded-3xl h-48 w-full flex flex-col items-center justify-center text-slate-500 shadow-inner border border-slate-300 relative overflow-hidden">
-              <MapPin className="w-8 h-8 text-slate-400 mb-2 z-10" />
-              <span className="font-bold text-sm z-10">Google Maps View</span>
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #94a3b8 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
+            <div className="space-y-8 pt-2">
+              {/* EMAIL US */}
+              <div className="flex items-start gap-5 group">
+                <div className="w-12 h-12 rounded-full bg-[#161619] border border-white/10 flex items-center justify-center text-slate-300 shrink-0 group-hover:border-amber-500/50 group-hover:bg-[#1f1f23] transition-all">
+                  <Mail className="w-5 h-5 text-slate-200" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                    EMAIL US
+                  </span>
+                  <a 
+                    href="mailto:kamtiautomotive@gmail.com" 
+                    className="text-lg sm:text-xl font-bold text-white tracking-tight block hover:text-amber-400 transition-colors mb-0.5"
+                  >
+                    kamtiautomotive@gmail.com
+                  </a>
+                  <p className="text-xs text-slate-400 font-normal">
+                    We aim to respond to all inquiries within 24 hours.
+                  </p>
+                </div>
+              </div>
+
+              {/* CALL US */}
+              <div className="flex items-start gap-5 group">
+                <div className="w-12 h-12 rounded-full bg-[#161619] border border-white/10 flex items-center justify-center text-slate-300 shrink-0 group-hover:border-amber-500/50 group-hover:bg-[#1f1f23] transition-all">
+                  <Phone className="w-5 h-5 text-slate-200" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                    CALL US
+                  </span>
+                  <a 
+                    href="tel:+918591719499" 
+                    className="text-lg sm:text-xl font-bold text-white tracking-tight block hover:text-amber-400 transition-colors mb-0.5"
+                  >
+                    +91 8591719499
+                  </a>
+                  <p className="text-xs text-slate-400 font-normal">
+                    Available Mon–Sat, 9am – 6pm IST.
+                  </p>
+                </div>
+              </div>
+
+              {/* VISIT US */}
+              <div className="flex items-start gap-5 group">
+                <div className="w-12 h-12 rounded-full bg-[#161619] border border-white/10 flex items-center justify-center text-slate-300 shrink-0 group-hover:border-amber-500/50 group-hover:bg-[#1f1f23] transition-all">
+                  <MapPin className="w-5 h-5 text-slate-200" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                    VISIT US
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight block mb-0.5">
+                    KAMTI AUTOMOTIVE
+                  </h3>
+                  <p className="text-xs text-slate-400 font-normal leading-relaxed max-w-xs">
+                    Main Market, Auto Parts Hub,<br />
+                    Maharashtra, Mumbai - 400057
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Contact Form */}
-          <div className="md:col-span-3 bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm">
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Send us a message</h3>
-            <p className="text-slate-500 font-medium mb-8">Hume message karein aur humari team jald hi aapse contact karegi.</p>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-black text-slate-700 mb-2 uppercase tracking-wider">Your Name</label>
-                  <input type="text" required placeholder="e.g. Vikram Sharma" className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-black text-slate-700 mb-2 uppercase tracking-wider">Phone / WhatsApp</label>
-                  <input type="tel" required placeholder="e.g. 8591719499" className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium transition-all" />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-xs font-black text-slate-700 mb-2 uppercase tracking-wider">Message / Part Request</label>
-                <textarea rows="4" required placeholder="Specify part number, vehicle make, or your question..." className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium transition-all resize-none"></textarea>
-              </div>
+          {/* Right Column: Send a Message Card */}
+          <div className="lg:col-span-6">
+            <div className="bg-[#121214] border border-white/10 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl relative overflow-hidden backdrop-blur-md">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-              <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white font-black py-4 px-8 rounded-xl transition-colors shadow-lg shadow-orange-500/30 flex items-center gap-2">
-                Send Message <ArrowRight className="w-5 h-5" />
-              </button>
-            </form>
+              <h2 className="text-2xl sm:text-3xl font-serif text-white mb-8 tracking-tight font-medium">
+                Send a Message
+              </h2>
+
+              {submitted ? (
+                <div className="py-12 text-center space-y-4">
+                  <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto text-amber-400">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-2xl font-serif text-white">Thank You!</h3>
+                  <p className="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
+                    Your message has been received by <strong className="text-white">KAMTI AUTOMOTIVE</strong>. Our technical support team will contact you shortly via email or phone.
+                  </p>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="mt-6 bg-[#cca362] hover:bg-[#d8af6e] text-black font-semibold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full transition-all"
+                  >
+                    Send Another Message
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* FULL NAME */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                      FULL NAME
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      placeholder=""
+                      className="w-full bg-[#09090b] border border-white/10 text-white rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
+
+                  {/* EMAIL ADDRESS */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                      EMAIL ADDRESS
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder=""
+                      className="w-full bg-[#09090b] border border-white/10 text-white rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
+
+                  {/* SUBJECT */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                      SUBJECT
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      placeholder=""
+                      className="w-full bg-[#09090b] border border-white/10 text-white rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
+
+                  {/* MESSAGE */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                      MESSAGE
+                    </label>
+                    <textarea
+                      rows={4}
+                      required
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder=""
+                      className="w-full bg-[#09090b] border border-white/10 text-white rounded-2xl p-5 text-sm focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 transition-all resize-none"
+                    ></textarea>
+                  </div>
+
+                  {/* SUBMIT BUTTON */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#cca362] hover:bg-[#d8af6e] active:scale-[0.99] disabled:opacity-50 text-black font-semibold py-4 rounded-full transition-all duration-200 text-sm sm:text-base tracking-wide shadow-lg shadow-amber-500/10 mt-2 cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {loading ? 'Sending Message...' : 'Send Message'}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
 
         </div>

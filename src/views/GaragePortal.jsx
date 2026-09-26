@@ -322,11 +322,11 @@ Please share the best trade wholesale quote & delivery schedule!
                   {/* Invoice Header */}
                   <div className="flex items-start justify-between border-b border-slate-200 pb-4">
                     <div>
-                      <h2 className="text-2xl font-black text-slate-900">
-                        Auto<span className="text-[#FF5722]">Zon</span><span className="text-blue-600">India</span>
+                      <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">
+                        KAMTI <span className="text-[#FF5722]">AUTOMOTIVE</span>
                       </h2>
                       <p className="text-[11px] text-slate-500 font-semibold">
-                        Sagar Travels & Auto Parts Direct Store • GSTIN: 27AABCS1420P1Z2
+                        KAMTI AUTOMOTIVE Direct Store • GSTIN: 27AABCS1420P1Z2
                       </p>
                     </div>
                     <div className="text-right">

@@ -37,7 +37,7 @@ export const rankProductSearchResults = (productsParam, searchQueryParam, select
   let selectedVehicle = (typeof selectedVehicleParam === 'object') ? selectedVehicleParam : null;
 
   if (!products || !Array.isArray(products) || products.length === 0) return [];
-  if (!searchQuery || !searchQuery.trim()) return [];
+  if (!searchQuery || !searchQuery.trim()) return products;
 
   const normalizedQuery = normalizeAutomotiveQuery(searchQuery);
   const cleanPartNoQuery = normalizedQuery.replace(/[^a-z0-9]/gi, '');
@@ -67,13 +67,23 @@ export const rankProductSearchResults = (productsParam, searchQueryParam, select
       score += 700;
     }
 
-    // Level 5: Exact Title Match (+300)
-    if (product.title && product.title.toLowerCase().includes(normalizedQuery)) {
+    // Level 5: Title / Name Match (+300)
+    const prodTitle = (product.title || product.name || '').toLowerCase();
+    const queryStem = normalizedQuery.replace(/s$/i, ''); // e.g. "air filters" -> "air filter"
+    if (prodTitle && (prodTitle.includes(normalizedQuery) || (queryStem.length > 3 && prodTitle.includes(queryStem)))) {
       score += 300;
     }
 
-    // Level 6: Brand / Category Match (+200)
-    if ((product.category && product.category.toLowerCase().includes(normalizedQuery)) || (product.brand && product.brand.toLowerCase().includes(normalizedQuery))) {
+    // Level 6: Brand / Car Brand / Category / Car Model Match (+200)
+    const prodCategory = (product.category || '').toLowerCase();
+    const prodBrand = (product.brand || product.carBrand || '').toLowerCase();
+    const prodModel = (product.carModel || product.model || '').toLowerCase();
+
+    if (
+      (prodCategory && (prodCategory.includes(normalizedQuery) || prodCategory.includes(queryStem))) ||
+      (prodBrand && (prodBrand.includes(normalizedQuery) || prodBrand.includes(queryStem))) ||
+      (prodModel && (prodModel.includes(normalizedQuery) || prodModel.includes(queryStem)))
+    ) {
       score += 200;
     }
 

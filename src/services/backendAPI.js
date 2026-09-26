@@ -9,6 +9,7 @@ import {
   validateCOD,
   createOrderSnapshot
 } from './cartCheckoutEngine';
+import { saveOrderToFirestore } from './firebaseService';
 
 const createResponse = (success, data = null, error = null) => {
   return {
@@ -119,6 +120,13 @@ export const BackendAPI = {
 
       // Commit to Order Database State
       storeState.addCompletedOrder(result.order);
+
+      // Save order to Firestore Database in real-time
+      try {
+        saveOrderToFirestore(result.order);
+      } catch (e) {
+        console.warn('Firestore order save error:', e);
+      }
 
       // Deduct inventory atomically (Rule 34)
       storeState.deductInventoryStock(result.purchasedProductIds, cartItems || storeState.cart);

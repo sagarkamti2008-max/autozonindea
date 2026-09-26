@@ -45,7 +45,7 @@ export const getSupportSettings = () => safeGetStorage(STORAGE_KEYS.SETTINGS, {
   human_handoff_enabled: true,
   max_messages_per_session: 30,
   max_daily_messages: 100,
-  support_email: 'support@autozonindia.com',
+  support_email: 'kamtiautomotive@gmail.com',
   support_hours: 'Mon-Sat 09:00 - 20:00 IST',
   ai_disclaimer: 'AutoZoneIndia AI Assistant retrieves verified database compatibility and stock data only.',
   default_ticket_priority: 'normal'

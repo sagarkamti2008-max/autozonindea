@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AddToCartAnimation } from '../components/AddToCartAnimation';
 import { useStore } from '../context/StoreContext';
-import { checkProductCompatibility } from '../services/compatibilityService';
+import { checkProductCompatibility } from '../services/cartCheckoutEngine';
 import {
   getProductReviewSummary,
   submitProductReview,
@@ -21,10 +21,15 @@ import {
 
 export const ProductDetailView = () => {
   const [flyInfo, setFlyInfo] = useState(null);
-  const { products, activeProductId, addToCart, navigateTo, showToast, selectedVehicle, user, isInWishlist, toggleWishlist, toggleCompare, recentlyViewed, addToRecentlyViewed } = useStore();
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [purchaseType, setPurchaseType] = useState('onetime');
+  const { products, activeProductId, addToCart, buyNow, navigateTo, showToast, selectedVehicle, setIsVehicleModalOpen, user, isInWishlist, toggleWishlist, toggleCompare, recentlyViewed, addToRecentlyViewed, setIsCartDrawerOpen } = useStore();
 
   // Fallback Product if none selected
-  const storeProduct = (typeof activeProductId === 'object' && activeProductId !== null) ? activeProductId : ((products || []).find(p => p.id === activeProductId));
+  const storeProduct = (typeof activeProductId === 'object' && activeProductId !== null) 
+    ? activeProductId 
+    : ((products || []).find(p => String(p.id) === String(activeProductId) || p.sku === activeProductId || p.oemPartNumber === activeProductId));
   
   const rawProduct = storeProduct || {
     id: 'prod-piston-set',
@@ -58,25 +63,43 @@ export const ProductDetailView = () => {
 
   const product = {
     ...rawProduct,
-    name: rawProduct.name || rawProduct.title,
-    originalPrice: rawProduct.originalPrice || rawProduct.mrp
+    id: rawProduct.id || 'AZI-PROD-GENERIC',
+    name: rawProduct.name || rawProduct.title || 'AutoZon Genuine Spare Part',
+    price: typeof rawProduct.price === 'number' ? rawProduct.price : (parseFloat(rawProduct.price) || 0),
+    originalPrice: typeof rawProduct.originalPrice === 'number' ? rawProduct.originalPrice : (parseFloat(rawProduct.originalPrice || rawProduct.mrp) || (rawProduct.price ? rawProduct.price * 1.2 : 0)),
+    brand: typeof rawProduct.brand === 'object' ? (rawProduct.brand?.name || 'AutoZon') : (rawProduct.brand || 'AutoZon'),
+    specs: {
+      'Brand': (typeof rawProduct.brand === 'object' ? rawProduct.brand?.name : rawProduct.brand) || 'OEM Grade',
+      'Part Number': rawProduct.oemPartNumber || rawProduct.sku || rawProduct.id || 'AZI-GEN-001',
+      'Compatibility': rawProduct.compatibility || rawProduct.fits || 'Universal / Exact Fit',
+      'Warranty': rawProduct.warranty || '1 Year Manufacturer Warranty',
+      ...(rawProduct.specs || {})
+    },
+    images: Array.isArray(rawProduct.images) ? rawProduct.images : [rawProduct.image || '/images/piston_set.jpg']
   };
 
   // Image Gallery Helpers
   const getGalleryImages = () => {
     if (product.product_images && Array.isArray(product.product_images) && product.product_images.length > 0) {
-      return product.product_images.map(img => img.image_url);
+      return product.product_images.map(img => img.image_url || '/images/piston_set.jpg');
     }
     if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-      return product.images.map(img => (typeof img === 'string' ? img : img.image_url || img.url));
+      return product.images.map(img => (typeof img === 'string' ? img : img.image_url || img.url || '/images/piston_set.jpg'));
     }
-    return [product.image || 'https://via.placeholder.com/400x300?text=AutoZon+Spare+Part'];
+    return [product.image || '/images/piston_set.jpg'];
   };
 
   const galleryImages = getGalleryImages();
-  const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
+  const [selectedImage, setSelectedImage] = useState(galleryImages[0] || '/images/piston_set.jpg');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('specs');
+
+  useEffect(() => {
+    const imgs = getGalleryImages();
+    if (imgs && imgs.length > 0) {
+      setSelectedImage(imgs[0]);
+    }
+  }, [product.id, rawProduct.image]);
 
   // Related Products logic (same category or brand)
   const relatedProducts = (products || [])
@@ -144,14 +167,13 @@ export const ProductDetailView = () => {
 
   // Check vehicle fitment when vehicle changes
   useEffect(() => {
-    if (selectedVehicle) {
-      checkProductCompatibility(product.id, selectedVehicle.id).then(res => {
-        setFitmentResult(res);
-      });
+    if (selectedVehicle && product) {
+      const res = checkProductCompatibility(product, selectedVehicle);
+      setFitmentResult(res);
     } else {
       setFitmentResult(null);
     }
-  }, [product.id, selectedVehicle]);
+  }, [product?.id, selectedVehicle]);
 
   const loadEngagementData = async () => {
     const summary = await getProductReviewSummary(product.id, reviewSort, reviewStarFilter);
@@ -305,11 +327,11 @@ export const ProductDetailView = () => {
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-8 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[13px] font-bold text-slate-500 overflow-x-auto whitespace-nowrap">
-          <span onClick={() => navigateTo('home')} className="hover:text-orange-500 cursor-pointer transition-colors">Home</span>
+          <span onClick={() => navigateTo('home')} className="hover:text-[#0B5394] cursor-pointer transition-colors">Home</span>
           <ChevronRight className="w-4 h-4 text-slate-300" />
-          <span onClick={() => navigateTo('catalog')} className="hover:text-orange-500 cursor-pointer transition-colors">Engine Parts</span>
+          <span onClick={() => navigateTo('catalog')} className="hover:text-[#0B5394] cursor-pointer transition-colors">Engine Parts</span>
           <ChevronRight className="w-4 h-4 text-slate-300" />
-          <span onClick={() => navigateTo('catalog')} className="hover:text-orange-500 cursor-pointer transition-colors">Piston</span>
+          <span onClick={() => navigateTo('catalog')} className="hover:text-[#0B5394] cursor-pointer transition-colors">Piston</span>
           <ChevronRight className="w-4 h-4 text-slate-300" />
           <span className="text-slate-800 font-black truncate">{product.name}</span>
         </div>
@@ -321,55 +343,50 @@ export const ProductDetailView = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12">
             
             {/* Gallery Column (Left) */}
-            <div className="lg:col-span-5 p-6 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100/50">
+            <div className="lg:col-span-5 p-6 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100/50 flex flex-col justify-between">
               <div className="relative aspect-square bg-white border border-slate-200/60 rounded-3xl overflow-hidden flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
                 <img
                   src={selectedImage}
                   alt={product.name}
-                  className="max-h-full max-w-full object-contain p-4 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  onError={(e) => { e.target.src = '/images/piston_set.jpg'; }}
+                  className="max-h-full max-w-full object-contain p-6 group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                {product.originalPrice && (
-                  <div className="absolute top-5 left-5 bg-gradient-to-r from-red-500 to-rose-600 text-white font-black text-xs uppercase tracking-wider py-1.5 px-3 rounded-xl shadow-lg shadow-red-500/30 border border-red-400/20">
-                    {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
-                  </div>
-                )}
+                
+                {/* Representational Image Red Overlay Banner */}
+                <div className="absolute bottom-4 left-4 right-4 bg-red-600/90 backdrop-blur-sm text-white text-center py-2 px-3 rounded-xl font-extrabold text-[11px] sm:text-xs tracking-wide shadow-md border border-red-500/30">
+                  This image is only for representational purpose only.
+                </div>
+
                 {/* Floating Action Buttons */}
                 <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
                   <button
+                    onClick={() => {
+                      setLightboxIndex(galleryImages.indexOf(selectedImage));
+                      setIsLightboxOpen(true);
+                    }}
+                    className="p-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/zoom"
+                    title="Zoom Image"
+                  >
+                    <Camera className="w-4 h-4 text-slate-400 group-hover/zoom:text-emerald-500" />
+                  </button>
+                  <button
                     onClick={() => toggleWishlist(product)}
-                    className="p-3.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/heart"
+                    className="p-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/heart"
                     title={isLiked ? 'Remove from Wishlist' : 'Add to Wishlist'}
                   >
-                    <Heart className={`w-5 h-5 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-400 group-hover/heart:text-red-500'}`} />
-                  </button>
-                  <button
-                    onClick={() => toggleCompare(product)}
-                    className="p-3.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/compare"
-                    title="Compare Product"
-                  >
-                    <RefreshCw className="w-5 h-5 text-slate-400 group-hover/compare:text-indigo-500" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(window.location.href);
-                      showToast('Link copied to clipboard! 📋');
-                    }}
-                    className="p-3.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/share"
-                    title="Share Product"
-                  >
-                    <Share2 className="w-5 h-5 text-slate-400 group-hover/share:text-blue-500" />
+                    <Heart className={`w-4 h-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-400 group-hover/heart:text-red-500'}`} />
                   </button>
                 </div>
               </div>
 
               {/* Thumbnail Row */}
-              <div className="flex gap-4 overflow-x-auto py-5 mt-2 scrollbar-hide snap-x snap-mandatory">
+              <div className="flex gap-3 overflow-x-auto py-4 mt-3 scrollbar-hide snap-x snap-mandatory">
                 {galleryImages.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedImage(img)}
-                    className={`snap-center w-24 h-24 rounded-2xl bg-white border-2 overflow-hidden shrink-0 transition-all duration-300 ${
-                      selectedImage === img ? 'border-orange-500 shadow-lg shadow-orange-500/20 scale-105' : 'border-slate-100 hover:border-orange-300 opacity-60 hover:opacity-100'
+                    className={`snap-center w-20 h-20 rounded-2xl bg-white border-2 overflow-hidden shrink-0 transition-all duration-300 ${
+                      selectedImage === img ? 'border-[#0B5394] shadow-md scale-105' : 'border-slate-100 hover:border-slate-300 opacity-70 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="thumb" className="w-full h-full object-contain p-2" />
@@ -379,308 +396,268 @@ export const ProductDetailView = () => {
             </div>
 
             {/* Details & Actions Column (Right) */}
-            <div className="lg:col-span-7 p-6 lg:p-10 flex flex-col bg-white">
-              
-              {/* Brand, Classification & Title */}
-              <div className="mb-6">
-                <div className="flex flex-wrap items-center gap-2 mb-4">
-                  <div className="inline-block bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest py-1.5 px-3 rounded-lg shadow-sm">
-                    {product.brand?.name || product.brand || 'AutoZon'}
-                  </div>
-                  {product.classification && (
-                    <div className="inline-block bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1.5 px-3 rounded-lg shadow-sm flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" /> {product.classification}
-                    </div>
-                  )}
-                  {product.condition && (
-                    <div className={`inline-block text-[10px] font-black uppercase tracking-widest py-1.5 px-3 rounded-lg shadow-sm ${product.condition === 'New' ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}`}>
-                      {product.condition}
-                    </div>
-                  )}
-                </div>
-                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-[1.15] mb-4">
+            <div className="lg:col-span-7 p-6 lg:p-10 flex flex-col justify-between bg-white">
+              <div>
+                {/* 1. Product Title */}
+                <h1 className="text-2xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
                   {product.name}
                 </h1>
-                
-                {/* Ratings & Social Proof */}
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-50 to-orange-50 px-3.5 py-2 rounded-xl border border-amber-200/60 shadow-sm">
-                    <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-                    <span className="font-black text-amber-700">{reviewSummary.averageRating || product.rating || '4.9'}</span>
-                    <span className="text-amber-600/70 font-semibold text-xs">({reviewSummary.totalReviews || product.reviewsCount || 0} reviews)</span>
-                  </div>
-                  {product.oemPartNumber && (
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-                      Part No: <strong className="text-slate-800">{product.oemPartNumber}</strong>
-                    </span>
-                  )}
-                  {product.sku && (
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">SKU: {product.sku}</span>
-                  )}
-                </div>
-              </div>
 
-              {/* Transparent Pricing Banner */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/80 rounded-3xl p-6 mb-8 flex flex-col gap-4 shadow-sm relative overflow-hidden">
-                <div className="absolute -right-10 -top-10 w-32 h-32 bg-orange-500/5 rounded-full blur-2xl"></div>
-                
-                <div className="relative z-10 flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/60 pb-4">
-                  <div>
-                    <div className="flex items-end gap-3 mb-1">
-                      <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">₹{Number(product.price).toLocaleString('en-IN')}</span>
-                      {product.originalPrice && (
-                        <span className="text-xl text-slate-400 font-bold line-through mb-1.5">
-                          ₹{Number(product.originalPrice).toLocaleString('en-IN')}
-                        </span>
-                      )}
+                {/* 2. Badges Row (AutoZoneIndia Theme) */}
+                <div className="flex flex-wrap items-center gap-2 mb-6">
+                  <span className="px-3 py-1 bg-[#073763]/10 text-[#073763] rounded-lg text-xs font-bold border border-[#073763]/20">
+                    Brand: <strong className="font-extrabold">{product.brand?.name || product.brand || 'PRASCO'}</strong>
+                  </span>
+                  <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200">
+                    Part No: <strong className="text-slate-900 font-bold">{product.oemPartNumber || product.sku || 'vals'}</strong>
+                  </span>
+                  <span className="px-3 py-1 bg-emerald-500/10 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-500/20">
+                    Type: <strong className="font-extrabold">{product.classification || product.type || 'OES'}</strong>
+                  </span>
+                </div>
+
+                {/* 3. Price & View Catalog Row */}
+                <div className="flex items-center justify-between gap-4 border-t border-b border-slate-100 py-5 mb-6">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-3xl sm:text-4xl font-black text-[#D84315] tracking-tight">
+                      ₹{Number(product.price).toFixed(2)}
+                    </span>
+                    {product.originalPrice && product.originalPrice > product.price && (
+                      <span className="text-lg text-slate-400 font-bold line-through">
+                        ₹{Number(product.originalPrice).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => navigateTo('catalog')}
+                    className="px-4 py-2 border-2 border-[#0B5394] text-[#0B5394] hover:bg-[#0B5394] hover:text-white text-xs font-extrabold rounded-xl transition-all shadow-sm whitespace-nowrap"
+                  >
+                    View Catalog
+                  </button>
+                </div>
+
+                {/* Size Selector */}
+                <div className="mb-6">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">SIZE / VARIANT</span>
+                  <div className="inline-flex items-center px-4 py-2 bg-[#0F172A] text-white rounded-full text-xs font-bold shadow-sm">
+                    {product.specs?.['Quantity'] || product.specs?.['Size'] || '100ml'}
+                  </div>
+                </div>
+
+                {/* Purchase Options Radio Box (Integrated with Site Theme) */}
+                <div className="mb-6 bg-[#0F172A] border border-slate-800 rounded-3xl p-4 text-white space-y-3 shadow-xl">
+                  {/* One-Time Purchase */}
+                  <label 
+                    onClick={() => setPurchaseType('onetime')}
+                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
+                      purchaseType === 'onetime' 
+                        ? 'border-amber-400 bg-slate-800/90 ring-1 ring-amber-400/50' 
+                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${purchaseType === 'onetime' ? 'border-amber-400 bg-amber-400' : 'border-slate-500'}`}>
+                        {purchaseType === 'onetime' && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-white">One-Time Purchase</div>
+                        <div className="text-xs text-slate-400 mt-0.5">Standard direct checkout</div>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-1 mt-1">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Inclusive of all taxes (+18% GST)</span>
-                      {product.originalPrice && product.price < product.originalPrice && (
-                        <span className="text-[13px] font-black text-emerald-600">You Save ₹{Number(product.originalPrice - product.price).toLocaleString('en-IN')}</span>
-                      )}
+                    <span className="font-sans text-lg font-black text-white tracking-tight">
+                      ₹{Number(product.price).toLocaleString('en-IN')}
+                    </span>
+                  </label>
+
+                  {/* Subscribe & Save */}
+                  <label 
+                    onClick={() => setPurchaseType('subscribe')}
+                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
+                      purchaseType === 'subscribe' 
+                        ? 'border-amber-400 bg-slate-800/90 ring-1 ring-amber-400/50' 
+                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${purchaseType === 'subscribe' ? 'border-amber-400 bg-amber-400' : 'border-slate-500'}`}>
+                        {purchaseType === 'subscribe' && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-amber-400">Subscribe & Save 15%</div>
+                        <div className="text-xs text-slate-400 mt-0.5">Auto-delivered on your schedule. Cancel anytime.</div>
+                      </div>
                     </div>
+                    <span className="font-sans text-lg font-black text-amber-400 tracking-tight">
+                      ₹{Math.round(product.price * 0.85).toLocaleString('en-IN')}
+                    </span>
+                  </label>
+                </div>
+
+                {/* Quantity Row */}
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">QUANTITY</span>
+                  <div className="flex items-center bg-[#0F172A] border border-slate-800 rounded-full px-4 py-1.5 text-white">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-7 h-7 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold">-</button>
+                    <span className="w-8 text-center font-black text-sm text-white">{quantity}</span>
+                    <button onClick={() => setQuantity(quantity + 1)} className="w-7 h-7 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold">+</button>
+                  </div>
+                </div>
+
+                {/* Primary Action Buttons (Gold Add to Bag + Heart Wishlist + Solid Black Buy Now) */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const finalPrice = purchaseType === 'subscribe' ? Math.round(product.price * 0.85) : product.price;
+                        addToCart({ ...product, price: finalPrice }, quantity);
+                        setIsCartDrawerOpen(true);
+                        setFlyInfo({ src: galleryImages[0], startRect: rect });
+                      }}
+                      className="flex-1 py-4 px-6 rounded-full font-extrabold bg-[#C59B4E] hover:bg-[#b58b3e] text-slate-950 shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] text-sm tracking-wide"
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      Add to Bag
+                    </button>
+
+                    <button
+                      onClick={() => toggleWishlist(product)}
+                      className={`p-4 rounded-full transition-all shrink-0 ${
+                        isLiked ? 'bg-red-500 text-white' : 'bg-[#0F172A] text-white hover:bg-slate-800 border border-slate-800'
+                      }`}
+                    >
+                      <Heart className={`w-5 h-5 ${isLiked ? 'fill-white' : ''}`} />
+                    </button>
                   </div>
                   
-                  <div className="flex flex-col items-end gap-2">
-                    {isOutOfStock ? (
-                      <div className="flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-xl border border-red-200 shadow-sm">
-                        <AlertCircle className="w-4 h-4" />
-                        <span className="text-xs font-black uppercase tracking-wider">Out of Stock</span>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
-                          <CheckCircle className="w-4 h-4 text-emerald-600" />
-                          <span className="text-xs font-black uppercase tracking-wider text-emerald-800">In Stock</span>
-                        </div>
-                        <span className="text-[11px] font-bold text-slate-500">Dispatched in 24 hours</span>
-                      </>
-                    )}
+                  <button
+                    onClick={() => {
+                      const finalPrice = purchaseType === 'subscribe' ? Math.round(product.price * 0.85) : product.price;
+                      buyNow({ ...product, price: finalPrice }, quantity);
+                    }}
+                    className="w-full py-4 px-6 rounded-full font-black bg-slate-950 hover:bg-black text-white shadow-xl flex items-center justify-center gap-2 transition-all border border-slate-900 active:scale-[0.98] text-sm tracking-wider uppercase"
+                  >
+                    Buy Now
+                  </button>
+                </div>
+
+                {/* Secondary Action Links (WISHLIST & SHARE) */}
+                <div className="flex items-center justify-center gap-8 pt-2 mb-8">
+                  <button
+                    onClick={() => toggleWishlist(product)}
+                    className={`text-xs font-bold flex items-center gap-2 transition-colors uppercase tracking-wider ${
+                      isLiked ? 'text-red-500' : 'text-slate-700 hover:text-slate-900'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
+                    <span>WISHLIST</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      const text = `Check out ${product.name} (₹${product.price}) on KAMTI AUTOMOTIVE: ${window.location.href}`;
+                      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                    className="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center gap-2 transition-colors uppercase tracking-wider"
+                  >
+                    <Share2 className="w-4 h-4 text-slate-500" />
+                    <span>SHARE</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 7. Trust Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-slate-100 pt-6">
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-2xl p-3.5 flex items-center gap-3">
+                  <div className="p-2.5 bg-blue-50 text-[#0B5394] rounded-xl">
+                    <Truck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-xs text-slate-900">Fast Delivery</h5>
+                    <p className="text-[10px] text-slate-500 font-medium">Pan-India shipping</p>
                   </div>
                 </div>
 
-                {/* Price Breakdown */}
-                <div className="relative z-10 flex items-center gap-6 text-sm font-bold text-slate-600">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase text-slate-400">MRP</span>
-                    <span>₹{Number(product.originalPrice || product.price).toLocaleString('en-IN')}</span>
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-2xl p-3.5 flex items-center gap-3">
+                  <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <ShieldCheck className="w-4 h-4" />
                   </div>
-                  <div className="text-slate-300">-</div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase text-slate-400">Discount</span>
-                    <span className="text-emerald-600">- ₹{Number((product.originalPrice || product.price) - product.price).toLocaleString('en-IN')}</span>
+                  <div>
+                    <h5 className="font-bold text-xs text-slate-900">Quality Assured</h5>
+                    <p className="text-[10px] text-slate-500 font-medium">100% genuine parts</p>
                   </div>
-                  <div className="text-slate-300">=</div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase text-slate-400">Selling Price</span>
-                    <span className="text-slate-900">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                </div>
+
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-2xl p-3.5 flex items-center gap-3">
+                  <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
+                    <RefreshCw className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-xs text-slate-900">Easy Returns</h5>
+                    <p className="text-[10px] text-slate-500 font-medium">Hassle-free policy</p>
                   </div>
                 </div>
               </div>
 
-              {/* Fitment & Delivery Verification Box */}
-              <div className="bg-white border-2 border-slate-100 rounded-3xl p-5 mb-8 shadow-sm">
-                <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" /> Verification & Delivery
-                </h4>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Vehicle Fitment Box */}
-                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                    <div className="text-xs font-black uppercase text-slate-500 mb-2 flex items-center gap-1.5"><Car className="w-3.5 h-3.5"/> Vehicle Fitment</div>
-                    {selectedVehicle ? (
-                      fitmentResult?.isCompatible ? (
+              {/* Seller & Location Information */}
+              {product.other_sellers && product.other_sellers.length > 0 ? (
+                <div className="mt-6">
+                  <h3 className="text-sm font-black text-slate-900 mb-3">Other Sellers on AutoZon</h3>
+                  <div className="space-y-3">
+                    {product.other_sellers.map((seller) => (
+                      <div key={seller.id} className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
                         <div>
-                          <div className="font-black text-emerald-700 text-sm flex items-center gap-1.5 mb-1"><CheckCircle className="w-4 h-4" /> 100% Guaranteed Fit</div>
-                          <div className="text-slate-600 text-[11px] font-medium leading-tight">For {selectedVehicle.make} {selectedVehicle.model} {selectedVehicle.variant} ({selectedVehicle.year})</div>
+                          <h4 className="text-sm font-black text-slate-900">{seller.name}</h4>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
+                              <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {seller.rating}
+                            </span>
+                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${seller.condition === 'New' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                              {seller.condition}
+                            </span>
+                          </div>
+                          {seller.condition !== 'New' && (
+                            <p className="text-[10px] text-slate-500 mt-1">Limited warranty. Final sale.</p>
+                          )}
                         </div>
-                      ) : (
-                        <div className="bg-red-50 border border-red-200 p-2 rounded-xl">
-                          <div className="font-black text-red-600 text-sm flex items-center gap-1.5 mb-1"><AlertTriangle className="w-4 h-4" /> Does NOT Fit</div>
-                          <div className="text-red-500 text-[11px] font-bold leading-tight">This part does not fit your {selectedVehicle.make} {selectedVehicle.model}.</div>
+                        <div className="text-right">
+                          <div className="text-sm font-black text-slate-900 mb-2">₹{Number(seller.price || 0).toLocaleString('en-IN')}</div>
+                          <button 
+                            onClick={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              addToCart({ ...product, price: seller.price, seller: seller.name }, quantity);
+                              setFlyInfo({ src: galleryImages[0], startRect: rect });
+                            }}
+                            className="text-xs font-black bg-slate-900 text-white px-4 py-1.5 rounded-lg hover:bg-slate-800"
+                          >
+                            Add to Cart
+                          </button>
                         </div>
-                      )
-                    ) : (
-                      <div>
-                        <div className="font-black text-slate-700 text-sm mb-2">Check Your Vehicle</div>
-                        <button className="w-full text-xs font-black bg-white border-2 border-slate-200 text-slate-900 py-2 rounded-xl hover:border-orange-500 transition-colors">
-                          Select Vehicle
-                        </button>
                       </div>
-                    )}
+                    ))}
                   </div>
-
-                  {/* Pincode Delivery Box */}
-                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                    <div className="text-xs font-black uppercase text-slate-500 mb-2 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5"/> Check Delivery</div>
-                    <div className="flex gap-2 mb-2">
-                      <input 
-                        type="text" 
-                        placeholder="Enter Pincode" 
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-orange-500"
-                        maxLength="6"
-                      />
-                      <button className="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors">
-                        Check
-                      </button>
+                </div>
+              ) : (
+                <div className="mt-6 p-4 rounded-2xl bg-white border border-slate-200 flex flex-col gap-4 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2.5 bg-slate-50 rounded-xl shadow-sm border border-slate-100">
+                      <MapPin className="w-5 h-5 text-slate-400" />
                     </div>
-                    <div className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5" /> Fast delivery in 2-4 days
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900">Sold by {product.seller?.name || 'AutoZonIndia Official'}</h4>
+                      <p className="text-xs text-slate-500 mt-0.5">Ships from {product.seller?.location || 'New Delhi Warehouse'}</p>
+                      <div className="flex gap-4 mt-2">
+                        <p className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md">
+                          <CheckCircle className="w-3.5 h-3.5" /> AutoZon Assured
+                        </p>
+                        <p className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
+                          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> {product.seller?.rating || '4.9'} Seller Rating
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Main Action Buttons */}
-              <div className="mt-auto">
-                {!isOutOfStock ? (
-                  <>
-                    <div className="flex items-center gap-4 mb-4">
-                      {/* Quantity Selector */}
-                      <div className="flex items-center bg-slate-100 rounded-xl border border-slate-200 p-1 shrink-0">
-                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 flex items-center justify-center font-black text-slate-600 hover:text-orange-500 transition-colors">-</button>
-                        <span className="w-10 text-center font-black text-slate-900">{quantity}</span>
-                        <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center font-black text-slate-600 hover:text-orange-500 transition-colors">+</button>
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          addToCart(product, quantity);
-                          setFlyInfo({ src: galleryImages[0], startRect: rect });
-                        }}
-                        className="flex-1 py-4 rounded-xl font-black bg-slate-900 text-white hover:bg-slate-800 shadow-md flex items-center justify-center gap-2 transition-all active:scale-95"
-                      >
-                        <ShoppingBag className="w-5 h-5" />
-                        Add to Cart
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <button
-                        onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          addToCart(product, quantity);
-                          navigateTo('cart');
-                          setFlyInfo({ src: galleryImages[0], startRect: rect });
-                        }}
-                        className="py-3 rounded-xl font-bold bg-orange-500 text-white hover:bg-orange-600 shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95"
-                      >
-                        Buy Now
-                      </button>
-                      <button
-                        onClick={() => setIsRequestPartOpen(true)}
-                        className="py-3 rounded-xl font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                        Request Part
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col gap-3 mb-6">
-                    <button
-                      onClick={() => setIsStockAlertOpen(true)}
-                      className="w-full py-4 rounded-xl font-black bg-slate-900 text-white hover:bg-slate-800 shadow-md flex items-center justify-center gap-2 transition-all active:scale-95"
-                    >
-                      <Bell className="w-5 h-5 text-orange-500" />
-                      Notify Me When Available
-                    </button>
-                    <button
-                      onClick={() => setIsRequestPartOpen(true)}
-                      className="w-full py-3 rounded-xl font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 flex items-center justify-center gap-2 transition-all"
-                    >
-                      <AlertCircle className="w-4 h-4" />
-                      Can't find it? Request Part
-                    </button>
-                  </div>
-                )}
-
-                {/* Trust & Warranty Policy */}
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 border-t border-slate-100 pt-6">
-                  <div className="flex flex-col items-center justify-center text-center gap-1.5 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                    <CheckCircle className="w-5 h-5 text-emerald-500" />
-                    <span className="text-[10px] font-black uppercase text-slate-600 leading-tight">100% Genuine <br/> OEM/OES</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center gap-1.5 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                    <Truck className="w-5 h-5 text-blue-500" />
-                    <span className="text-[10px] font-black uppercase text-slate-600 leading-tight">Fast <br/> Delivery</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center gap-1.5 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                    <RefreshCw className="w-5 h-5 text-orange-500" />
-                    <span className="text-[10px] font-black uppercase text-slate-600 leading-tight">Easy <br/> Returns</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center gap-1.5 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                    <span className="text-[10px] font-black uppercase text-slate-600 leading-tight">{product.specs?.warranty || '1 Year'} <br/> Warranty</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center gap-1.5 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                    <Lock className="w-5 h-5 text-purple-500" />
-                    <span className="text-[10px] font-black uppercase text-slate-600 leading-tight">100% Secure <br/> Payment</span>
-                  </div>
-                </div>
-
-                {/* Seller & Location Information */}
-                {product.other_sellers && product.other_sellers.length > 0 ? (
-                  <div className="mt-6">
-                    <h3 className="text-sm font-black text-slate-900 mb-3">Other Sellers on AutoZon</h3>
-                    <div className="space-y-3">
-                      {product.other_sellers.map((seller) => (
-                        <div key={seller.id} className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
-                          <div>
-                            <h4 className="text-sm font-black text-slate-900">{seller.name}</h4>
-                            <div className="flex items-center gap-3 mt-1">
-                              <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
-                                <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {seller.rating}
-                              </span>
-                              <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${seller.condition === 'New' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                                {seller.condition}
-                              </span>
-                            </div>
-                            {seller.condition !== 'New' && (
-                              <p className="text-[10px] text-slate-500 mt-1">Limited warranty. Final sale.</p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-black text-slate-900 mb-2">₹{seller.price.toLocaleString('en-IN')}</div>
-                            <button 
-                              onClick={(e) => {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                addToCart({ ...product, price: seller.price, seller: seller.name }, quantity);
-                                setFlyInfo({ src: galleryImages[0], startRect: rect });
-                              }}
-                              className="text-xs font-black bg-slate-900 text-white px-4 py-1.5 rounded-lg hover:bg-slate-800"
-                            >
-                              Add to Cart
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-6 p-4 rounded-2xl bg-white border border-slate-200 flex flex-col gap-4 shadow-sm">
-                    <div className="flex items-start gap-4">
-                      <div className="p-2.5 bg-slate-50 rounded-xl shadow-sm border border-slate-100">
-                        <MapPin className="w-5 h-5 text-slate-400" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900">Sold by {product.seller?.name || 'AutoZonIndia Official'}</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">Ships from {product.seller?.location || 'New Delhi Warehouse'}</p>
-                        <div className="flex gap-4 mt-2">
-                          <p className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md">
-                            <CheckCircle className="w-3.5 h-3.5" /> AutoZon Assured
-                          </p>
-                          <p className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
-                            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> {product.seller?.rating || '4.9'} Seller Rating
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
           
@@ -689,13 +666,13 @@ export const ProductDetailView = () => {
             <div className="flex border-b border-slate-200">
               <button 
                 onClick={() => setActiveTab('specs')}
-                className={`flex-1 py-4 text-sm font-black uppercase tracking-wider transition-colors ${activeTab === 'specs' ? 'text-orange-500 border-b-2 border-orange-500 bg-orange-50/30' : 'text-slate-500 hover:bg-slate-50'}`}
+                className={`flex-1 py-4 text-sm font-black uppercase tracking-wider transition-colors ${activeTab === 'specs' ? 'text-[#0B5394] border-b-2 border-[#0B5394] bg-[#E3F2FD]/30' : 'text-slate-500 hover:bg-slate-50'}`}
               >
                 Specifications
               </button>
               <button 
                 onClick={() => setActiveTab('desc')}
-                className={`flex-1 py-4 text-sm font-black uppercase tracking-wider transition-colors ${activeTab === 'desc' ? 'text-orange-500 border-b-2 border-orange-500 bg-orange-50/30' : 'text-slate-500 hover:bg-slate-50'}`}
+                className={`flex-1 py-4 text-sm font-black uppercase tracking-wider transition-colors ${activeTab === 'desc' ? 'text-[#0B5394] border-b-2 border-[#0B5394] bg-[#E3F2FD]/30' : 'text-slate-500 hover:bg-slate-50'}`}
               >
                 Description
               </button>
@@ -705,18 +682,41 @@ export const ProductDetailView = () => {
               {activeTab === 'specs' ? (
                 <div>
                   <h3 className="font-black text-lg text-slate-900 mb-6">Specifications & Fitment</h3>
-                  {product.specs ? (
-                    <div className="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-sm">
-                      <table className="w-full text-left text-sm">
-                        <tbody>
-                          {Object.entries(product.specs).map(([key, value], idx) => (
-                            <tr key={key} className={idx % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}>
-                              <th className="py-4 px-6 font-bold text-slate-500 border-b border-slate-100 w-1/3 align-top">{key.replace(/([A-Z])/g, ' $1').trim()}</th>
-                              <td className="py-4 px-6 font-bold text-slate-900 border-b border-slate-100">{value}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  {product.specs && typeof product.specs === 'object' ? (
+                    <div>
+                      <div className="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-sm mb-8">
+                        <table className="w-full text-left text-sm">
+                          <tbody>
+                            {Object.entries(product.specs).map(([key, value], idx) => (
+                              <tr key={key} className={idx % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}>
+                                <th className="py-4 px-6 font-bold text-slate-500 border-b border-slate-100 w-1/3 align-top">{key.replace(/([A-Z])/g, ' $1').trim()}</th>
+                                <td className="py-4 px-6 font-bold text-slate-900 border-b border-slate-100">{String(value)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* What's Included Box */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h4 className="font-black text-sm text-slate-900 mb-3 flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-emerald-600" /> What's Included in the Box
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" /> 1 × {product.name} Assembly
+                          </div>
+                          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" /> Mounting Clips & Hardware Pack
+                          </div>
+                          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" /> Manufacturer Warranty & QA Certificate
+                          </div>
+                          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" /> Step-by-Step Installation Guide
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <p className="text-slate-500 font-medium">No specifications provided for this product.</p>
@@ -812,7 +812,7 @@ export const ProductDetailView = () => {
 
             <button
               onClick={handleOpenWriteReview}
-              className="mt-5 md:mt-0 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-orange-500/30 transition-all active:scale-95"
+              className="mt-5 md:mt-0 px-6 py-3 bg-[#0B5394] hover:bg-[#073763] text-white text-sm font-bold rounded-xl shadow-lg shadow-[#0B5394]/30 transition-all active:scale-95"
             >
               Write a Review
             </button>
@@ -987,21 +987,64 @@ export const ProductDetailView = () => {
         </div>
       </div>
 
+        {/* Frequently Bought Together Bundle */}
+        {relatedProducts.length > 0 && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+              <h2 className="text-lg sm:text-xl font-black mb-4 flex items-center gap-2">
+                <Tag className="w-5 h-5 text-amber-400" />
+                Frequently Bought Together
+              </h2>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-3 overflow-x-auto pb-2 w-full md:w-auto">
+                  <div className="bg-white/10 p-3 rounded-2xl border border-white/10 shrink-0 text-center w-36">
+                    <img src={selectedImage} alt={product.name} className="w-20 h-20 object-contain mx-auto mb-2" />
+                    <div className="text-[11px] font-bold truncate">{product.name}</div>
+                    <div className="text-xs font-black text-amber-400">₹{product.price}</div>
+                  </div>
+                  <span className="text-2xl font-black text-amber-400">+</span>
+                  <div className="bg-white/10 p-3 rounded-2xl border border-white/10 shrink-0 text-center w-36">
+                    <img src={relatedProducts[0].image || relatedProducts[0].images?.[0] || '/images/piston_set.jpg'} alt={relatedProducts[0].name} className="w-20 h-20 object-contain mx-auto mb-2" />
+                    <div className="text-[11px] font-bold truncate">{relatedProducts[0].name}</div>
+                    <div className="text-xs font-black text-amber-400">₹{relatedProducts[0].price}</div>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto text-center md:text-right">
+                  <div>
+                    <div className="text-xs text-slate-400 uppercase font-bold">Total Bundle Price</div>
+                    <div className="text-2xl font-black text-amber-400">₹{Number(product.price + relatedProducts[0].price).toLocaleString('en-IN')}</div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      addToCart(product, 1, false);
+                      addToCart(relatedProducts[0], 1, false);
+                      showToast('Bundle added to Cart! 🛒');
+                    }}
+                    className="w-full sm:w-auto px-6 py-3.5 bg-amber-400 text-slate-900 font-black rounded-xl hover:bg-amber-300 transition-all shadow-lg active:scale-95"
+                  >
+                    Add Both to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Related Products Section */}
         {relatedProducts.length > 0 && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
             <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-              <Tag className="w-5 h-5 text-orange-500" />
+              <Tag className="w-5 h-5 text-[#0B5394]" />
               Related Parts & Accessories
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {relatedProducts.map(rp => (
-                <div key={rp.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group" onClick={() => navigateTo('product', rp.id)}>
+                <div key={rp.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group" onClick={() => navigateTo('product-detail', rp.id)}>
                   <div className="aspect-square bg-slate-50 p-4 flex items-center justify-center relative overflow-hidden">
-                    <img src={rp.image || rp.images?.[0] || 'https://via.placeholder.com/300?text=Part'} alt={rp.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                    <img src={rp.image || rp.images?.[0] || '/images/piston_set.jpg'} alt={rp.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-slate-800 text-sm line-clamp-2 mb-2 group-hover:text-orange-500 transition-colors">{rp.name}</h3>
+                    <h3 className="font-bold text-slate-800 text-sm line-clamp-2 mb-2 group-hover:text-[#0B5394] transition-colors">{rp.name}</h3>
                     <div className="flex items-center gap-2">
                       <span className="font-black text-slate-900">₹{rp.price}</span>
                       {rp.originalPrice && <span className="text-xs text-slate-400 line-through">₹{rp.originalPrice}</span>}
@@ -1014,20 +1057,20 @@ export const ProductDetailView = () => {
         )}
 
         {/* Recently Viewed Section */}
-        {recentlyViewed && recentlyViewed.length > 1 && (
+        {recentlyViewed && Array.isArray(recentlyViewed) && recentlyViewed.length > 1 && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-blue-500" />
               Recently Viewed
             </h2>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
-              {recentlyViewed.filter(p => p.id !== product.id).slice(0, 5).map(rv => (
-                <div key={rv.id} className="min-w-[180px] max-w-[180px] bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group snap-start" onClick={() => navigateTo('product', rv.id)}>
+              {recentlyViewed.filter(p => p && p.id !== product.id).slice(0, 5).map(rv => (
+                <div key={rv.id} className="min-w-[180px] max-w-[180px] bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group snap-start" onClick={() => navigateTo('product-detail', rv.id)}>
                   <div className="aspect-square bg-slate-50 p-3 flex items-center justify-center">
-                    <img src={rv.image || rv.images?.[0] || 'https://via.placeholder.com/300?text=Part'} alt={rv.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                    <img src={rv.image || rv.images?.[0] || '/images/piston_set.jpg'} alt={rv.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="p-3">
-                    <h3 className="font-bold text-slate-800 text-xs line-clamp-2 mb-1 group-hover:text-orange-500 transition-colors">{rv.name}</h3>
+                    <h3 className="font-bold text-slate-800 text-xs line-clamp-2 mb-1 group-hover:text-[#0B5394] transition-colors">{rv.name}</h3>
                     <span className="font-black text-slate-900 text-sm">₹{rv.price}</span>
                   </div>
                 </div>
@@ -1402,13 +1445,10 @@ export const ProductDetailView = () => {
               <ShoppingBag className="w-4 h-4" /> Add
             </button>
             <button
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                addToCart(product, quantity);
-                navigateTo('cart');
-                setFlyInfo({ src: galleryImages[0], startRect: rect });
+              onClick={() => {
+                buyNow(product, quantity);
               }}
-              className="flex-1 py-3 rounded-xl font-black bg-orange-500 text-white shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 rounded-xl font-black bg-[#0B5394] text-white shadow-lg shadow-[#0B5394]/30 flex items-center justify-center gap-2 text-sm"
             >
               Buy Now
             </button>
@@ -1418,7 +1458,7 @@ export const ProductDetailView = () => {
             onClick={() => setIsStockAlertOpen(true)}
             className="w-full py-3 rounded-xl font-black bg-slate-900 text-white shadow-md flex items-center justify-center gap-2 text-sm"
           >
-            <Bell className="w-4 h-4 text-orange-500" /> Notify Me
+            <Bell className="w-4 h-4 text-[#0B5394]" /> Notify Me
           </button>
         )}
       </div>
@@ -1469,8 +1509,44 @@ export const ProductDetailView = () => {
           </div>
         </div>
       )}
-      
-      <ToastContainer />
+      {/* Lightbox Zoom Modal */}
+      {isLightboxOpen && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <button 
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-6 right-6 text-white hover:text-amber-400 p-3 bg-white/10 rounded-full transition-all"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <button 
+            onClick={() => setLightboxIndex((lightboxIndex - 1 + galleryImages.length) % galleryImages.length)}
+            className="absolute left-6 text-white hover:text-amber-400 p-4 bg-white/10 rounded-full transition-all"
+          >
+            <ChevronRight className="w-6 h-6 rotate-180" />
+          </button>
+
+          <div className="max-w-4xl max-h-[80vh] flex items-center justify-center">
+            <img 
+              src={galleryImages[lightboxIndex]} 
+              alt="Zoomed product view" 
+              className="max-h-[80vh] max-w-full object-contain rounded-2xl shadow-2xl"
+            />
+          </div>
+
+          <button 
+            onClick={() => setLightboxIndex((lightboxIndex + 1) % galleryImages.length)}
+            className="absolute right-6 text-white hover:text-amber-400 p-4 bg-white/10 rounded-full transition-all"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+          
+          <div className="absolute bottom-6 text-white/80 font-bold text-sm bg-black/40 px-4 py-1.5 rounded-full border border-white/10">
+            {lightboxIndex + 1} / {galleryImages.length}
+          </div>
+        </div>
+      )}
+      {/* End of Product Detail View */}
     </div>
   );
 };

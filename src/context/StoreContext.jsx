@@ -34,16 +34,30 @@ import {
   mergeGuestWishlistOnLogin
 } from '../services/engagementService';
 import { checkVehicleProductCompatibility } from '../services/catalogEngine';
+import { subscribeProductsRealtime, subscribeOrdersRealtime } from '../services/firebaseService';
 
 const StoreContext = createContext();
 
 const safeGetStorage = (key, fallback) => {
   try {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : fallback;
+    if (!saved) return fallback;
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed) && parsed.length === 0 && Array.isArray(fallback) && fallback.length > 0) {
+      return fallback;
+    }
+    return parsed;
   } catch (e) {
     console.error(`Error reading ${key} from localStorage`, e);
     return fallback;
+  }
+};
+
+const safeSetStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn(`Error writing ${key} to localStorage:`, e);
   }
 };
 
@@ -64,19 +78,10 @@ export const StoreProvider = ({ children }) => {
       if (path.includes('/track-order')) return 'track-order';
       if (path.includes('/account/orders/') && path.includes('/tracking')) return 'customer-order-tracking';
       if (path.includes('/account/orders/') && path.includes('/invoice')) return 'invoice';
+      if (path.includes('admin')) return 'admin';
       if (path.startsWith('/assistant')) return 'ai-assistant';
       if (path.includes('/support/ticket/')) return 'customer-ticket-detail';
-      if (path.startsWith('/admin/support')) return 'admin';
       if (path.includes('/account/notifications')) return 'customer-notifications';
-      if (path.startsWith('/admin/marketing')) return 'admin';
-      if (path.startsWith('/admin/cms')) return 'admin';
-      if (path.startsWith('/admin/blog')) return 'admin';
-      if (path.startsWith('/admin/seo')) return 'admin';
-      if (path.startsWith('/admin/faqs')) return 'admin';
-      if (path.startsWith('/admin/warehouses')) return 'admin';
-      if (path.startsWith('/admin/inventory/transfers')) return 'admin';
-      if (path.startsWith('/admin/fulfillment')) return 'admin';
-      if (path.startsWith('/admin/inventory/reports')) return 'admin';
       if (path.startsWith('/page/')) return 'public-cms-page';
       if (path.startsWith('/blog/category/')) return 'blog-category';
       if (path.startsWith('/blog/search')) return 'blog-search';
@@ -105,19 +110,19 @@ export const StoreProvider = ({ children }) => {
   const [activeProductId, setActiveProductId] = useState(null);
   const [activeOrderId, setActiveOrderId] = useState(null);
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(() => safeGetStorage('autozon_products', []));
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [cars] = useState(mockCars);
   const [categories] = useState(CATEGORIES_DATABASE);
   const [academy] = useState(academyModules);
-  const [enquiries, setEnquiries] = useState(() => safeGetStorage('autozon_enquiries', INITIAL_ENQUIRIES));
-  const [quotations, setQuotations] = useState(() => safeGetStorage('autozon_quotations', INITIAL_QUOTATIONS));
-  const [reviews, setReviews] = useState(() => safeGetStorage('autozon_reviews', INITIAL_REVIEWS));
+  const [enquiries, setEnquiries] = useState(() => safeGetStorage('autozon_enquiries', []));
+  const [quotations, setQuotations] = useState(() => safeGetStorage('autozon_quotations', []));
+  const [reviews, setReviews] = useState(() => safeGetStorage('autozon_reviews', []));
   const [coupons, setCoupons] = useState([]);
-  const [payments, setPayments] = useState(() => safeGetStorage('autozon_payments_db', INITIAL_PAYMENTS));
-  const [shippingRecords, setShippingRecords] = useState(() => safeGetStorage('autozon_shipping_db', INITIAL_SHIPPING));
-  const [adminUsers, setAdminUsers] = useState(() => safeGetStorage('autozon_admin_users_db', INITIAL_ADMIN_USERS));
+  const [payments, setPayments] = useState([]);
+  const [shippingRecords, setShippingRecords] = useState([]);
+  const [adminUsers, setAdminUsers] = useState([]);
   const [websiteSettings, setWebsiteSettings] = useState([]);
 
   const [savedGarage, setSavedGarage] = useState(() => safeGetStorage('autozon_garage', [
@@ -131,10 +136,11 @@ export const StoreProvider = ({ children }) => {
   const [cart, setCart] = useState(() => safeGetStorage('autozon_cart', []));
   // New state for immediate Buy Now flow
   const [buyNowProduct, setBuyNowProduct] = useState(null);
-  const buyNow = (product, quantity = 1) => {
-    setBuyNowProduct({ ...product, quantity });
-    navigateTo('buy-now');
-  };
+  const [activeProductModal, setActiveProductModal] = useState(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState('addr-1');
+  const [shippingAddress, setShippingAddress] = useState(null);
+
   const [savedForLater, setSavedForLater] = useState(() => safeGetStorage('autozon_saved_later', []));
   const [appliedCouponCode, setAppliedCouponCode] = useState(() => safeGetStorage('autozon_coupon', ''));
   const [savedAddresses, setSavedAddresses] = useState(() => safeGetStorage('autozon_addresses', INITIAL_ADDRESSES));
@@ -147,20 +153,43 @@ export const StoreProvider = ({ children }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [selectedClassification, setSelectedClassification] = useState('all');
-  const [filterFitsVehicle, setFilterFitsVehicle] = useState(!!safeGetStorage('autozon_selected_vehicle', savedGarage[0] || null));
-  const [priceRange, setPriceRange] = useState(10000);
+  const [filterFitsVehicle, setFilterFitsVehicle] = useState(false);
+  const [priceRange, setPriceRange] = useState(500000);
   const [sortBy, setSortBy] = useState('featured');
 
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
 
+  const buyNow = (product, quantity = 1) => {
+    if (!product) return;
+    const itemWithId = {
+      ...product,
+      id: product.id || product.sku || product.oemPartNumber || `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      name: product.name || product.title || product.product_name || 'Auto Part',
+      title: product.title || product.name || product.product_name || 'Auto Part',
+      price: typeof product.price === 'number' ? product.price : (parseFloat(product.price) || 0),
+      quantity,
+      timestamp: Date.now()
+    };
+    setBuyNowProduct(itemWithId);
+    setCart([{ ...itemWithId, quantity }]);
+    if (typeof setActiveProductModal === 'function') setActiveProductModal(null);
+    if (typeof setIsVehicleModalOpen === 'function') setIsVehicleModalOpen(false);
+    if (typeof setIsCheckoutOpen === 'function') setIsCheckoutOpen(false);
+    setCurrentView('checkout');
+    try {
+      window.scrollTo(0, 0);
+    } catch (e) {}
+    if (showToast) showToast(`⚡ Buy Now: ${itemWithId.name.slice(0, 30)}... Proceeding to Checkout`);
+  };
+
   // Supabase Fetch Initial Data
   useEffect(() => {
     const fetchSupabaseData = async () => {
       try {
         const { data: pData } = await supabase.from('products').select('*');
-        if (pData) setProducts(pData);
+        if (pData && pData.length > 0) setProducts(pData);
         
         const { data: oData } = await supabase.from('orders').select('*');
         if (oData) setOrders(oData);
@@ -178,6 +207,25 @@ export const StoreProvider = ({ children }) => {
       }
     };
     fetchSupabaseData();
+  }, []);
+
+  // Firebase Realtime Synchronization (Admin <-> Customer Storefront Live Sync)
+  useEffect(() => {
+    const unsubProducts = subscribeProductsRealtime((fireProducts) => {
+      const fireList = Array.isArray(fireProducts) ? fireProducts : [];
+      setProducts(fireList);
+      safeSetStorage('autozon_products', fireList);
+    });
+
+    const unsubOrders = subscribeOrdersRealtime((fireOrders) => {
+      const fireList = Array.isArray(fireOrders) ? fireOrders : [];
+      setOrders(fireList);
+    });
+
+    return () => {
+      if (unsubProducts) unsubProducts();
+      if (unsubOrders) unsubOrders();
+    };
   }, []);
 
   // Auto-merge guest wishlist when customer logs in
@@ -205,7 +253,6 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => { try { localStorage.setItem('autozon_garage', JSON.stringify(savedGarage)); } catch(e){} }, [savedGarage]);
   useEffect(() => { 
     try { localStorage.setItem('autozon_selected_vehicle', JSON.stringify(selectedVehicle)); } catch(e){} 
-    if (selectedVehicle) setFilterFitsVehicle(true);
   }, [selectedVehicle]);
   useEffect(() => { try { localStorage.setItem('autozon_cart', JSON.stringify(cart)); } catch(e){} }, [cart]);
   useEffect(() => { try { localStorage.setItem('autozon_saved_later', JSON.stringify(savedForLater)); } catch(e){} }, [savedForLater]);
@@ -263,27 +310,42 @@ export const StoreProvider = ({ children }) => {
     }, 3200);
   };
 
-  const navigateTo = (viewName, productId = null) => {
+  const navigateTo = (viewName, payload = null) => {
     setCurrentView(viewName);
-    if (productId) setActiveProductId(productId);
+    if (payload) {
+      if (typeof payload === 'string' && (viewName === 'brand' || viewName === 'catalog')) {
+        setSelectedBrand(payload);
+      } else {
+        setActiveProductId(payload);
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const addToCart = (product, quantity = 1) => {
-    const stockQty = product.stockCount ?? product.stock_quantity ?? product.stock ?? 10;
-    if (stockQty <= 0) {
+  const addToCart = (product, quantity = 1, openDrawer = true) => {
+    if (!product) return;
+    const itemWithId = {
+      ...product,
+      id: product.id || product.sku || product.oemPartNumber || `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      name: product.name || product.title || 'Auto Part',
+      price: typeof product.price === 'number' ? product.price : (parseFloat(product.price) || 0)
+    };
+    const isExplicitlyOutOfStock = product.inStock === false || product.stock_status === 'out_of_stock';
+    if (isExplicitlyOutOfStock) {
       showToast('Product is currently Out of Stock', 'error');
       return;
     }
     setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+      const existing = prev.find(item => item.id === itemWithId.id);
       if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
+        return prev.map(item => item.id === itemWithId.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...itemWithId, quantity }];
     });
-    showToast(`Added "${(product.name || product.title || '').slice(0, 30)}..." to Cart! 🛒`);
-    setIsCartDrawerOpen(true);
+    showToast(`Added "${(itemWithId.name).slice(0, 30)}..." to Cart! 🛒`);
+    if (openDrawer) {
+      setIsCartDrawerOpen(true);
+    }
   };
 
   const removeFromCart = (id) => {
@@ -312,6 +374,7 @@ export const StoreProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]);
+    setBuyNowProduct(null);
     setAppliedCouponCode('');
   };
 
@@ -457,6 +520,70 @@ export const StoreProvider = ({ children }) => {
     showToast('Vehicle removed from garage', 'info');
   };
 
+  const saveProduct = async (productData) => {
+    if (!productData) return;
+    const prodId = productData.id || `AZ-PROD-${Date.now()}`;
+    const newProdObj = {
+      id: prodId,
+      name: productData.title || productData.name || 'Auto Part',
+      title: productData.title || productData.name || 'Auto Part',
+      sku: productData.sku || productData.partNumber || `SKU-${Date.now()}`,
+      partNumber: productData.partNumber || productData.sku || `SKU-${Date.now()}`,
+      brand: productData.brand || 'AutoZon',
+      category: productData.category || 'Brake Parts',
+      mrp: parseFloat(productData.mrp) || parseFloat(productData.price) * 1.25 || 1000,
+      price: parseFloat(productData.price || productData.sellingPrice || productData.sale_price) || 800,
+      sale_price: parseFloat(productData.price || productData.sellingPrice || productData.sale_price) || 800,
+      stock: parseInt(productData.stock, 10) || 10,
+      status: true,
+      statusText: productData.statusText || productData.status || 'Published',
+      image: productData.image || (Array.isArray(productData.images) && productData.images[0]) || 'https://images.unsplash.com/photo-1600793575654-910699b5e4d4?w=500&q=80',
+      images: Array.isArray(productData.images) && productData.images.length > 0 ? productData.images : [productData.image || 'https://images.unsplash.com/photo-1600793575654-910699b5e4d4?w=500&q=80'],
+      fitments: productData.fitments || [],
+      ...productData
+    };
+
+    setProducts(prev => {
+      const exists = prev.some(p => String(p.id) === String(prodId));
+      let updated;
+      if (exists) {
+        updated = prev.map(p => String(p.id) === String(prodId) ? newProdObj : p);
+      } else {
+        updated = [newProdObj, ...prev];
+      }
+      try { localStorage.setItem('autozon_products', JSON.stringify(updated)); } catch(e){}
+      return updated;
+    });
+
+    showToast(`🎉 Product "${newProdObj.title}" published live on website!`);
+
+    try {
+      await supabase.from('products').upsert([{
+        id: prodId,
+        title: newProdObj.title,
+        sku: newProdObj.sku,
+        brand: newProdObj.brand,
+        category: newProdObj.category,
+        mrp: newProdObj.mrp,
+        selling_price: newProdObj.price,
+        stock: newProdObj.stock,
+        status: true
+      }]);
+    } catch(e) {}
+  };
+
+  const deleteProduct = async (productId) => {
+    setProducts(prev => {
+      const updated = prev.filter(p => String(p.id) !== String(productId));
+      try { localStorage.setItem('autozon_products', JSON.stringify(updated)); } catch(e){}
+      return updated;
+    });
+    showToast('Product deleted from website', 'info');
+    try {
+      await supabase.from('products').delete().eq('id', productId);
+    } catch(e) {}
+  };
+
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -487,6 +614,9 @@ export const StoreProvider = ({ children }) => {
       setActiveOrderId,
       navigateTo,
       products,
+      setProducts,
+      saveProduct,
+      deleteProduct,
       orders,
       updateOrderStatus,
       customers,
@@ -535,7 +665,17 @@ export const StoreProvider = ({ children }) => {
       updateCartQuantity,
       // Buy Now utilities
       buyNowProduct,
+      setBuyNowProduct,
       buyNow,
+      selectedAddressId,
+      setSelectedAddressId,
+      shippingAddress,
+      setShippingAddress,
+      showToast,
+      activeProductModal,
+      setActiveProductModal,
+      isCheckoutOpen,
+      setIsCheckoutOpen,
       clearCart,
       moveToSavedForLater,
       moveToCartFromSaved,
@@ -563,6 +703,10 @@ export const StoreProvider = ({ children }) => {
       setIsVehicleModalOpen,
       isCartDrawerOpen,
       setIsCartDrawerOpen,
+      activeProductModal,
+      setActiveProductModal,
+      isCheckoutOpen,
+      setIsCheckoutOpen,
       toasts,
       showToast,
       blogs: INITIAL_BLOGS,

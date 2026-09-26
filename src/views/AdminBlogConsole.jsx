@@ -407,7 +407,7 @@ export const AdminBlogConsole = () => {
 
                 <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 space-y-1">
                   <div className="text-[11px] text-emerald-400 truncate">
-                    https://autozonindia.vercel.app/blog/{postForm.slug || 'slug'}
+                    https://sagar-travels-4de3b.web.app/blog/{postForm.slug || 'slug'}
                   </div>
                   <div className="text-sm font-medium text-blue-400 line-clamp-1">
                     {postForm.meta_title || postForm.title || 'Article Title'} | AutoZoneIndia

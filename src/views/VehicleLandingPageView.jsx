@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { cmsSeoService } from '../services/cmsSeoService';
 import { generateBreadcrumbJSONLD } from '../services/seoEngine';
 import { Truck, Layers, CheckCircle2, ChevronRight, ShoppingBag, ArrowRight, Shield, AlertTriangle } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
 
 export const VehicleLandingPageView = ({ vehicleSlug }) => {
+  const { buyNow } = useStore();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -170,12 +172,17 @@ export const VehicleLandingPageView = ({ vehicleSlug }) => {
                   </div>
                   <div className="p-4 pt-0 border-t border-slate-800/60 mt-2 flex items-center justify-between">
                     <span className="text-base font-extrabold text-slate-100">₹{p.price}</span>
-                    <a
-                      href={`/product/${p.slug || p.id}`}
-                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg hover:bg-emerald-400 transition-colors"
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        buyNow(p);
+                      }}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg hover:bg-emerald-400 transition-colors cursor-pointer"
                     >
                       Buy Now
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}

@@ -168,8 +168,10 @@ export const validateCoupon = async (customerId, rawCouponCode, cartItems = [], 
   let eligibleSubtotal = 0;
   let hasEligibleItems = false;
 
-  cartItems.forEach(item => {
-    const itemPrice = item.price || 0;
+  const safeCart = Array.isArray(cartItems) ? cartItems : [];
+  safeCart.forEach(item => {
+    if (!item) return;
+    const itemPrice = typeof item.price === 'number' ? item.price : (parseFloat(item.price) || 0);
     const qty = item.quantity || 1;
     let isItemEligible = true;
 
@@ -332,10 +334,19 @@ export const calculateCartTotals = async ({
   shippingMethod = 'standard',
   originState = 'Maharashtra'
 }) => {
-  const validItems = cartItems.filter(i => (i.quantity || 1) > 0);
+  const safeItems = Array.isArray(cartItems) ? cartItems : [];
+  const validItems = safeItems.filter(i => i && typeof i === 'object' && (i.quantity || 1) > 0);
 
-  const mrpTotal = validItems.reduce((sum, i) => sum + ((i.mrp || i.price || 0) * (i.quantity || 1)), 0);
-  const subtotal = validItems.reduce((sum, i) => sum + ((i.price || 0) * (i.quantity || 1)), 0);
+  const mrpTotal = validItems.reduce((sum, i) => {
+    const priceVal = typeof i.price === 'number' ? i.price : (parseFloat(i.price) || 0);
+    const mrpVal = typeof i.mrp === 'number' ? i.mrp : (parseFloat(i.mrp) || priceVal);
+    return sum + (mrpVal * (i.quantity || 1));
+  }, 0);
+
+  const subtotal = validItems.reduce((sum, i) => {
+    const priceVal = typeof i.price === 'number' ? i.price : (parseFloat(i.price) || 0);
+    return sum + (priceVal * (i.quantity || 1));
+  }, 0);
   const productSavings = Math.max(0, mrpTotal - subtotal);
 
   // Coupon Validation

@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { X, Star, ShoppingCart, ShieldCheck, CheckCircle2, Truck, RefreshCw, Car, Wrench } from 'lucide-react';
 
 export const ProductModal = () => {
-  const { activeProductModal, setActiveProductModal, addToCart, selectedVehicle, setIsCartOpen } = useStore();
+  const { activeProductModal, setActiveProductModal, addToCart, buyNow, selectedVehicle, navigateTo } = useStore();
   const [qty, setQty] = useState(1);
 
   if (!activeProductModal) return null;
@@ -11,9 +11,8 @@ export const ProductModal = () => {
   const product = activeProductModal;
 
   const handleBuyNow = () => {
-    addToCart(product, qty);
+    buyNow(product, qty);
     setActiveProductModal(null);
-    setIsCartOpen(true);
   };
 
   return (

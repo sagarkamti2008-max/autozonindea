@@ -1,5 +1,6 @@
 // Enterprise CMS, Blog, SEO Quality & Dynamic Landing Page Service for AutoZoneIndia
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { INITIAL_FAQS } from '../data/mockData';
 
 // Simple, effective HTML Sanitizer to prevent XSS / script injection in rich text editor
 export const sanitizeHtml = (html) => {
@@ -491,7 +492,12 @@ export const cmsSeoService = {
   // 4. FAQ SYSTEM ENGINE
   // -------------------------------------------------------------
   async getFaqs(filters = {}) {
-    if (!isSupabaseConfigured()) return { data: [], error: null };
+    if (!isSupabaseConfigured()) {
+      let result = [...(INITIAL_FAQS || [])];
+      if (filters.status) result = result.filter(f => f.status === filters.status);
+      if (filters.category) result = result.filter(f => f.category === filters.category);
+      return { data: result, error: null };
+    }
     let query = supabase.from('faqs').select('*');
 
     if (filters.status) query = query.eq('status', filters.status);
@@ -502,6 +508,12 @@ export const cmsSeoService = {
     query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
 
     const { data, error } = await query;
+    if ((!data || data.length === 0) && !error) {
+      let result = [...(INITIAL_FAQS || [])];
+      if (filters.status) result = result.filter(f => f.status === filters.status);
+      if (filters.category) result = result.filter(f => f.category === filters.category);
+      return { data: result, error: null };
+    }
     return { data: data || [], error };
   },
 

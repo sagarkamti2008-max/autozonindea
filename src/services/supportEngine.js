@@ -39,10 +39,10 @@ export const COMPLAINT_TYPES = [
 
 // Default Contact & Support Hours Config (Sections 26, 27, 34)
 const DEFAULT_SUPPORT_CONFIG = {
-  businessName: 'AutoZonIndia Genuine Spare Parts Store',
-  phone: '+91 98201 99000',
-  email: 'support@autozonindia.com',
-  whatsapp: '+91 98201 99000',
+  businessName: 'KAMTI AUTOMOTIVE Genuine Spare Parts Store',
+  phone: '+91 8591719499',
+  email: 'kamtiautomotive@gmail.com',
+  whatsapp: '+91 8591719499',
   workingDays: 'Monday - Saturday',
   openingTime: '09:00 AM',
   closingTime: '08:00 PM IST',

@@ -151,7 +151,7 @@ export const warehouseFulfillmentService = {
   generateQRCodePayload(product) {
     if (!product) return '';
     // Public URL payload (never exposes internal DB credentials)
-    return `https://autozonindia.vercel.app/product/${product.slug || product.id}`;
+    return `https://sagar-travels-4de3b.web.app/product/${product.slug || product.id}`;
   },
 
   async lookupProductByBarcode(scannedBarcode) {

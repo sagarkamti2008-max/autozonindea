@@ -268,34 +268,67 @@ export default function FindPartsForMyCarView() {
           {compatibleProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {compatibleProducts.map(p => (
-                <div key={p.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/50 transition shadow-xl">
-                  <div>
-                    <span className="text-xs font-bold text-amber-400 uppercase block mb-1">{p.brand || 'OE Verified'}</span>
-                    <h3 className="font-bold text-white text-base mb-1 line-clamp-2">{p.name || p.title}</h3>
-                    <p className="text-xs text-slate-500 font-mono mb-3">SKU: {p.sku}</p>
-                    <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 mb-4">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> 100% Fitment Guaranteed
+                <div key={p.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/50 transition shadow-xl space-y-4">
+                  <div className="space-y-3">
+                    <div className="h-28 bg-slate-950 border border-slate-800 rounded-xl p-2 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={p.image || p.imageUrl || '/kamti-logo.png'}
+                        alt={p.title || p.name}
+                        onError={(e) => { e.target.src = '/kamti-logo.png'; }}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-amber-400 uppercase block mb-1">{p.brand || 'OE Verified'}</span>
+                      <h3 className="font-bold text-white text-sm line-clamp-2">{p.name || p.title}</h3>
+                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">SKU / Part #: {p.sku || p.partNumber || 'KMT-GENUINE'}</p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Guaranteed Fit for {selectedMake?.name} {selectedModel?.name}
                     </span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-lg font-extrabold text-white">₹{Number(p.price || 0).toLocaleString('en-IN')}</span>
-                    <button
-                      onClick={() => {
-                        addToCart(p);
-                        showToast(`Added "${p.name || p.title}" to cart!`, 'success');
-                      }}
-                      className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-1.5"
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5" /> Add
-                    </button>
+                  <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-extrabold text-white">₹{Number(p.price || 0).toLocaleString('en-IN')}</span>
+                      <span className="text-[10px] text-emerald-400 font-bold uppercase">Ready to Dispatch</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={() => {
+                          addToCart(p);
+                          showToast(`Added "${p.name || p.title}" to cart!`, 'success');
+                        }}
+                        className="py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5" /> Add
+                      </button>
+
+                      <a
+                        href={`https://wa.me/918591719499?text=${encodeURIComponent(`Hi SAGAR TRAVELS, I want to order this part for my ${selectedMake?.name} ${selectedModel?.name}:\n*${p.name || p.title}* (₹${p.price})`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        WhatsApp
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
-              No direct catalog parts matching this exact variant yet. Contact support for custom OEM part sourcing.
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400 space-y-3">
+              <p className="text-sm">No catalog items matching this exact model filter currently in stock.</p>
+              <a
+                href={`https://wa.me/918591719499?text=${encodeURIComponent(`Hi SAGAR TRAVELS / KAMTI AUTOMOTIVE, I am looking for spare parts for my car: ${selectedMake?.name} ${selectedModel?.name} (${selectedYear || '2022'}). Please check availability.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition gap-1.5"
+              >
+                Request Custom Sourcing on WhatsApp (+91 8591719499)
+              </a>
             </div>
           )}
         </div>
@@ -303,3 +336,4 @@ export default function FindPartsForMyCarView() {
     </div>
   );
 }
+

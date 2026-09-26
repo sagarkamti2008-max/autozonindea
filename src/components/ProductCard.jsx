@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { Star, ShoppingCart, Heart, CheckCircle, Shield, Eye, Wrench } from 'lucide-react';
 
 export const ProductCard = ({ product }) => {
-  const { selectedVehicle, addToCart, toggleWishlist, wishlist, setActiveProductModal } = useStore();
+  const { selectedVehicle, addToCart, buyNow, toggleWishlist, wishlist, setActiveProductModal, navigateTo } = useStore();
 
   const isWishlisted = wishlist.some(item => item.id === product.id);
 
@@ -57,7 +57,7 @@ export const ProductCard = ({ product }) => {
       </button>
 
       {/* Image Container */}
-      <div className="card-img-container" onClick={() => setActiveProductModal(product)}>
+      <div className="card-img-container cursor-pointer" onClick={() => navigateTo('product-detail', product)}>
         <img 
           src={getPrimaryImageUrl()} 
           alt={product.title} 
@@ -80,7 +80,7 @@ export const ProductCard = ({ product }) => {
           {product.oemPartNumber && <span className="card-partno">Part #: {product.oemPartNumber}</span>}
         </div>
 
-        <h3 className="card-title" onClick={() => setActiveProductModal(product)}>
+        <h3 className="card-title cursor-pointer" onClick={() => navigateTo('product-detail', product)}>
           {product.title}
         </h3>
 
@@ -103,9 +103,17 @@ export const ProductCard = ({ product }) => {
             )}
           </div>
 
-          <button className="btn-add-cart" onClick={() => addToCart(product)}>
-            <ShoppingCart size={18} /> Add
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button className="btn-add-cart" onClick={(e) => { e.stopPropagation(); addToCart(product); }}>
+              <ShoppingCart size={16} /> Add
+            </button>
+            <button 
+              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-extrabold text-xs px-3 py-2 rounded-xl transition cursor-pointer shadow-md shadow-orange-500/20" 
+              onClick={(e) => { e.stopPropagation(); buyNow(product); }}
+            >
+              Buy Now
+            </button>
+          </div>
         </div>
       </div>
     </div>

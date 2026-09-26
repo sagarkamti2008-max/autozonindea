@@ -91,34 +91,44 @@ export const AdminFulfillmentManager = () => {
         </div>
       </div>
 
-      {/* Shipping Metrics Cards */}
-      <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '0.8rem', color: '#64748B' }}>Total Single-Owner Orders</span>
-          <h3 style={{ fontSize: '1.6rem', color: '#0F2167', margin: '0.25rem 0' }}>{orders.length}</h3>
-          <span style={{ fontSize: '0.75rem', color: '#3B82F6' }}>100% Owned Products</span>
+      {/* Orders Metrics Cards */}
+      <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }} onClick={() => setStatusFilter('all')}>
+          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>📦 Total Orders</span>
+          <h3 style={{ fontSize: '1.75rem', color: '#0F2167', margin: '0.25rem 0', fontWeight: 900 }}>{orders.length}</h3>
+          <span style={{ fontSize: '0.75rem', color: '#3B82F6', fontWeight: 700 }}>All Customer Orders</span>
         </div>
 
-        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '0.8rem', color: '#64748B' }}>Pending Fulfillment</span>
-          <h3 style={{ fontSize: '1.6rem', color: '#F59E0B', margin: '0.25rem 0' }}>
-            {orders.filter(o => (o.orderStatus || 'Confirmed') === 'Confirmed' || o.orderStatus === 'Processing').length}
+        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }} onClick={() => setStatusFilter('New')}>
+          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>🆕 New Orders</span>
+          <h3 style={{ fontSize: '1.75rem', color: '#0284C7', margin: '0.25rem 0', fontWeight: 900 }}>
+            {orders.filter(o => o.orderStatus === 'New' || o.orderStatus === 'Confirmed' || !o.orderStatus).length}
           </h3>
-          <span style={{ fontSize: '0.75rem', color: '#F59E0B' }}>Ready for Packing</span>
+          <span style={{ fontSize: '0.75rem', color: '#0284C7', fontWeight: 700 }}>Fresh Received</span>
         </div>
 
-        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '0.8rem', color: '#64748B' }}>Shipped / In Transit</span>
-          <h3 style={{ fontSize: '1.6rem', color: '#10B981', margin: '0.25rem 0' }}>
-            {orders.filter(o => o.orderStatus === 'Shipped').length}
+        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }} onClick={() => setStatusFilter('Pending')}>
+          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>⏳ Pending Orders</span>
+          <h3 style={{ fontSize: '1.75rem', color: '#D97706', margin: '0.25rem 0', fontWeight: 900 }}>
+            {orders.filter(o => o.orderStatus === 'Pending' || o.orderStatus === 'Processing' || o.orderStatus === 'Packed').length}
           </h3>
-          <span style={{ fontSize: '0.75rem', color: '#10B981' }}>On-Time Air/Surface</span>
+          <span style={{ fontSize: '0.75rem', color: '#D97706', fontWeight: 700 }}>Processing / Packing</span>
         </div>
 
-        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '0.8rem', color: '#64748B' }}>Scheduled Courier Pickups</span>
-          <h3 style={{ fontSize: '1.6rem', color: '#0F2167', margin: '0.25rem 0' }}>{pickups.length}</h3>
-          <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Today's Dispatch</span>
+        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }} onClick={() => setStatusFilter('Completed')}>
+          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>✅ Completed Orders</span>
+          <h3 style={{ fontSize: '1.75rem', color: '#059669', margin: '0.25rem 0', fontWeight: 900 }}>
+            {orders.filter(o => o.orderStatus === 'Completed' || o.orderStatus === 'Delivered' || o.orderStatus === 'Shipped').length}
+          </h3>
+          <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>Shipped / Delivered</span>
+        </div>
+
+        <div className="metric-card" style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }} onClick={() => setStatusFilter('Cancelled')}>
+          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>🚫 Cancelled Orders</span>
+          <h3 style={{ fontSize: '1.75rem', color: '#DC2626', margin: '0.25rem 0', fontWeight: 900 }}>
+            {orders.filter(o => o.orderStatus === 'Cancelled').length}
+          </h3>
+          <span style={{ fontSize: '0.75rem', color: '#DC2626', fontWeight: 700 }}>Cancelled & Refunded</span>
         </div>
       </div>
 
