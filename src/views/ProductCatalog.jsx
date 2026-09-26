@@ -83,18 +83,22 @@ export const ProductCatalog = () => {
   const finalFilteredProducts = useMemo(() => {
     return ranked.filter(prod => {
       if (!prod || (!prod.title && !prod.name)) return false;
-      if (prod.isActive === false) return false;
+      if (prod.isActive === false || prod.status === 'inactive' || prod.activeStatus === 'inactive') return false;
 
       // Check dependent vehicle & category matching
       const targetBrand = selectedVehicle ? (selectedVehicle.makeName || selectedVehicle.makeId || selectedBrand) : selectedBrand;
       const targetModel = selectedVehicle ? (selectedVehicle.modelName || selectedVehicle.modelId) : '';
+      const targetVariant = selectedVehicle ? (selectedVehicle.variant || '') : '';
+      const targetYear = selectedVehicle ? (selectedVehicle.year || '') : '';
 
       const isMatched = isProductMatchingVehicleAndCategory(
         prod,
         targetBrand,
         targetModel,
         selectedCategory,
-        ''
+        '',
+        targetVariant,
+        targetYear
       );
 
       if (!isMatched && (selectedVehicle || selectedCategory !== 'all')) return false;

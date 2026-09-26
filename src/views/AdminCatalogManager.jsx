@@ -451,16 +451,47 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
 
   // Save Product (Draft vs Published based on Role)
   const handleSaveProduct = async (targetStatus) => {
+    // 1. Title Validation
+    if (!productForm.title || !productForm.title.trim()) {
+      showToast('❌ Product Title / Name is required!', 'error');
+      return;
+    }
+
+    // 2. Category Validation
+    if (!productForm.category || productForm.category === 'all') {
+      showToast('❌ Part Category is required! Please select a category.', 'error');
+      return;
+    }
+
+    // 3. Car Model Fitment Validation
+    const hasValidFitment = productForm.isUniversal || (
+      Array.isArray(productForm.fitments) &&
+      productForm.fitments.length > 0 &&
+      productForm.fitments.some(f => f && f.model && f.model.trim().length > 0)
+    );
+    if (!hasValidFitment) {
+      showToast('❌ Vehicle Model selection is required! Please specify at least one car model in the fitment matrix.', 'error');
+      return;
+    }
+
+    // 4. Product Image Validation
+    if (!productForm.images || !Array.isArray(productForm.images) || productForm.images.length === 0 || !productForm.images[0]) {
+      showToast('❌ Product Image is required! Please upload or attach at least one image.', 'error');
+      return;
+    }
+
+    // 5. Price Validation
+    const parsedPrice = parseFloat(productForm.sellingPrice) || parseFloat(productForm.mrp);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      showToast('❌ Valid Selling Price (greater than 0) is required!', 'error');
+      return;
+    }
+
     // Auto-generate SKU if blank
     let generatedSku = productForm.sku.trim();
     if (!generatedSku) {
       const brandCode = (productForm.brand || 'AZ').slice(0, 3).toUpperCase();
       generatedSku = `SKU-${brandCode}-${Math.floor(100000 + Math.random() * 900000)}`;
-    }
-
-    if (!productForm.title.trim()) {
-      showToast('❌ Product Title is required!', 'error');
-      return;
     }
 
     const effectiveSellingPrice = parseFloat(productForm.sellingPrice) || parseFloat(productForm.mrp) || 1200;

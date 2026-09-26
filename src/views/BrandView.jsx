@@ -166,7 +166,7 @@ const BRAND_MODELS_DATA = {
 
 // 14 Master Categories for filtering as requested
 const MAIN_CATEGORIES = [
-  { id: 'all', name: 'All Categories', icon: '✨' },
+  { id: 'all', name: 'All Parts', icon: '✨' },
   { id: 'engine-parts', name: 'Engine Parts', icon: '⚙️' },
   { id: 'brake-parts', name: 'Brake Parts', icon: '🛑' },
   { id: 'suspension-parts', name: 'Suspension Parts', icon: '🔩' },
@@ -197,6 +197,7 @@ export const BrandView = () => {
 
   // Selection states
   const [activeModel, setActiveModel] = useState('');
+  const [activeVariant, setActiveVariant] = useState('All');
   const [activeFuel, setActiveFuel] = useState('All');
   const [activeYear, setActiveYear] = useState('All');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -209,7 +210,18 @@ export const BrandView = () => {
 
   // Filter products for this brand & vehicle & category
   const filteredProducts = (products || []).filter(p => {
-    const isMatched = isProductMatchingVehicleAndCategory(p, currentBrand, activeModel, activeCategory, '');
+    // 0. Active status check
+    if (p.isActive === false || p.status === 'inactive' || p.activeStatus === 'inactive') return false;
+
+    const isMatched = isProductMatchingVehicleAndCategory(
+      p,
+      currentBrand,
+      activeModel,
+      activeCategory,
+      '',
+      activeVariant,
+      activeYear
+    );
     if (!isMatched) return false;
 
     // Fuel Type
@@ -223,25 +235,19 @@ export const BrandView = () => {
       if (!matchFuel && !p.isUniversal) return false;
     }
 
-    // Year
-    if (activeYear && activeYear !== 'All') {
-      const yrStr = String(activeYear);
-      const pTitleLower = (p.title || '').toLowerCase();
-      const pDescLower = (p.description || '').toLowerCase();
-      const matchYear = (p.year && String(p.year) === yrStr) ||
-                        (p.compatibleYears && String(p.compatibleYears).includes(yrStr)) ||
-                        pTitleLower.includes(yrStr) ||
-                        pDescLower.includes(yrStr);
-      if (!matchYear && !p.isUniversal) return false;
-    }
-
-    // Search Term
+    // Search Term / Part Number / OEM Number
     if (searchTerm.trim().length > 0) {
       const term = searchTerm.toLowerCase().trim();
       const pTitleLower = (p.title || '').toLowerCase();
       const pDescLower = (p.description || '').toLowerCase();
+      const pPartNum = (p.partNumber || p.mpn || '').toLowerCase();
+      const pOemNum = (p.oemPartNumber || p.oemNumber || '').toLowerCase();
+      const pBrand = (p.brand || '').toLowerCase();
+
       const matchText = pTitleLower.includes(term) ||
-                        (p.oemPartNumber && p.oemPartNumber.toLowerCase().includes(term)) ||
+                        pOemNum.includes(term) ||
+                        pPartNum.includes(term) ||
+                        pBrand.includes(term) ||
                         (p.subCategory && p.subCategory.toLowerCase().includes(term)) ||
                         pDescLower.includes(term);
       if (!matchText) return false;
@@ -250,18 +256,9 @@ export const BrandView = () => {
     return true;
   });
 
-  // Fallback brand items if zero products match specific filter combination
-  const displayProducts = filteredProducts.length > 0 
-    ? filteredProducts 
-    : (products || []).filter(p => {
-        const bLower = currentBrand.toLowerCase();
-        return (p.brand || '').toLowerCase().includes(bLower) || 
-               (p.title || '').toLowerCase().includes(bLower) ||
-               (p.compatibleVehicles && p.compatibleVehicles.some(v => v.toLowerCase().includes(bLower))) ||
-               p.isUniversal || p.brand === 'Universal';
-      });
-
-  const isShowingFallback = filteredProducts.length === 0;
+  // Strict catalog display (never show cross-model fallback when model/filters are active)
+  const displayProducts = filteredProducts;
+  const isShowingFallback = false;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-24 selection:bg-[#FF5722] selection:text-white">
@@ -608,130 +605,175 @@ export const BrandView = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
-          {displayProducts.map((product) => {
-            const isWishlisted = wishlist && wishlist.some(item => item.id === product.id);
-            const discountPercent = product.mrp && product.mrp > product.price 
-              ? Math.round(((product.mrp - product.price) / product.mrp) * 100) 
-              : 15;
-
-            return (
-              <div
-                key={product.id}
-                className="bg-slate-950 border border-slate-800 hover:border-[#FF5722] rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/10 group relative"
+        {displayProducts.length === 0 ? (
+          <div className="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center py-16 px-6 text-center w-full mb-8 relative overflow-hidden">
+            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-800 text-amber-500">
+              <Search size={32} />
+            </div>
+            <h3 className="font-black text-2xl text-white mb-3 uppercase tracking-tight">
+              No products found for {currentBrand} {activeModel || ''} {activeCategory !== 'all' ? activeCategory.replace('-', ' ') : ''}
+            </h3>
+            <p className="text-slate-400 font-medium text-xs sm:text-sm max-w-md mx-auto mb-8 leading-relaxed">
+              We couldn't find any products matching your specific vehicle model and category selection. Try selecting another category or speak with our live fitment team.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button 
+                onClick={() => {
+                  setActiveModel('');
+                  setActiveCategory('all');
+                  setActiveVariant('All');
+                  setActiveYear('All');
+                  setSearchTerm('');
+                }}
+                className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 px-6 rounded-xl transition-all cursor-pointer border border-slate-700"
               >
-                <div>
-                  {/* Product Image & Badges */}
-                  <div className="relative h-48 bg-slate-900 rounded-xl overflow-hidden mb-3.5 flex items-center justify-center p-3 border border-slate-800/80">
-                    <img
-                      src={product.image || product.image_url || '/images/synthetic_engine_oil.jpg'}
-                      alt={product.title}
-                      className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-300"
-                    />
-                    
-                    <span className="absolute top-2 left-2 bg-[#FF5722] text-white font-black text-[10px] px-2 py-0.5 rounded uppercase shadow-md flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" /> 100% Fitment
-                    </span>
+                Reset Vehicle & Category Filters
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            {displayProducts.map((product) => {
+              const isWishlisted = wishlist && wishlist.some(item => item.id === product.id);
+              const discountPercent = product.mrp && product.mrp > product.price 
+                ? Math.round(((product.mrp - product.price) / product.mrp) * 100) 
+                : 15;
+              const isOutOfStock = product.stockStatus === 'out_of_stock' || (product.stock !== undefined && product.stock <= 0) || product.inStock === false;
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleWishlist(product);
-                      }}
-                      className={`absolute top-2 right-2 p-2 rounded-full border backdrop-blur-md transition ${
-                        isWishlisted 
-                          ? 'bg-red-500 text-white border-red-400' 
-                          : 'bg-slate-900/80 text-slate-400 hover:text-white border-slate-700'
-                      }`}
-                    >
-                      <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
-                    </button>
-
-                    {product.oemPartNumber && (
-                      <span className="absolute bottom-2 left-2 bg-slate-950/90 text-amber-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-800">
-                        OEM: {product.oemPartNumber}
+              return (
+                <div
+                  key={product.id}
+                  className="bg-slate-950 border border-slate-800 hover:border-[#FF5722] rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/10 group relative"
+                >
+                  <div>
+                    {/* Product Image & Badges */}
+                    <div className="relative h-48 bg-slate-900 rounded-xl overflow-hidden mb-3.5 flex items-center justify-center p-3 border border-slate-800/80">
+                      <img
+                        src={product.image || product.image_url || '/images/synthetic_engine_oil.jpg'}
+                        alt={product.title}
+                        className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-300"
+                      />
+                      
+                      <span className="absolute top-2 left-2 bg-[#FF5722] text-white font-black text-[10px] px-2 py-0.5 rounded uppercase shadow-md flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> 100% Fitment
                       </span>
-                    )}
 
-                    {discountPercent > 0 && (
-                      <span className="absolute bottom-2 right-2 bg-emerald-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded">
-                        {discountPercent}% OFF
-                      </span>
-                    )}
-                  </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
+                        className={`absolute top-2 right-2 p-2 rounded-full border backdrop-blur-md transition ${
+                          isWishlisted 
+                            ? 'bg-red-500 text-white border-red-400' 
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white border-slate-700'
+                        }`}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
+                      </button>
 
-                  {/* Brand & SubCategory */}
-                  <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-400 mb-1">
-                    <span className="text-[#FF5722]">{product.brand || currentBrand}</span>
-                    <span className="text-slate-500">{product.subCategory || product.category || 'Spare Part'}</span>
-                  </div>
+                      {(product.oemPartNumber || product.partNumber) && (
+                        <span className="absolute bottom-2 left-2 bg-slate-950/90 text-amber-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-800">
+                          OEM: {product.oemPartNumber || product.partNumber}
+                        </span>
+                      )}
 
-                  {/* Product Title */}
-                  <h4
-                    onClick={() => navigateTo('product-detail', product.id)}
-                    className="font-extrabold text-white text-sm line-clamp-2 hover:text-[#FF5722] cursor-pointer transition leading-snug"
-                  >
-                    {product.title}
-                  </h4>
-
-                  {/* Rating Stars */}
-                  <div className="flex items-center gap-1.5 mt-2 text-amber-400 text-xs font-extrabold">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 fill-current text-amber-400" />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-slate-400 font-bold">(4.9 • Verified Fit)</span>
-                  </div>
-                </div>
-
-                {/* Price & Actions */}
-                <div className="pt-4 border-t border-slate-800/80 mt-4 space-y-2">
-                  <div className="flex items-baseline justify-between">
-                    <div>
-                      <div className="text-lg font-black text-white">
-                        ₹{product.price ? product.price.toLocaleString('en-IN') : '1,299'}
-                      </div>
-                      {product.mrp && product.mrp > product.price && (
-                        <div className="text-[10px] text-slate-500 line-through font-bold">
-                          ₹{product.mrp.toLocaleString('en-IN')}
-                        </div>
+                      {discountPercent > 0 && (
+                        <span className="absolute bottom-2 right-2 bg-emerald-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded">
+                          {discountPercent}% OFF
+                        </span>
                       )}
                     </div>
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                      In Stock
-                    </span>
+
+                    {/* Brand & SubCategory */}
+                    <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-400 mb-1">
+                      <span className="text-[#FF5722]">{product.brand || currentBrand}</span>
+                      <span className="text-slate-500">{product.subCategory || product.category || 'Spare Part'}</span>
+                    </div>
+
+                    {/* Product Title */}
+                    <h4
+                      onClick={() => navigateTo('product-detail', product.id)}
+                      className="font-extrabold text-white text-sm line-clamp-2 hover:text-[#FF5722] cursor-pointer transition leading-snug"
+                    >
+                      {product.title}
+                    </h4>
+
+                    {/* Rating Stars */}
+                    <div className="flex items-center gap-1.5 mt-2 text-amber-400 text-xs font-extrabold">
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-current text-amber-400" />
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold">(4.9 • Verified Fit)</span>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      onClick={() => {
-                        addToCart(product);
-                        showToast(`Added "${product.title}" to Cart 🛒`);
-                      }}
-                      className="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-[#FF5722] p-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-bold"
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5 text-[#FF5722]" />
-                      <span>Add</span>
-                    </button>
+                  {/* Price & Actions */}
+                  <div className="pt-4 border-t border-slate-800/80 mt-4 space-y-2">
+                    <div className="flex items-baseline justify-between">
+                      <div>
+                        <div className="text-lg font-black text-white">
+                          ₹{product.price ? product.price.toLocaleString('en-IN') : '1,299'}
+                        </div>
+                        {product.mrp && product.mrp > product.price && (
+                          <div className="text-[10px] text-slate-500 line-through font-bold">
+                            ₹{product.mrp.toLocaleString('en-IN')}
+                          </div>
+                        )}
+                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                        isOutOfStock 
+                          ? 'text-rose-400 bg-rose-500/10 border-rose-500/30' 
+                          : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                      }`}>
+                        {isOutOfStock ? 'Out of Stock' : 'In Stock'}
+                      </span>
+                    </div>
 
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        buyNow(product);
-                      }}
-                      className="bg-gradient-to-r from-[#FF5722] to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white p-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1 text-xs font-black shadow-md shadow-orange-500/20"
-                    >
-                      <span>Buy Now</span>
-                    </button>
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        disabled={isOutOfStock}
+                        onClick={() => {
+                          if (isOutOfStock) return;
+                          addToCart(product);
+                          showToast(`Added "${product.title}" to Cart 🛒`);
+                        }}
+                        className={`p-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs font-bold ${
+                          isOutOfStock
+                            ? 'bg-slate-900 text-slate-600 border border-slate-800 cursor-not-allowed'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-[#FF5722] cursor-pointer'
+                        }`}
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5 text-[#FF5722]" />
+                        <span>Add</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={isOutOfStock}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (isOutOfStock) return;
+                          buyNow(product);
+                        }}
+                        className={`p-2.5 rounded-xl transition-all flex items-center justify-center gap-1 text-xs font-black ${
+                          isOutOfStock
+                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-[#FF5722] to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md shadow-orange-500/20 cursor-pointer'
+                        }`}
+                      >
+                        <span>{isOutOfStock ? 'Unavailable' : 'Buy Now'}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
       </section>
 
