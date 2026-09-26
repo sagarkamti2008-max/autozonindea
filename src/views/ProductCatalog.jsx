@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../context/StoreContext';
 import { rankProductSearchResults } from '../services/searchDiscoveryEngine';
-import { checkVehicleProductCompatibility } from '../services/catalogEngine';
+import { checkVehicleProductCompatibility, isProductMatchingVehicleAndCategory } from '../services/catalogEngine';
 import {
   Search, Sliders, Car, ShieldCheck, Star, Heart, ArrowRightLeft,
   Wrench, ChevronDown, Filter, X, CheckCircle2, AlertTriangle, Sparkles, ShoppingCart, Truck, Zap,
-  Check, RotateCcw
+  Check, RotateCcw, Layers
 } from 'lucide-react';
 
 export const ProductCatalog = () => {
@@ -84,29 +84,21 @@ export const ProductCatalog = () => {
     return ranked.filter(prod => {
       if (!prod || (!prod.title && !prod.name)) return false;
       if (prod.isActive === false) return false;
-      
-      // Category Match
-      if (selectedCategory !== 'all') {
-        const prodCatLower = (prod.category || '').toLowerCase();
-        const selCatLower = selectedCategory.toLowerCase();
-        if (prodCatLower !== selCatLower) {
-          const categoryMap = {
-            'engine_parts': ['engine_parts', 'engine', 'spare_parts', 'clutch_transmission', 'service_parts', 'engine parts'],
-            'braking_system': ['braking_system', 'brakes', 'spare_parts', 'brake parts'],
-            'suspension_steering': ['suspension_steering', 'suspension', 'steering_suspension', 'spare_parts', 'suspension parts', 'steering parts'],
-            'filters_oils': ['filters_oils', 'oils_fluids', 'service_parts', 'filters', 'engine', 'filters & maintenance', 'filter'],
-            'lighting_electrical': ['lighting_electrical', 'electrical', 'electronics', 'electrical parts'],
-            'interior_exterior_accessories': ['interior_exterior_accessories', 'interior', 'exterior', 'interiors', 'car_care', 'body_shop', 'accessories', 'body parts']
-          };
-          const aliases = (categoryMap[selCatLower] || [selCatLower]).map(a => a.toLowerCase());
-          if (!aliases.some(alias => prodCatLower.includes(alias) || alias.includes(prodCatLower))) return false;
-        }
-      }
-      
-      // Brand Match
-      const prodBrand = (prod.brand || prod.carBrand || '').toLowerCase();
-      if (selectedBrand !== 'all' && prodBrand !== selectedBrand.toLowerCase()) return false;
-      
+
+      // Check dependent vehicle & category matching
+      const targetBrand = selectedVehicle ? (selectedVehicle.makeName || selectedVehicle.makeId || selectedBrand) : selectedBrand;
+      const targetModel = selectedVehicle ? (selectedVehicle.modelName || selectedVehicle.modelId) : '';
+
+      const isMatched = isProductMatchingVehicleAndCategory(
+        prod,
+        targetBrand,
+        targetModel,
+        selectedCategory,
+        ''
+      );
+
+      if (!isMatched && (selectedVehicle || selectedCategory !== 'all')) return false;
+
       // Classification Match
       if (selectedClassification !== 'all' && prod.classification?.toLowerCase() !== selectedClassification.toLowerCase()) return false;
       
@@ -119,13 +111,7 @@ export const ProductCatalog = () => {
       
       // Rating
       if (minRating > 0 && (prod.rating || 0) < minRating) return false;
-  
-      // Vehicle Fitment
-      if (filterFitsVehicle && selectedVehicle) {
-        const check = checkVehicleProductCompatibility(prod, selectedVehicle);
-        if (!check.compatible) return false;
-      }
-  
+
       return true;
     }).sort((a, b) => {
       if (sortBy === 'price-low') return a.price - b.price;
@@ -134,7 +120,7 @@ export const ProductCatalog = () => {
       if (sortBy === 'popularity') return (b.sales || 0) - (a.sales || 0);
       return 0; // relevance or featured
     });
-  }, [ranked, selectedCategory, selectedBrand, selectedClassification, priceRange, inStockOnly, minRating, filterFitsVehicle, selectedVehicle, sortBy]);
+  }, [ranked, selectedCategory, selectedBrand, selectedClassification, priceRange, inStockOnly, minRating, selectedVehicle, sortBy]);
 
   const handleLocalSearchSubmit = (e) => {
     e.preventDefault();

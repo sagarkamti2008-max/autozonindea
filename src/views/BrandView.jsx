@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
+import { isProductMatchingVehicleAndCategory } from '../services/catalogEngine';
 import {
   ArrowLeft, ChevronRight, Car, CheckCircle2, ShieldCheck, Filter,
   Search, ShoppingCart, Heart, ArrowRight, Sparkles, Wrench, Layers, Tag,
@@ -163,16 +164,23 @@ const BRAND_MODELS_DATA = {
   ]
 };
 
-// Major Categories for filtering
+// 14 Master Categories for filtering as requested
 const MAIN_CATEGORIES = [
   { id: 'all', name: 'All Categories', icon: '✨' },
-  { id: 'engine-parts', name: 'Engine & Parts', icon: '⚙️' },
-  { id: 'brake-system', name: 'Brakes & Suspension', icon: '🛑' },
-  { id: 'filters', name: 'Filters (Air/Oil/Cabin)', icon: '🧹' },
-  { id: 'body-bumper', name: 'Body Parts & Bumpers', icon: '🚗' },
-  { id: 'electrical', name: 'Electrical & Lighting', icon: '⚡' },
-  { id: 'oils-fluids', name: 'Engine Oil & Fluids', icon: '🛢️' },
-  { id: 'car-accessories', name: 'Car Accessories', icon: '👑' }
+  { id: 'engine-parts', name: 'Engine Parts', icon: '⚙️' },
+  { id: 'brake-parts', name: 'Brake Parts', icon: '🛑' },
+  { id: 'suspension-parts', name: 'Suspension Parts', icon: '🔩' },
+  { id: 'electrical-parts', name: 'Electrical Parts', icon: '⚡' },
+  { id: 'body-parts', name: 'Body Parts', icon: '🚗' },
+  { id: 'ac-parts', name: 'AC Parts', icon: '❄️' },
+  { id: 'transmission-parts', name: 'Transmission Parts', icon: '🕹️' },
+  { id: 'steering-parts', name: 'Steering Parts', icon: '☸️' },
+  { id: 'filters', name: 'Filters', icon: '🧹' },
+  { id: 'clutch-parts', name: 'Clutch Parts', icon: '💿' },
+  { id: 'cooling-system', name: 'Cooling System', icon: '🌡️' },
+  { id: 'fuel-system', name: 'Fuel System', icon: '⛽' },
+  { id: 'interior-parts', name: 'Interior Parts', icon: '💺' },
+  { id: 'accessories', name: 'Accessories', icon: '👑' }
 ];
 
 export const BrandView = () => {
@@ -199,102 +207,27 @@ export const BrandView = () => {
     document.title = `${currentBrand} Spare Parts & Car Models Catalog | AutoZonIndia`;
   }, [currentBrand]);
 
-  // Filter products for this brand
+  // Filter products for this brand & vehicle & category
   const filteredProducts = (products || []).filter(p => {
-    const brandLower = currentBrand.toLowerCase();
-    const pBrandLower = (p.brand || '').toLowerCase();
-    const pTitleLower = (p.title || '').toLowerCase();
-    const pDescLower = (p.description || '').toLowerCase();
+    const isMatched = isProductMatchingVehicleAndCategory(p, currentBrand, activeModel, activeCategory, '');
+    if (!isMatched) return false;
 
-    // 1. Match Brand
-    const matchBrand = pBrandLower.includes(brandLower) ||
-                       pTitleLower.includes(brandLower) ||
-                       pDescLower.includes(brandLower) ||
-                       (p.compatibleVehicles && p.compatibleVehicles.some(v => v.toLowerCase().includes(brandLower)));
-
-    if (!matchBrand && !p.isUniversal && p.brand !== 'Universal') return false;
-
-    // 2. Exact Model Match
-    if (activeModel) {
-      const modelClean = activeModel.trim().toLowerCase();
-      
-      const checkTextMatch = (text) => {
-        if (!text) return false;
-        const t = text.toLowerCase();
-
-        // Exact full string match
-        if (t.includes(modelClean)) return true;
-
-        // Sub-models list (e.g. Innova vs Innova Crysta vs Innova Hycross)
-        const subModels = [
-          { full: 'innova crysta', sub: 'crysta' },
-          { full: 'innova hycross', sub: 'hycross' },
-          { full: 'etios liva', sub: 'liva' },
-          { full: 'corolla altis', sub: 'altis' },
-          { full: 'landcruiser prado', sub: 'prado' },
-          { full: 'thar roxx', sub: 'roxx' },
-          { full: 'scorpio-n', sub: 'scorpio-n' },
-          { full: 'scorpio classic', sub: 'classic' },
-          { full: 'xuv3xo', sub: '3xo' },
-          { full: 'bolero neo', sub: 'neo' },
-          { full: 'nexon ev', sub: 'ev' },
-          { full: 'punch ev', sub: 'ev' },
-          { full: 'tiago ev', sub: 'ev' },
-          { full: 'tigor ev', sub: 'ev' },
-          { full: 'curvv ev', sub: 'ev' },
-          { full: 'grand vitara', sub: 'vitara' },
-          { full: 'alto k10', sub: 'k10' },
-          { full: 'alto 800', sub: '800' },
-          { full: 'elite i20', sub: 'elite' },
-          { full: 'grand i10', sub: 'grand' }
-        ];
-
-        // If user selected a specific sub-model (e.g. "innova crysta" or "crysta")
-        for (const m of subModels) {
-          if (modelClean.includes(m.sub) || modelClean === m.full) {
-            return t.includes(m.sub) || t.includes(m.full);
-          }
-        }
-
-        // If user selected base model "innova" (without crysta / hycross)
-        if (modelClean === 'innova') {
-          return t.includes('innova') && !t.includes('crysta') && !t.includes('hycross');
-        }
-        if (modelClean === 'etios') {
-          return t.includes('etios') && !t.includes('liva');
-        }
-        if (modelClean === 'corolla') {
-          return t.includes('corolla') && !t.includes('altis');
-        }
-        if (modelClean === 'scorpio') {
-          return t.includes('scorpio') && !t.includes('scorpio-n') && !t.includes('classic');
-        }
-
-        // Default match
-        const mainWord = modelClean.split(' ')[0];
-        return t.includes(mainWord);
-      };
-
-      const matchModel = checkTextMatch(pTitleLower) ||
-                         checkTextMatch(pDescLower) ||
-                         (p.compatibleVehicles && p.compatibleVehicles.some(v => checkTextMatch(v))) ||
-                         (p.fitments && p.fitments.some(f => checkTextMatch(f.model)));
-
-      if (!matchModel && !p.isUniversal && p.brand !== 'Universal') return false;
-    }
-
-    // 3. Match Fuel Type
+    // Fuel Type
     if (activeFuel && activeFuel !== 'All') {
       const fuelLower = activeFuel.toLowerCase();
+      const pTitleLower = (p.title || '').toLowerCase();
+      const pDescLower = (p.description || '').toLowerCase();
       const matchFuel = (p.fuelType && p.fuelType.toLowerCase().includes(fuelLower)) ||
                         pTitleLower.includes(fuelLower) ||
                         pDescLower.includes(fuelLower);
       if (!matchFuel && !p.isUniversal) return false;
     }
 
-    // 4. Match Year
+    // Year
     if (activeYear && activeYear !== 'All') {
       const yrStr = String(activeYear);
+      const pTitleLower = (p.title || '').toLowerCase();
+      const pDescLower = (p.description || '').toLowerCase();
       const matchYear = (p.year && String(p.year) === yrStr) ||
                         (p.compatibleYears && String(p.compatibleYears).includes(yrStr)) ||
                         pTitleLower.includes(yrStr) ||
@@ -302,39 +235,11 @@ export const BrandView = () => {
       if (!matchYear && !p.isUniversal) return false;
     }
 
-    // 5. Match Category Exactly
-    if (activeCategory !== 'all') {
-      const catLower = activeCategory.toLowerCase();
-      const pCat = (p.category || '').toLowerCase();
-      const pSub = (p.subCategory || '').toLowerCase();
-      const pTitle = pTitleLower;
-
-      let catMatch = false;
-
-      if (catLower === 'engine-parts') {
-        catMatch = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') || pTitle.includes('spark') || pTitle.includes('clutch') || pTitle.includes('piston') || pTitle.includes('gasket');
-      } else if (catLower === 'brake-system') {
-        catMatch = pCat.includes('brake') || pCat.includes('suspension') || pSub.includes('brake') || pSub.includes('shock') || pTitle.includes('brake') || pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('absorber');
-      } else if (catLower === 'filters') {
-        catMatch = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
-      } else if (catLower === 'body-bumper') {
-        catMatch = pCat.includes('body') || pCat.includes('bumper') || pSub.includes('bumper') || pTitle.includes('bumper') || pTitle.includes('fender') || pTitle.includes('door') || pTitle.includes('mirror');
-      } else if (catLower === 'electrical') {
-        catMatch = pCat.includes('electric') || pCat.includes('lighting') || pSub.includes('electric') || pSub.includes('light') || pTitle.includes('light') || pTitle.includes('headlight') || pTitle.includes('battery') || pTitle.includes('switch');
-      } else if (catLower === 'oils-fluids') {
-        catMatch = pCat.includes('oil') || pCat.includes('fluid') || pSub.includes('oil') || pTitle.includes('oil') || pTitle.includes('fluid') || pTitle.includes('coolant');
-      } else if (catLower === 'car-accessories') {
-        catMatch = pCat.includes('accessori') || pSub.includes('accessori') || pTitle.includes('holder') || pTitle.includes('mat') || pTitle.includes('cover') || pTitle.includes('seat');
-      } else {
-        catMatch = pCat.includes(catLower) || pSub.includes(catLower);
-      }
-
-      if (!catMatch) return false;
-    }
-
-    // 6. Match Search Term
+    // Search Term
     if (searchTerm.trim().length > 0) {
       const term = searchTerm.toLowerCase().trim();
+      const pTitleLower = (p.title || '').toLowerCase();
+      const pDescLower = (p.description || '').toLowerCase();
       const matchText = pTitleLower.includes(term) ||
                         (p.oemPartNumber && p.oemPartNumber.toLowerCase().includes(term)) ||
                         (p.subCategory && p.subCategory.toLowerCase().includes(term)) ||

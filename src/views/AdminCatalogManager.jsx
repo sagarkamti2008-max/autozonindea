@@ -1551,13 +1551,30 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                       </div>
                       <div>
                         <label className="text-[10px] text-slate-400 font-bold block mb-1">Car Model *</label>
-                        <input
-                          type="text"
+                        <select
                           value={fit.model}
                           onChange={(e) => handleFitmentChange(idx, 'model', e.target.value)}
-                          placeholder="e.g. Swift"
                           className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold"
-                        />
+                        >
+                          <option value="">Select Model...</option>
+                          {(() => {
+                            const selectedMakeObj = VEHICLE_MAKES.find(m => 
+                              m.name.toLowerCase().includes((fit.make || '').toLowerCase()) || 
+                              (fit.make || '').toLowerCase().includes(m.id)
+                            );
+                            if (selectedMakeObj && selectedMakeObj.models) {
+                              return selectedMakeObj.models.map(mod => (
+                                <option key={mod.id} value={mod.name}>{mod.name}</option>
+                              ));
+                            }
+                            return [
+                              'Innova', 'Innova Crysta', 'Innova Hycross', 'Fortuner', 'Legender', 'Glanza', 'Etios', 'Etios Liva', 'Camry', 'Corolla Altis',
+                              'Swift', 'Baleno', 'Brezza', 'Ertiga', 'Dzire', 'Thar', 'Scorpio-N', 'Scorpio Classic', 'XUV700', 'XUV300', 'Bolero', 'Creta', 'Venue', 'i20', 'Verna'
+                            ].map(m => (
+                              <option key={m} value={m}>{m}</option>
+                            ));
+                          })()}
+                        </select>
                       </div>
                       <div>
                         <label className="text-[10px] text-slate-400 font-bold block mb-1">Variant *</label>
