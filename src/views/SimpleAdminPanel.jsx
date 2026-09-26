@@ -275,49 +275,57 @@ export const SimpleAdminPanel = () => {
 
   // Save Product (Add / Edit) - Instant Modal Close & Background Sync
   const handleSaveProduct = async (e) => {
-    e.preventDefault();
-    if (!productForm.name || !productForm.name.trim()) {
-      showToast('⚠️ Please enter Product Name / Title', 'error');
-      return;
-    }
-    if (!productForm.sellingPrice || Number(productForm.sellingPrice) <= 0) {
-      showToast('⚠️ Please enter a valid Selling Price (Mera Price)', 'error');
-      return;
-    }
+    if (e && e.preventDefault) e.preventDefault();
+    
+    const productName = (productForm.name || '').trim() || 'New Auto Part';
+    const sellingPriceVal = Number(productForm.sellingPrice) || Number(productForm.mrp) || 1000;
+    const mrpVal = Number(productForm.mrp) || Math.round(sellingPriceVal * 1.25);
 
     const newProductObj = {
       id: editingProduct ? editingProduct.id : `AZ-PROD-${Date.now()}`,
       ...productForm,
-      title: productForm.name,
-      name: productForm.name,
-      price: Number(productForm.sellingPrice),
-      sellingPrice: Number(productForm.sellingPrice),
-      mrp: Number(productForm.mrp) || Number(productForm.sellingPrice) * 1.25,
+      name: productName,
+      title: productName,
+      desc: productForm.desc || '',
+      description: productForm.desc || '',
+      sku: productForm.sku || `KAMTI-${Math.floor(1000 + Math.random() * 9000)}`,
+      partNumber: productForm.sku || `KAMTI-${Math.floor(1000 + Math.random() * 9000)}`,
+      brand: productForm.carBrand || productForm.brand || 'Kamti Genuine',
+      carBrand: productForm.carBrand || productForm.brand || 'Kamti Genuine',
+      carModel: productForm.carModel || '',
+      category: productForm.category || 'Engine Parts',
+      price: sellingPriceVal,
+      sellingPrice: sellingPriceVal,
+      mrp: mrpVal,
       stock: productForm.stock !== undefined ? Number(productForm.stock) : 10,
+      inStock: (productForm.stock !== undefined ? Number(productForm.stock) : 10) > 0,
+      isActive: productForm.isActive !== false,
+      image: productForm.image || (productForm.images && productForm.images[0]) || '/images/engine_parts_main.jpg',
+      images: (productForm.images && productForm.images.length > 0) ? productForm.images : [productForm.image || '/images/engine_parts_main.jpg'],
       updatedAt: new Date().toISOString()
     };
 
-    // 1. INSTANT LOCAL STATE UPDATE
+    // 1. INSTANT LOCAL STATE UPDATE & UI REFRESH
     if (editingProduct) {
       setProductsList(prev => prev.map(p => p.id === editingProduct.id ? newProductObj : p));
       if (setProducts) setProducts(prev => (prev || []).map(p => p.id === editingProduct.id ? newProductObj : p));
-      showToast('✅ Product updated live!');
+      showToast('✅ Product updated & live on website!');
     } else {
       setProductsList(prev => [newProductObj, ...prev]);
       if (setProducts) setProducts(prev => [newProductObj, ...(prev || [])]);
-      showToast('🎉 New product published live!');
+      showToast('🎉 New product added & live on website!');
     }
 
-    // 2. INSTANTLY CLOSE MODAL & RESET FORM
+    // 2. INSTANTLY CLOSE MODAL & RESET FORM STATE
     setIsProductModalOpen(false);
     setEditingProduct(null);
 
     // 3. NON-BLOCKING BACKGROUND FIRESTORE SYNC
     try {
       if (editingProduct) {
-        await updateProductInFirestore(editingProduct.id, productForm);
+        await updateProductInFirestore(editingProduct.id, newProductObj);
       } else {
-        await addProductToFirestore(productForm);
+        await addProductToFirestore(newProductObj);
       }
     } catch (err) {
       console.warn('Background Firestore Sync:', err);
@@ -1051,12 +1059,19 @@ export const SimpleAdminPanel = () => {
       {/* Product Add / Edit Modal */}
       {isProductModalOpen && (
         <div className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl text-white shadow-2xl space-y-6 my-8">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-black text-white">
-                {editingProduct ? 'Edit Product' : 'Add New Product'}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl text-white shadow-2xl space-y-6 my-8 relative">
+            <div className="sticky top-0 bg-slate-900 border-b border-slate-800 py-3 px-6 -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 z-30 flex items-center justify-between rounded-t-3xl shadow-md">
+              <h3 className="text-xl font-black text-white uppercase tracking-wide flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></span>
+                <span>{editingProduct ? 'Edit Product' : 'Add New Product'}</span>
               </h3>
-              <button onClick={() => setIsProductModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer"><XCircle className="w-6 h-6" /></button>
+              <button 
+                type="button"
+                onClick={() => { setIsProductModalOpen(false); setEditingProduct(null); }} 
+                className="bg-slate-800 hover:bg-red-500/20 text-slate-400 hover:text-red-400 p-2 rounded-full cursor-pointer transition flex items-center justify-center"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
             </div>
 
             <form onSubmit={handleSaveProduct} className="space-y-4">
@@ -1208,7 +1223,7 @@ export const SimpleAdminPanel = () => {
                 </label>
 
                 <div className="flex gap-3">
-                  <button type="button" onClick={() => setIsProductModalOpen(false)} className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 text-xs font-bold hover:bg-slate-800 cursor-pointer">Cancel</button>
+                  <button type="button" onClick={() => { setIsProductModalOpen(false); setEditingProduct(null); }} className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 text-xs font-bold hover:bg-slate-800 cursor-pointer">Cancel</button>
                   <button type="submit" disabled={isSavingProduct} className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-extrabold shadow-lg cursor-pointer flex items-center gap-2">
                     {isSavingProduct ? (
                       <>
