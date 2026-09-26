@@ -214,15 +214,71 @@ export const BrandView = () => {
 
     if (!matchBrand && !p.isUniversal && p.brand !== 'Universal') return false;
 
-    // 2. Match Model if selected
+    // 2. Exact Model Match
     if (activeModel) {
-      const modelParts = activeModel.split('/')[0].trim().toLowerCase().split(' ');
-      const primaryModel = modelParts[0]; // e.g. "innova", "fortuner", "glanza", "corolla", "camry"
+      const modelClean = activeModel.trim().toLowerCase();
+      
+      const checkTextMatch = (text) => {
+        if (!text) return false;
+        const t = text.toLowerCase();
 
-      const matchModel = pTitleLower.includes(primaryModel) ||
-                         pDescLower.includes(primaryModel) ||
-                         (p.compatibleVehicles && p.compatibleVehicles.some(v => v.toLowerCase().includes(primaryModel))) ||
-                         (p.fitments && p.fitments.some(f => (f.model || '').toLowerCase().includes(primaryModel)));
+        // Exact full string match
+        if (t.includes(modelClean)) return true;
+
+        // Sub-models list (e.g. Innova vs Innova Crysta vs Innova Hycross)
+        const subModels = [
+          { full: 'innova crysta', sub: 'crysta' },
+          { full: 'innova hycross', sub: 'hycross' },
+          { full: 'etios liva', sub: 'liva' },
+          { full: 'corolla altis', sub: 'altis' },
+          { full: 'landcruiser prado', sub: 'prado' },
+          { full: 'thar roxx', sub: 'roxx' },
+          { full: 'scorpio-n', sub: 'scorpio-n' },
+          { full: 'scorpio classic', sub: 'classic' },
+          { full: 'xuv3xo', sub: '3xo' },
+          { full: 'bolero neo', sub: 'neo' },
+          { full: 'nexon ev', sub: 'ev' },
+          { full: 'punch ev', sub: 'ev' },
+          { full: 'tiago ev', sub: 'ev' },
+          { full: 'tigor ev', sub: 'ev' },
+          { full: 'curvv ev', sub: 'ev' },
+          { full: 'grand vitara', sub: 'vitara' },
+          { full: 'alto k10', sub: 'k10' },
+          { full: 'alto 800', sub: '800' },
+          { full: 'elite i20', sub: 'elite' },
+          { full: 'grand i10', sub: 'grand' }
+        ];
+
+        // If user selected a specific sub-model (e.g. "innova crysta" or "crysta")
+        for (const m of subModels) {
+          if (modelClean.includes(m.sub) || modelClean === m.full) {
+            return t.includes(m.sub) || t.includes(m.full);
+          }
+        }
+
+        // If user selected base model "innova" (without crysta / hycross)
+        if (modelClean === 'innova') {
+          return t.includes('innova') && !t.includes('crysta') && !t.includes('hycross');
+        }
+        if (modelClean === 'etios') {
+          return t.includes('etios') && !t.includes('liva');
+        }
+        if (modelClean === 'corolla') {
+          return t.includes('corolla') && !t.includes('altis');
+        }
+        if (modelClean === 'scorpio') {
+          return t.includes('scorpio') && !t.includes('scorpio-n') && !t.includes('classic');
+        }
+
+        // Default match
+        const mainWord = modelClean.split(' ')[0];
+        return t.includes(mainWord);
+      };
+
+      const matchModel = checkTextMatch(pTitleLower) ||
+                         checkTextMatch(pDescLower) ||
+                         (p.compatibleVehicles && p.compatibleVehicles.some(v => checkTextMatch(v))) ||
+                         (p.fitments && p.fitments.some(f => checkTextMatch(f.model)));
 
       if (!matchModel && !p.isUniversal && p.brand !== 'Universal') return false;
     }
@@ -246,9 +302,33 @@ export const BrandView = () => {
       if (!matchYear && !p.isUniversal) return false;
     }
 
-    // 5. Match Category
+    // 5. Match Category Exactly
     if (activeCategory !== 'all') {
-      const catMatch = p.category === activeCategory || (p.subCategory && p.subCategory.toLowerCase().includes(activeCategory.replace('-', '')));
+      const catLower = activeCategory.toLowerCase();
+      const pCat = (p.category || '').toLowerCase();
+      const pSub = (p.subCategory || '').toLowerCase();
+      const pTitle = pTitleLower;
+
+      let catMatch = false;
+
+      if (catLower === 'engine-parts') {
+        catMatch = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') || pTitle.includes('spark') || pTitle.includes('clutch') || pTitle.includes('piston') || pTitle.includes('gasket');
+      } else if (catLower === 'brake-system') {
+        catMatch = pCat.includes('brake') || pCat.includes('suspension') || pSub.includes('brake') || pSub.includes('shock') || pTitle.includes('brake') || pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('absorber');
+      } else if (catLower === 'filters') {
+        catMatch = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
+      } else if (catLower === 'body-bumper') {
+        catMatch = pCat.includes('body') || pCat.includes('bumper') || pSub.includes('bumper') || pTitle.includes('bumper') || pTitle.includes('fender') || pTitle.includes('door') || pTitle.includes('mirror');
+      } else if (catLower === 'electrical') {
+        catMatch = pCat.includes('electric') || pCat.includes('lighting') || pSub.includes('electric') || pSub.includes('light') || pTitle.includes('light') || pTitle.includes('headlight') || pTitle.includes('battery') || pTitle.includes('switch');
+      } else if (catLower === 'oils-fluids') {
+        catMatch = pCat.includes('oil') || pCat.includes('fluid') || pSub.includes('oil') || pTitle.includes('oil') || pTitle.includes('fluid') || pTitle.includes('coolant');
+      } else if (catLower === 'car-accessories') {
+        catMatch = pCat.includes('accessori') || pSub.includes('accessori') || pTitle.includes('holder') || pTitle.includes('mat') || pTitle.includes('cover') || pTitle.includes('seat');
+      } else {
+        catMatch = pCat.includes(catLower) || pSub.includes(catLower);
+      }
+
       if (!catMatch) return false;
     }
 
@@ -491,7 +571,45 @@ export const BrandView = () => {
       ------------------------------------------------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         
+        {/* Category Pills Bar */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+              <Layers className="w-4 h-4 text-[#FF5722]" /> Select Spare Parts Category
+            </h3>
+            {activeCategory !== 'all' && (
+              <button
+                onClick={() => setActiveCategory('all')}
+                className="text-[11px] font-bold text-[#FF5722] hover:underline cursor-pointer"
+              >
+                Show All Categories
+              </button>
+            )}
+          </div>
 
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+            {MAIN_CATEGORIES.map((cat) => {
+              const isCatActive = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    showToast(`Filtered by ${cat.name}`);
+                  }}
+                  className={`px-4 py-2.5 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 shrink-0 border ${
+                    isCatActive
+                      ? 'bg-[#FF5722] text-white border-[#FF5722] shadow-lg shadow-orange-500/20 scale-105 ring-2 ring-[#FF5722]/30'
+                      : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+                  }`}
+                >
+                  <span>{cat.icon}</span>
+                  <span>{cat.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Filter Dropdowns Bar */}
         <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 shadow-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
