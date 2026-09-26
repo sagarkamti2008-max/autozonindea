@@ -1430,37 +1430,60 @@ export const ProductDetailView = () => {
           </div>
         </div>
       )}
-      {/* Mobile Sticky Add to Cart Bar */}
-      <div className="fixed bottom-[70px] left-0 right-0 p-3 bg-white border-t border-slate-200 z-[999] md:hidden flex gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] pb-safe">
-        {!isOutOfStock ? (
-          <>
+      {/* Mobile Sticky Action & Instant WhatsApp Order Bar */}
+      <div className="fixed bottom-[64px] left-0 right-0 p-2.5 bg-slate-950/95 border-t border-slate-800 backdrop-blur-md z-40 md:hidden flex items-center justify-between gap-2 shadow-[0_-8px_25px_rgba(0,0,0,0.4)] pb-safe">
+        
+        {/* Price & Stock Display */}
+        <div className="shrink-0 pl-1">
+          <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mera Price</div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-base font-black text-orange-400">₹{Number(product.price).toLocaleString('en-IN')}</span>
+            {product.originalPrice > product.price && (
+              <span className="text-[11px] line-through text-slate-500">₹{Number(product.originalPrice).toLocaleString('en-IN')}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          {!isOutOfStock ? (
+            <>
+              {/* Add to Cart */}
+              <button
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  addToCart(product, quantity);
+                  setFlyInfo({ src: galleryImages[0], startRect: rect });
+                  showToast('🛒 Added to Cart!');
+                }}
+                className="py-2.5 px-3 rounded-xl font-bold bg-slate-900 border border-slate-700 text-white text-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition"
+              >
+                <ShoppingBag className="w-3.5 h-3.5 text-orange-400" />
+                <span>+ Cart</span>
+              </button>
+
+              {/* Instant WhatsApp Order */}
+              <a
+                href={`https://wa.me/918591719499?text=${encodeURIComponent(
+                  `Hi Kamti Automotive, I want to order this spare part:\n\n📦 Product: ${product.name}\n🏷️ SKU / OEM: ${product.oemPartNumber || product.sku || 'KAMTI-AUTO'}\n💰 Selling Price: ₹${product.price}\n🚘 Car Vehicle Fitment: ${selectedVehicle ? `${selectedVehicle.brand || ''} ${selectedVehicle.model || ''}` : product.specs?.['Fits'] || 'Universal Fit'}\n\nPlease confirm availability and delivery time.`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="py-2.5 px-3.5 rounded-xl font-black bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/30 cursor-pointer active:scale-95 transition"
+              >
+                <Phone className="w-3.5 h-3.5 fill-current" />
+                <span>WhatsApp Order</span>
+              </a>
+            </>
+          ) : (
             <button
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                addToCart(product, quantity);
-                setFlyInfo({ src: galleryImages[0], startRect: rect });
-              }}
-              className="flex-1 py-3 rounded-xl font-black bg-slate-900 text-white shadow-md flex items-center justify-center gap-2 text-sm"
+              onClick={() => setIsStockAlertOpen(true)}
+              className="py-2.5 px-4 rounded-xl font-black bg-slate-900 border border-amber-500/40 text-amber-400 text-xs flex items-center justify-center gap-1.5 shadow-md"
             >
-              <ShoppingBag className="w-4 h-4" /> Add
+              <Bell className="w-3.5 h-3.5" /> Notify Stock
             </button>
-            <button
-              onClick={() => {
-                buyNow(product, quantity);
-              }}
-              className="flex-1 py-3 rounded-xl font-black bg-[#0B5394] text-white shadow-lg shadow-[#0B5394]/30 flex items-center justify-center gap-2 text-sm"
-            >
-              Buy Now
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={() => setIsStockAlertOpen(true)}
-            className="w-full py-3 rounded-xl font-black bg-slate-900 text-white shadow-md flex items-center justify-center gap-2 text-sm"
-          >
-            <Bell className="w-4 h-4 text-[#0B5394]" /> Notify Me
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Request Part Modal */}
