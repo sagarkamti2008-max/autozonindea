@@ -419,25 +419,39 @@ export const SimpleAdminPanel = () => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col md:flex-row">
 
-      {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-slate-950 border-r border-slate-800 p-4 shrink-0">
-        <div className="flex items-center gap-3 px-3 py-4 border-b border-slate-800 mb-6">
-          <div className="w-10 h-10 rounded-2xl bg-orange-500 flex items-center justify-center font-black text-white text-xl shadow-lg">
-            {storeSettings.logo || 'K'}
+      {/* Sidebar Navigation - Mobile & Desktop Responsive */}
+      <aside className="w-full md:w-64 bg-slate-950 border-b md:border-b-0 md:border-r border-slate-800 shrink-0">
+        
+        {/* Header Bar */}
+        <div className="flex items-center justify-between p-4 border-b border-slate-800 md:border-b-0 md:mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-orange-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-lg">
+              {storeSettings.logo || 'K'}
+            </div>
+            <div>
+              <h1 className="font-black text-sm sm:text-base text-white tracking-tight">{storeSettings.companyName}</h1>
+              <p className="text-[10px] sm:text-[11px] text-slate-400 font-bold">Admin Console</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-black text-base text-white tracking-tight">{storeSettings.companyName}</h1>
-            <p className="text-[11px] text-slate-400 font-bold">Admin Console</p>
-          </div>
+
+          {/* Mobile Sign Out Button */}
+          <button
+            onClick={handleAdminLogout}
+            className="md:hidden p-2 rounded-xl border border-slate-800 bg-slate-900 text-slate-400 hover:text-red-400 text-xs font-bold transition cursor-pointer"
+            title="Sign Out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
 
-        <nav className="space-y-1.5">
+        {/* Mobile Horizontal Scrollable Nav Pills */}
+        <div className="flex md:hidden overflow-x-auto gap-2 p-3 border-b border-slate-800 scrollbar-none bg-slate-950/80 sticky top-0 z-20">
           {[
             { id: 'dashboard', label: '📊 Dashboard', icon: LayoutDashboard },
             { id: 'products', label: '📦 Products', icon: Package, count: totalProducts },
             { id: 'orders', label: '🛒 Orders', icon: ShoppingCart, count: totalOrders },
             { id: 'customers', label: '👥 Customers', icon: Users, count: derivedCustomers.length },
-            { id: 'content', label: '🖼️ Content Manager', icon: Globe },
+            { id: 'content', label: '🖼️ Content', icon: Globe },
             { id: 'settings', label: '⚙️ Settings', icon: Settings }
           ].map(tab => {
             const Icon = tab.icon;
@@ -446,18 +460,16 @@ export const SimpleAdminPanel = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
                   isActive
-                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
-                    : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                    : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </div>
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${
                     isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {tab.count}
@@ -466,20 +478,60 @@ export const SimpleAdminPanel = () => {
               </button>
             );
           })}
-        </nav>
+        </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-800">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 mb-4 flex items-center gap-2 text-xs text-emerald-400 font-bold">
-            <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
-            <span>Firebase Guard Active</span>
+        {/* Desktop Vertical Sidebar */}
+        <div className="hidden md:block p-4">
+          <nav className="space-y-1.5">
+            {[
+              { id: 'dashboard', label: '📊 Dashboard', icon: LayoutDashboard },
+              { id: 'products', label: '📦 Products', icon: Package, count: totalProducts },
+              { id: 'orders', label: '🛒 Orders', icon: ShoppingCart, count: totalOrders },
+              { id: 'customers', label: '👥 Customers', icon: Users, count: derivedCustomers.length },
+              { id: 'content', label: '🖼️ Content Manager', icon: Globe },
+              { id: 'settings', label: '⚙️ Settings', icon: Settings }
+            ].map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition cursor-pointer ${
+                    isActive
+                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                      : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
+                  </div>
+                  {tab.count !== undefined && (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="mt-8 pt-6 border-t border-slate-800">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 mb-4 flex items-center gap-2 text-xs text-emerald-400 font-bold">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+              <span>Firebase Guard Active</span>
+            </div>
+
+            <button
+              onClick={handleAdminLogout}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-slate-800 bg-slate-900 text-slate-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-xs font-bold transition cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" /> Sign Out
+            </button>
           </div>
-
-          <button
-            onClick={handleAdminLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-slate-800 bg-slate-900 text-slate-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-xs font-bold transition cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" /> Sign Out
-          </button>
         </div>
       </aside>
 
