@@ -671,6 +671,18 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
                     Proceed to Express Checkout <ArrowRight className="w-5 h-5" />
                   </button>
 
+                  <a 
+                    href={`https://wa.me/918591719499?text=${encodeURIComponent(
+                      `Hi Kamti Automotive, I want to order the following spare parts from my cart:\n\n${cartItems.map(item => `• ${item.name || item.title} (Qty: ${item.quantity || 1}) - ₹${((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}`).join('\n')}\n\n💰 Grand Total: ₹${totals.grandTotal.toLocaleString('en-IN')}\n🚘 Vehicle Fitment: ${vehicleText || 'Universal Fit'}\n\nPlease confirm availability and delivery time.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base py-3.5 rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer mt-3"
+                  >
+                    <MessageCircle className="w-5 h-5 fill-current text-white" />
+                    <span>⚡ 1-Click Fast WhatsApp Order</span>
+                  </a>
+
                   <div className="border-t border-slate-100 pt-5 space-y-3">
                      <div className="flex items-center gap-3 text-xs text-slate-600 font-medium">
                        <Lock className="w-4 h-4 text-emerald-500 shrink-0" />
