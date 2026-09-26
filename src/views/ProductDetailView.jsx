@@ -340,11 +340,11 @@ export const ProductDetailView = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* Main Product Section Layout */}
         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-0">
             
-            {/* Gallery Column (Left) */}
-            <div className="lg:col-span-5 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100/50 flex flex-col gap-4">
-              <div className="relative w-full aspect-square max-h-[420px] bg-white border border-slate-200/60 rounded-3xl overflow-hidden flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] group mx-auto">
+            {/* Gallery Column (Left) - Sticky h-fit */}
+            <div className="lg:col-span-5 p-4 sm:p-6 lg:sticky lg:top-24 h-fit bg-gradient-to-br from-slate-50 to-slate-100/50 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-100">
+              <div className="relative w-full aspect-square max-h-[440px] bg-white border border-slate-200/60 rounded-3xl overflow-hidden flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] group mx-auto">
                 <img
                   src={selectedImage}
                   alt={product.name}
@@ -380,7 +380,7 @@ export const ProductDetailView = () => {
               </div>
 
               {/* Thumbnail Row */}
-              <div className="flex gap-2.5 overflow-x-auto py-2 scrollbar-thin snap-x snap-mandatory">
+              <div className="flex gap-2.5 overflow-x-auto py-1 scrollbar-thin snap-x snap-mandatory">
                 {galleryImages.map((img, i) => (
                   <button
                     key={i}
@@ -392,6 +392,31 @@ export const ProductDetailView = () => {
                     <img src={img} alt="thumb" className="w-full h-full object-contain p-1.5" />
                   </button>
                 ))}
+              </div>
+
+              {/* Vehicle Compatibility & Warranty Guarantee Card */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-2.5 mt-1">
+                <div className="flex items-center gap-2 text-xs font-black text-slate-900 border-b border-slate-100 pb-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Fitment & Quality Guarantee</span>
+                </div>
+                
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-600 gap-2">
+                    <span className="font-bold shrink-0">Compatible Vehicle:</span>
+                    <span className="font-extrabold text-slate-900 text-right truncate">
+                      {selectedVehicle ? `${selectedVehicle.makeName || selectedVehicle.make || ''} ${selectedVehicle.modelName || selectedVehicle.model || ''}` : (product.specs?.['Fits'] || 'Universal / Exact Fit')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span className="font-bold">Quality Grade:</span>
+                    <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">100% Genuine OES</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span className="font-bold">Warranty:</span>
+                    <span className="font-bold text-slate-800">{product.specs?.['Warranty'] || '6 Month Manufacturer Warranty'}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
