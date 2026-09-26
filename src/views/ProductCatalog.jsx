@@ -364,6 +364,41 @@ export const ProductCatalog = () => {
           </div>
         )}
 
+        {/* Horizontal Category Pills Bar (All Parts | Engine Parts | Brakes...) */}
+        <div className="flex overflow-x-auto gap-2 py-3 px-1 mb-6 border-b border-slate-800/80 scrollbar-none">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap transition cursor-pointer shrink-0 ${
+              selectedCategory === 'all'
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20 scale-[1.02]'
+                : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white hover:bg-slate-900'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>All Parts</span>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${selectedCategory === 'all' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+              {products.length}
+            </span>
+          </button>
+
+          {uniqueCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                selectedCategory.toLowerCase() === cat.toLowerCase()
+                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20 scale-[1.02]'
+                  : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              <span>{cat}</span>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${selectedCategory.toLowerCase() === cat.toLowerCase() ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                {categoryCounts[cat] || 0}
+              </span>
+            </button>
+          ))}
+        </div>
+
         {/* Page Title & Sort Bar */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 border-b border-slate-800 pb-6">
           <div>
