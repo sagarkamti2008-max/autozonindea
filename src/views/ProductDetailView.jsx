@@ -343,35 +343,35 @@ export const ProductDetailView = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12">
             
             {/* Gallery Column (Left) */}
-            <div className="lg:col-span-5 p-6 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100/50 flex flex-col justify-between">
-              <div className="relative aspect-square bg-white border border-slate-200/60 rounded-3xl overflow-hidden flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
+            <div className="lg:col-span-5 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100/50 flex flex-col gap-4">
+              <div className="relative w-full aspect-square max-h-[420px] bg-white border border-slate-200/60 rounded-3xl overflow-hidden flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] group mx-auto">
                 <img
                   src={selectedImage}
                   alt={product.name}
                   onError={(e) => { e.target.src = '/images/piston_set.jpg'; }}
-                  className="max-h-full max-w-full object-contain p-6 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="max-h-full max-w-full object-contain p-4 group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 
                 {/* Representational Image Red Overlay Banner */}
-                <div className="absolute bottom-4 left-4 right-4 bg-red-600/90 backdrop-blur-sm text-white text-center py-2 px-3 rounded-xl font-extrabold text-[11px] sm:text-xs tracking-wide shadow-md border border-red-500/30">
+                <div className="absolute bottom-3 left-3 right-3 bg-red-600/90 backdrop-blur-sm text-white text-center py-1.5 px-3 rounded-xl font-extrabold text-[11px] sm:text-xs tracking-wide shadow-md border border-red-500/30">
                   This image is only for representational purpose only.
                 </div>
 
                 {/* Floating Action Buttons */}
-                <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
+                <div className="absolute top-4 right-4 flex flex-col gap-2.5 z-10">
                   <button
                     onClick={() => {
                       setLightboxIndex(galleryImages.indexOf(selectedImage));
                       setIsLightboxOpen(true);
                     }}
-                    className="p-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/zoom"
+                    className="p-2.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/zoom cursor-pointer"
                     title="Zoom Image"
                   >
                     <Camera className="w-4 h-4 text-slate-400 group-hover/zoom:text-emerald-500" />
                   </button>
                   <button
                     onClick={() => toggleWishlist(product)}
-                    className="p-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/heart"
+                    className="p-2.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 hover:scale-110 transition-all group/heart cursor-pointer"
                     title={isLiked ? 'Remove from Wishlist' : 'Add to Wishlist'}
                   >
                     <Heart className={`w-4 h-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-400 group-hover/heart:text-red-500'}`} />
@@ -380,16 +380,16 @@ export const ProductDetailView = () => {
               </div>
 
               {/* Thumbnail Row */}
-              <div className="flex gap-3 overflow-x-auto py-4 mt-3 scrollbar-hide snap-x snap-mandatory">
+              <div className="flex gap-2.5 overflow-x-auto py-2 scrollbar-thin snap-x snap-mandatory">
                 {galleryImages.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedImage(img)}
-                    className={`snap-center w-20 h-20 rounded-2xl bg-white border-2 overflow-hidden shrink-0 transition-all duration-300 ${
-                      selectedImage === img ? 'border-[#0B5394] shadow-md scale-105' : 'border-slate-100 hover:border-slate-300 opacity-70 hover:opacity-100'
+                    className={`snap-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 overflow-hidden shrink-0 transition-all duration-300 cursor-pointer ${
+                      selectedImage === img ? 'border-[#0B5394] ring-2 ring-[#0B5394]/20 shadow-md scale-105' : 'border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="thumb" className="w-full h-full object-contain p-2" />
+                    <img src={img} alt="thumb" className="w-full h-full object-contain p-1.5" />
                   </button>
                 ))}
               </div>
