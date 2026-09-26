@@ -273,40 +273,54 @@ export const SimpleAdminPanel = () => {
     showToast('⭐ Primary main photo updated!');
   };
 
-  // Save Product (Add / Edit)
+  // Save Product (Add / Edit) - Instant Modal Close & Background Sync
   const handleSaveProduct = async (e) => {
     e.preventDefault();
-    if (!productForm.name || !productForm.sellingPrice) {
-      showToast('⚠️ Please enter Product Name & Selling Price (Mera Price)', 'error');
+    if (!productForm.name || !productForm.name.trim()) {
+      showToast('⚠️ Please enter Product Name / Title', 'error');
+      return;
+    }
+    if (!productForm.sellingPrice || Number(productForm.sellingPrice) <= 0) {
+      showToast('⚠️ Please enter a valid Selling Price (Mera Price)', 'error');
       return;
     }
 
-    setIsSavingProduct(true);
+    const newProductObj = {
+      id: editingProduct ? editingProduct.id : `AZ-PROD-${Date.now()}`,
+      ...productForm,
+      title: productForm.name,
+      name: productForm.name,
+      price: Number(productForm.sellingPrice),
+      sellingPrice: Number(productForm.sellingPrice),
+      mrp: Number(productForm.mrp) || Number(productForm.sellingPrice) * 1.25,
+      stock: productForm.stock !== undefined ? Number(productForm.stock) : 10,
+      updatedAt: new Date().toISOString()
+    };
+
+    // 1. INSTANT LOCAL STATE UPDATE
+    if (editingProduct) {
+      setProductsList(prev => prev.map(p => p.id === editingProduct.id ? newProductObj : p));
+      if (setProducts) setProducts(prev => (prev || []).map(p => p.id === editingProduct.id ? newProductObj : p));
+      showToast('✅ Product updated live!');
+    } else {
+      setProductsList(prev => [newProductObj, ...prev]);
+      if (setProducts) setProducts(prev => [newProductObj, ...(prev || [])]);
+      showToast('🎉 New product published live!');
+    }
+
+    // 2. INSTANTLY CLOSE MODAL & RESET FORM
+    setIsProductModalOpen(false);
+    setEditingProduct(null);
+
+    // 3. NON-BLOCKING BACKGROUND FIRESTORE SYNC
     try {
       if (editingProduct) {
         await updateProductInFirestore(editingProduct.id, productForm);
-        setProductsList(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...productForm } : p));
-        if (setProducts) setProducts(prev => (prev || []).map(p => p.id === editingProduct.id ? { ...p, ...productForm } : p));
-        showToast('✅ Product updated in Firestore & Live on Website!');
       } else {
-        const result = await addProductToFirestore(productForm);
-        const newProduct = {
-          id: result.id || `AZ-PROD-${Date.now()}`,
-          ...productForm,
-          title: productForm.name,
-          price: Number(productForm.sellingPrice)
-        };
-        setProductsList(prev => [newProduct, ...prev]);
-        if (setProducts) setProducts(prev => [newProduct, ...(prev || [])]);
-        showToast('🎉 New product added to Firestore & Live on Website!');
+        await addProductToFirestore(productForm);
       }
-      setIsProductModalOpen(false);
-      setEditingProduct(null);
     } catch (err) {
-      console.error(err);
-      showToast('❌ Failed to save product. Please check connection and try again.', 'error');
-    } finally {
-      setIsSavingProduct(false);
+      console.warn('Background Firestore Sync:', err);
     }
   };
 
@@ -1048,8 +1062,11 @@ export const SimpleAdminPanel = () => {
             <form onSubmit={handleSaveProduct} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Product Name</label>
-                  <input type="text" required value={productForm.name} onChange={e => setProductForm({ ...productForm, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500" placeholder="e.g. Front Brake Pads Assembly" />
+                  <label className="block text-xs font-black text-orange-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    <span>PRODUCT TITLE / NAME *</span>
+                    <span className="text-[10px] text-slate-500 font-normal">Required</span>
+                  </label>
+                  <input type="text" required value={productForm.name} onChange={e => setProductForm({ ...productForm, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-orange-500" placeholder="e.g. Front Brake Pads Assembly" />
                 </div>
 
                 <div className="sm:col-span-2">
