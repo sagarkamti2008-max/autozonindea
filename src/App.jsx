@@ -8,6 +8,7 @@ import { ToastContainer } from './components/Toast';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { AIPartFinderModal } from './components/AIPartFinderModal';
 import { SlideOutCart } from './components/SlideOutCart';
+import { ProductModal } from './components/ProductModal';
 
 import { CustomerHome } from './views/CustomerHome';
 import { ModernAutomotiveHomepage } from './views/ModernAutomotiveHomepage';
@@ -15,6 +16,7 @@ import { ProductCatalog } from './views/ProductCatalog';
 import { ProductDetailView } from './views/ProductDetailView';
 import { CompareView } from './views/CompareView';
 import { CarSelectView } from './views/CarSelectView';
+import { VehicleView } from './views/VehicleView';
 import { CheckoutView } from './views/CheckoutView';
 import { CustomerPortal } from './views/CustomerPortal';
 import { CategoryView } from './views/CategoryView';
@@ -28,6 +30,7 @@ import { LoginView, SignupView } from './views/AuthPages';
 import { PrivacyPolicyView, TermsView, ShippingPolicyView, ReturnPolicyView } from './views/LegalPages';
 import { EnterpriseAdminConsole } from './views/EnterpriseAdminConsole';
 import { AdminDashboard } from './views/AdminDashboard';
+import { SimpleAdminPanel } from './views/SimpleAdminPanel';
 import { AdminFulfillmentManager } from './views/AdminFulfillmentManager';
 import { AdminSearchAnalytics } from './views/AdminSearchAnalytics';
 import { AdminSEOControlCenter } from './views/AdminSEOControlCenter';
@@ -134,7 +137,7 @@ const ViewRenderer = () => {
     case 'home':
       return <ModernAutomotiveHomepage />;
     case 'buy-now':
-      return <BuyNowView />;
+      return <ModernCartAndCheckoutView initialMode="checkout" />;
     case 'classic-home':
       return <CustomerHome />;
     case 'catalog':
@@ -164,6 +167,9 @@ const ViewRenderer = () => {
     case 'order-confirm':
       return <OrderConfirmView />;
     case 'delivery-status':
+    case 'track-order':
+    case 'order-tracking':
+    case 'tracking':
       return <DeliveryStatusView />;
     case 'review':
       return <ReviewView />;
@@ -180,9 +186,9 @@ const ViewRenderer = () => {
     case 'write-review':
       return <WriteReviewView onNavigate={navigateTo} />;
     case 'cart':
-      return <ModernCartAndCheckoutView initialMode="cart" />;
+      return <ModernCartAndCheckoutView initialMode="cart" key="cart" />;
     case 'checkout':
-      return <ModernCartAndCheckoutView initialMode="checkout" />;
+      return <ModernCartAndCheckoutView initialMode="checkout" key="checkout" />;
     case 'my-garage':
       return <MyGarageView />;
     case 'service-booking':
@@ -198,9 +204,8 @@ const ViewRenderer = () => {
     case 'rsa':
       return <EmergencySupportView />;
     case 'login':
-      return <LoginView />;
     case 'signup':
-      return <SignupView />;
+      return <ModernAutomotiveHomepage />;
     case 'admin-login':
       return <AdminLogin />;
     case 'my-account':
@@ -273,6 +278,17 @@ const ViewRenderer = () => {
     }
     case 'admin':
     case 'admin-dashboard':
+    case 'admin/dashboard':
+    case 'admin-products':
+    case 'admin/products':
+    case 'catalog-manager':
+    case 'fitment-review':
+    case 'fulfillment':
+    case 'admin-orders':
+    case 'admin/orders':
+    case 'inventory':
+    case 'admin-inventory':
+    case 'admin/inventory':
     case 'admin/suppliers':
     case 'admin/suppliers/new':
     case 'admin-suppliers':
@@ -293,14 +309,14 @@ const ViewRenderer = () => {
     case 'admin/analytics/customers':
     case 'admin/alerts':
     case 'admin/activity':
-      return <AdminDashboard />;
+      return <SimpleAdminPanel />;
     case 'admin-support':
     case 'admin-support-hub':
     case 'admin/support':
       return <AdminSupportHub />;
     case 'ai-assistant':
     case 'assistant':
-      return <AIPartsAssistantView />;
+      return <ModernAutomotiveHomepage />;
     case 'customer-ticket-detail':
     case 'support-ticket-detail':
       return <CustomerTicketDetailView />;
@@ -379,23 +395,10 @@ const ViewRenderer = () => {
       return <AdminJobMonitor />;
     case 'database':
       return <AdminDatabaseInspector />;
-    case 'admin-products':
-    case 'admin/products':
-    case 'catalog-manager':
-    case 'fitment-review':
-      return <AdminCatalogManager defaultTab="catalog-list" />;
     case 'admin-bulk-upload':
     case 'admin/bulk-upload':
     case 'bulk-upload':
       return <AdminCatalogManager defaultTab="csv-import" />;
-    case 'fulfillment':
-    case 'admin-orders':
-    case 'admin/orders':
-      return <AdminFulfillmentManager />;
-    case 'inventory':
-    case 'admin-inventory':
-    case 'admin/inventory':
-      return <AdminInventoryConsole />;
     case 'admin-vehicles':
     case 'vehicle-master':
     case 'admin/vehicles':
@@ -511,7 +514,6 @@ const ViewRenderer = () => {
 import { WhatsAppFloatingButton } from './components/WhatsAppFloatingButton';
 import { SMSWhatsAppSimulatorModal } from './components/SMSWhatsAppSimulatorModal';
 import { FreeToolsModal } from './components/FreeToolsModal';
-import { CarPreloader } from './components/CarPreloader';
 import { Bot, MessageSquare, Wrench } from 'lucide-react';
 
 const MainApp = () => {
@@ -525,7 +527,7 @@ const MainApp = () => {
 
   return (
     <div className="app-layout">
-      {!isHomeView && (
+      {!isAdminView && (
         <>
           <Header 
             onOpenAIPartFinder={() => setIsAIPartFinderOpen(true)} 
@@ -541,12 +543,10 @@ const MainApp = () => {
 
       <Footer />
 
-
-
-      <CarPreloader duration={2200} />
       {!isAdminView && <WhatsAppFloatingButton />}
 
       <VehicleModal />
+      <ProductModal />
       <ToastContainer />
       <MobileBottomNav />
       <AIPartFinderModal isOpen={isAIPartFinderOpen} onClose={() => setIsAIPartFinderOpen(false)} />
