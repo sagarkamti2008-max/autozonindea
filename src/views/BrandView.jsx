@@ -261,18 +261,18 @@ export const BrandView = () => {
   const isShowingFallback = false;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-24 selection:bg-[#FF5722] selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-12 selection:bg-[#FF5722] selection:text-white">
       
       {/* -------------------------------------------------------------
           1. BREADCRUMB NAVIGATION & HERO BRAND HEADER
       ------------------------------------------------------------- */}
-      <div className="bg-white border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-sm">
+      <div className="bg-white border-b border-slate-200 py-4 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-sm">
         
         {/* Glowing Background FX */}
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto space-y-5 relative z-10">
+        <div className="max-w-7xl mx-auto space-y-4 relative z-10">
           
           {/* SEO Breadcrumbs */}
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
@@ -290,31 +290,31 @@ export const BrandView = () => {
           </div>
 
           {/* Main Brand Card Banner */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 text-slate-900 shadow-md border border-slate-200 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 text-slate-900 shadow-md border border-slate-200 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
             
             <div className="flex items-center gap-5 z-10">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-slate-50 p-3 flex items-center justify-center shrink-0 shadow-sm border border-slate-200 group hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-slate-50 p-2.5 flex items-center justify-center shrink-0 shadow-sm border border-slate-200 group hover:scale-105 transition-transform duration-300">
                 <img src={logoUrl} alt={currentBrand} className="max-h-full max-w-full object-contain filter drop-shadow-sm" />
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span className="bg-emerald-50 text-emerald-700 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-200 shadow-sm">
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span className="bg-emerald-50 text-emerald-700 font-black text-[10px] px-3 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-200 shadow-sm">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 100% Genuine {currentBrand} Parts
                   </span>
-                  <span className="bg-amber-50 text-amber-800 font-extrabold text-[10px] px-3 py-1 rounded-full border border-amber-200 flex items-center gap-1 shadow-sm">
+                  <span className="bg-amber-50 text-amber-800 font-extrabold text-[10px] px-3 py-0.5 rounded-full border border-amber-200 flex items-center gap-1 shadow-sm">
                     <ShieldCheck className="w-3.5 h-3.5 text-amber-600" /> Direct OEM Warranty
                   </span>
-                  <span className="bg-blue-50 text-blue-700 font-extrabold text-[10px] px-3 py-1 rounded-full border border-blue-200 shadow-sm">
+                  <span className="bg-blue-50 text-blue-700 font-extrabold text-[10px] px-3 py-0.5 rounded-full border border-blue-200 shadow-sm">
                     🚚 Express Pan-India Delivery
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 uppercase flex items-center gap-3">
+                <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase flex items-center gap-3">
                   <span>{currentBrand} SPARE PARTS & ACCESSORIES</span>
                 </h1>
                 
-                <p className="text-slate-600 text-xs sm:text-sm mt-1.5 max-w-2xl font-medium leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-2xl font-medium leading-relaxed">
                   Select your specific <strong>{currentBrand}</strong> car model below to get 100% fitment guarantee on genuine OEM & OES spare parts, filters, oils, and body components.
                 </p>
               </div>
@@ -329,7 +329,7 @@ export const BrandView = () => {
                   setSearchTerm('');
                   showToast(`Cleared filters for ${currentBrand}`);
                 }}
-                className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs px-5 py-3 rounded-xl border border-slate-300 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:border-[#FF5722]"
+                className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs px-4 py-2.5 rounded-xl border border-slate-300 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:border-[#FF5722]"
               >
                 <Filter className="w-4 h-4 text-[#FF5722]" /> Reset Filters
               </button>
@@ -340,33 +340,33 @@ export const BrandView = () => {
           </div>
 
           {/* Quick Assurance Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
-              <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+            <div className="bg-white border border-slate-200 p-2.5 rounded-xl flex items-center gap-2.5 shadow-sm">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
               <div>
                 <div className="text-xs font-black text-slate-900">100% Genuine Guarantee</div>
                 <div className="text-[10px] text-slate-500 font-medium">Direct from OEM factories</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
-              <Truck className="w-5 h-5 text-[#0B5394] shrink-0" />
+            <div className="bg-white border border-slate-200 p-2.5 rounded-xl flex items-center gap-2.5 shadow-sm">
+              <Truck className="w-4 h-4 text-[#0B5394] shrink-0" />
               <div>
                 <div className="text-xs font-black text-slate-900">Fast Doorstep Delivery</div>
                 <div className="text-[10px] text-slate-500 font-medium">Safe packaging across 19,000+ pin codes</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
-              <RotateCcw className="w-5 h-5 text-amber-600 shrink-0" />
+            <div className="bg-white border border-slate-200 p-2.5 rounded-xl flex items-center gap-2.5 shadow-sm">
+              <RotateCcw className="w-4 h-4 text-amber-600 shrink-0" />
               <div>
                 <div className="text-xs font-black text-slate-900">Easy Returns</div>
                 <div className="text-[10px] text-slate-500 font-medium">Hassle-free 10-day replacement</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
-              <Zap className="w-5 h-5 text-[#FF5722] shrink-0" />
+            <div className="bg-white border border-slate-200 p-2.5 rounded-xl flex items-center gap-2.5 shadow-sm">
+              <Zap className="w-4 h-4 text-[#FF5722] shrink-0" />
               <div>
                 <div className="text-xs font-black text-slate-900">Verified Fitment Engine</div>
                 <div className="text-[10px] text-slate-500 font-medium">Match by chassis & registration</div>
@@ -381,7 +381,7 @@ export const BrandView = () => {
       {/* -------------------------------------------------------------
           2. CAR MODEL SELECTION SECTION (POPULAR MODELS GRID)
       ------------------------------------------------------------- */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
           <div>

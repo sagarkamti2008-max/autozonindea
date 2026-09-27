@@ -651,7 +651,7 @@ export const ModernAutomotiveHomepage = () => {
       {/* -------------------------------------------------------------
           2. HERO BANNER SECTION (Exact Match with White Theme)
       ------------------------------------------------------------- */}
-      <section className="relative bg-[#F8FAFC] border-b border-slate-200 overflow-hidden py-12 sm:py-16 lg:py-20">
+      <section className="relative bg-[#F8FAFC] border-b border-slate-200 overflow-hidden py-6 sm:py-8 lg:py-10">
         {/* Background Image Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none" 
@@ -961,16 +961,16 @@ export const ModernAutomotiveHomepage = () => {
       {/* -------------------------------------------------------------
           3. SHOP BY CATEGORIES SECTION
       ------------------------------------------------------------- */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-8 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="flex items-center justify-between mb-10 border-b border-slate-200 pb-4">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight uppercase">
+        <div className="flex items-center justify-between mb-5 border-b border-slate-200 pb-3">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">
             Shop By Categories
           </h2>
           
           <button
             onClick={() => navigateTo('catalog')}
-            className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1 shadow-md cursor-pointer"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-md cursor-pointer"
           >
             <span>View all</span>
             <ArrowRight className="w-4 h-4" />
@@ -983,9 +983,9 @@ export const ModernAutomotiveHomepage = () => {
             <div
               key={cat.id}
               onClick={() => navigateTo('catalog')}
-              className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-4 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+              className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col justify-between"
             >
-              <div className="relative w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-3 flex items-center justify-center">
+              <div className="relative w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
                 <img
                   src={cat.image}
                   alt={cat.title}
@@ -1003,7 +1003,7 @@ export const ModernAutomotiveHomepage = () => {
                 <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm group-hover:text-[#0B5394] transition-colors mb-1 line-clamp-1">
                   {cat.title}
                 </h3>
-                <p className="text-[10px] text-slate-500 font-medium mb-2 line-clamp-2 leading-snug">
+                <p className="text-[10px] text-slate-500 font-medium mb-1.5 line-clamp-2 leading-snug">
                   {cat.desc}
                 </p>
                 <div className="text-[10px] font-black text-blue-600">
@@ -1020,15 +1020,15 @@ export const ModernAutomotiveHomepage = () => {
       {/* -------------------------------------------------------------
           4. BEST SELLERS & NEW ARRIVALS
       ------------------------------------------------------------- */}
-      <section className="py-16 bg-slate-50 border-t border-slate-200">
+      <section className="py-8 sm:py-10 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 border-b border-slate-200 pb-4 gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-5 border-b border-slate-200 pb-3 gap-3">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight uppercase flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase flex items-center gap-2">
                 Best Sellers <span className="text-[#0B5394]">🔥</span>
               </h2>
-              <p className="text-xs text-slate-500 font-bold mt-1">Highly rated parts verified by thousands of mechanics.</p>
+              <p className="text-xs text-slate-500 font-bold mt-0.5">Highly rated parts verified by thousands of mechanics.</p>
             </div>
             
             <button
