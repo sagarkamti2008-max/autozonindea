@@ -156,7 +156,97 @@ export const VEHICLE_DATABASE = [
         name: 'City 5th Gen / 4th Gen',
         years: ['2020-2024', '2014-2019'],
         variants: [
-          { id: 'city-zx-p', name: 'ZX 1.5L i-VTEC Petrol', engine: '1498 cc Petrol', transmission: 'CVT / 6-Speed MT' }
+          { id: 'city-zx-p', name: 'ZX 1.5L i-VTEC Petrol', engine: '1498 cc Petrol', transmission: 'CVT / 6-Speed MT' },
+          { id: 'city-vx-d', name: 'VX 1.5L i-DTEC Diesel', engine: '1498 cc Diesel', transmission: '6-Speed MT' }
+        ]
+      },
+      {
+        id: 'amaze',
+        name: 'Amaze',
+        years: ['2021-2024', '2018-2020'],
+        variants: [
+          { id: 'amaze-vx-p', name: 'VX 1.2L i-VTEC Petrol', engine: '1199 cc Petrol', transmission: 'CVT / 5-Speed MT' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'toyota',
+    name: 'Toyota',
+    country: 'Japan',
+    logo: '🚘',
+    models: [
+      {
+        id: 'innova-crysta',
+        name: 'Innova Crysta',
+        years: ['2020-2024', '2016-2020'],
+        variants: [
+          { id: 'crysta-zx-d', name: '2.4L ZX Diesel 7-Str', engine: '2393 cc Turbo Diesel', transmission: '5-Speed MT' },
+          { id: 'crysta-vx-d', name: '2.4L VX Diesel 7-Str', engine: '2393 cc Turbo Diesel', transmission: '5-Speed MT' },
+          { id: 'crysta-gx-d', name: '2.4L GX Diesel 8-Str', engine: '2393 cc Turbo Diesel', transmission: '5-Speed MT' },
+          { id: 'crysta-gx-p', name: '2.7L GX Petrol', engine: '2694 cc Petrol', transmission: '5-Speed MT / 6-Speed AT' }
+        ]
+      },
+      {
+        id: 'fortuner',
+        name: 'Fortuner',
+        years: ['2021-2024', '2016-2020'],
+        variants: [
+          { id: 'fortuner-sigma4', name: '2.8L 4x4 Sigma-4 AT', engine: '2755 cc Turbo Diesel', transmission: '6-Speed AT' },
+          { id: 'fortuner-4x2-d', name: '2.8L 4x2 Diesel AT', engine: '2755 cc Turbo Diesel', transmission: '6-Speed AT' },
+          { id: 'fortuner-gr', name: 'GR-Sport 4x4 AT', engine: '2755 cc Turbo Diesel', transmission: '6-Speed AT' }
+        ]
+      },
+      {
+        id: 'hyryder',
+        name: 'Urban Cruiser Hyryder',
+        years: ['2022-2024'],
+        variants: [
+          { id: 'hyryder-v-hybrid', name: '1.5L V Hybrid e-CVT', engine: '1490 cc Strong Hybrid', transmission: 'e-CVT' },
+          { id: 'hyryder-g-cng', name: '1.5L G CNG', engine: '1462 cc K15C CNG', transmission: '5-Speed MT' }
+        ]
+      },
+      {
+        id: 'glanza',
+        name: 'Glanza',
+        years: ['2022-2024', '2019-2021'],
+        variants: [
+          { id: 'glanza-g', name: 'G 1.2L Petrol', engine: '1197 cc Petrol', transmission: '5-Speed MT / AMT' },
+          { id: 'glanza-v', name: 'V 1.2L Petrol AMT', engine: '1197 cc Petrol', transmission: 'AMT' }
+        ]
+      },
+      {
+        id: 'hycross',
+        name: 'Innova Hycross',
+        years: ['2022-2024'],
+        variants: [
+          { id: 'hycross-zx-o', name: '2.0L ZX(O) Hybrid e-CVT', engine: '1987 cc Strong Hybrid', transmission: 'e-CVT' },
+          { id: 'hycross-vx', name: '2.0L VX Hybrid', engine: '1987 cc Strong Hybrid', transmission: 'e-CVT' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kia',
+    name: 'Kia',
+    country: 'South Korea',
+    logo: '🚘',
+    models: [
+      {
+        id: 'seltos',
+        name: 'Seltos',
+        years: ['2023-2024', '2019-2022'],
+        variants: [
+          { id: 'seltos-gtx', name: 'GTX+ 1.5L Turbo GDi 7DCT', engine: '1482 cc Turbo Petrol', transmission: '7-Speed DCT' },
+          { id: 'seltos-htx-d', name: 'HTX+ 1.5L CRDi Diesel AT', engine: '1493 cc Diesel', transmission: '6-Speed AT' }
+        ]
+      },
+      {
+        id: 'sonet',
+        name: 'Sonet',
+        years: ['2020-2024'],
+        variants: [
+          { id: 'sonet-gtx', name: 'GTX+ 1.0L Turbo 7DCT', engine: '998 cc Turbo Petrol', transmission: '7-Speed DCT' }
         ]
       }
     ]

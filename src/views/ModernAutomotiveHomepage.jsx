@@ -229,6 +229,89 @@ export const ModernAutomotiveHomepage = () => {
   // Complete 31 Car Brand Companies Database with Model Years down to 2010
   const DEFAULT_CAR_YEARS = ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'];
 
+  const MODEL_VARIANTS_MAP = {
+    // TOYOTA
+    'INNOVA CRYSTA': ['2.4L ZX DIESEL 7-STR', '2.4L VX DIESEL 7-STR', '2.4L GX DIESEL 8-STR', '2.7L GX PETROL'],
+    'INNOVA': ['2.5L V DIESEL 7-STR', '2.5L G DIESEL', '2.0L G PETROL'],
+    'INNOVA HYCROSS': ['2.0L ZX(O) HYBRID E-CVT', '2.0L VX HYBRID', '2.0L GX PETROL'],
+    'FORTUNER': ['2.8L 4X4 SIGMA-4 AT', '2.8L 4X2 DIESEL AT', '2.7L PETROL 4X2 MT', 'GR-SPORT 4X4 AT'],
+    'URBAN CRUISER HYRYDER': ['1.5L V HYBRID E-CVT', '1.5L G HYBRID', '1.5L S NEO DRIVE', '1.5L G CNG'],
+    'URBAN CRUISER': ['PREMIUM GRADE 1.5L K15B AT', 'HIGH GRADE 1.5L MT'],
+    'GLANZA': ['G 1.2L PETROL', 'V 1.2L AMT', 'S 1.2L CNG', 'E 1.2L MT'],
+    'CAMRY': ['2.5L HYBRID E-CVT', '2.5L PETROL AT'],
+    'COROLLA ALTIS': ['1.8L VL PETROL CVT', '1.4L D-4D DIESEL'],
+    'COROLLA': ['1.8L PETROL MT', '1.4L DIESEL'],
+    'ETIOS': ['1.5L V PETROL', '1.4L VD DIESEL'],
+    'ETIOS LIVA': ['1.2L V PETROL', '1.4L GD DIESEL'],
+    'HILUX': ['2.8L 4X4 HIGH AT', '2.8L 4X4 STD MT'],
+    'RUMION': ['V 1.5L NEO DRIVE AT', 'S 1.5L CNG', 'G 1.5L MT'],
+    'VELLFIRE': ['2.5L HYBRID EXECUTIVE LOUNGE'],
+    'LANDCRUISER': ['3.3L V6 TWIN TURBO DIESEL ZX', '4.5L V8 DIESEL'],
+    'LANDCRUISER PRADO': ['2.8L DIESEL VX'],
+    'YARIS': ['VX 1.5L CVT', 'G 1.5L MT'],
+
+    // MARUTI
+    'SWIFT': ['ZXI PLUS 1.2L DUALJET', 'VXI 1.2L MT', 'ZDI+ 1.3L DDIS TURBO', 'LXI 1.0L CNG'],
+    'BALENO': ['ALPHA 1.2L DUALJET AMT', 'ZETA 1.2L PETROL', 'SIGMA 1.2L CNG'],
+    'BREZZA': ['ZXI+ 1.5L SMART HYBRID AT', 'VXI 1.5L MT', 'ZDI+ 1.3L DDIS DIESEL'],
+    'ERTIGA': ['ZXI+ 1.5L K15C AT', 'VXI 1.5L CNG', 'ZDI 1.3L DDIS'],
+    'DZIRE': ['ZXI+ 1.2L DUALJET AMT', 'VXI 1.2L CNG'],
+    'GRAND VITARA': ['ALPHA+ 1.5L STRONG HYBRID e-CVT', 'ZETA 1.5L ALLGRIP 4WD'],
+    'JIMNY': ['ALPHA 1.5L ALLGRIP PRO 4WD AT', 'ZETA 1.5L MT'],
+    'ALTO': ['VXI+ 1.0L K10C AMT', 'LXI 1.0L CNG'],
+    'ALTO 800': ['LXI 0.8L PETROL', 'LXI 0.8L CNG'],
+    'ALTO K10': ['VXI+ 1.0L K10C AMT', 'LXI 1.0L CNG'],
+    'WAGON R': ['ZXI+ 1.2L DUALJET', 'LXI 1.0L CNG'],
+    'XL6': ['ALPHA+ 1.5L K15C AT', 'ZETA 1.5L CNG'],
+    'CIAZ': ['ALPHA 1.5L PETROL AT', 'ZETA 1.3L DDIS DIESEL'],
+    'IGNIS': ['ALPHA 1.2L PETROL AMT', 'ZETA 1.2L MT'],
+
+    // HYUNDAI
+    'CRETA': ['SX(O) 1.5L CRDI DIESEL AT', 'SX 1.5L MPI PETROL IVT', '1.5L TURBO GDI 7DCT', 'EX 1.5L DIESEL'],
+    'VENUE': ['SX(O) 1.0L TURBO GDI 7DCT', 'SX 1.5L CRDI DIESEL', 'S(O) 1.2L KAPPA MT'],
+    'I20': ['ASTA(O) 1.2L KAPPA IVT', 'SPORTZ 1.2L MT', 'ASTA 1.0L TURBO DCT'],
+    'VERNA': ['SX(O) 1.5L TURBO GDI 7DCT', 'SX 1.5L MPI IVT', 'SX 1.5L CRDI DIESEL'],
+    'ALCAZAR': ['SIGNATURE 1.5L TURBO PETROL 7DCT', 'PRESTIGE 1.5L CRDI DIESEL'],
+    'EXTER': ['SX(O) CONNECT 1.2L KAPPA AMT', 'S 1.2L CNG'],
+    'AURA': ['SX PLUS 1.2L KAPPA AMT', 'S 1.2L CNG'],
+
+    // TATA
+    'NEXON': ['FEARLESS+ S 1.2L TURBO PETROL DCA', 'CREATIVE+ 1.5L REVOTORQ DIESEL', 'XM+ 1.2L PETROL'],
+    'PUNCH': ['CREATIVE CUSTOM 1.2L REVOTRON AMT', 'ACCOMPLISHED 1.2L I-CNG'],
+    'HARRIER': ['FEARLESS+ 2.0L KRYOTEC DIESEL AT', 'ADVENTURE+ 2.0L DIESEL'],
+    'SAFARI': ['ACCOMPLISHED+ 6-STR 2.0L DIESEL AT', 'PURE+ 2.0L DIESEL'],
+    'ALTROZ': ['XZ+ O(S) 1.5L DIESEL', 'XZ+ TECH 1.2L DCA PETROL', 'XE 1.2L I-CNG'],
+
+    // MAHINDRA
+    'THAR': ['LX 4X4 2.2L mHawk DIESEL AT', 'LX 4X4 2.0L mStallion PETROL AT', 'RWD 1.5L DIESEL MT'],
+    'THAR ROXX': ['AX7L 4X4 2.2L DIESEL AT', 'MX5 2.0L PETROL MT'],
+    'XUV700': ['AX7 LUXURY PACK 2.2L DIESEL AWD AT', 'AX5 2.0L PETROL MT', 'AX7 2.2L DIESEL AT'],
+    'SCORPIO-N': ['Z8 L 2.2L DIESEL 4WD AT', 'Z6 2.2L DIESEL MT'],
+
+    // HONDA
+    'CITY': ['ZX 1.5L i-VTEC CVT', 'VX 1.5L i-DTEC DIESEL', 'e:HEV STRONG HYBRID'],
+    'AMAZE': ['VX 1.2L i-VTEC CVT', 'VX 1.5L i-DTEC DIESEL'],
+
+    // KIA
+    'SELTOS': ['GTX+ 1.5L TURBO GDI 7DCT', 'HTX+ 1.5L CRDI DIESEL AT', 'HTK+ 1.5L PETROL MT'],
+    'SONET': ['GTX+ 1.0L TURBO 7DCT', 'HTX 1.5L CRDI DIESEL iMT']
+  };
+
+  const getVariantsForModel = (brand, model) => {
+    if (!brand) return [];
+    if (model && MODEL_VARIANTS_MAP[model.trim().toUpperCase()]) {
+      return MODEL_VARIANTS_MAP[model.trim().toUpperCase()];
+    }
+    if (model) {
+      const matchKey = Object.keys(MODEL_VARIANTS_MAP).find(k => k.includes(model.trim().toUpperCase()) || model.trim().toUpperCase().includes(k));
+      if (matchKey) return MODEL_VARIANTS_MAP[matchKey];
+    }
+    if (carDatabase[brand] && carDatabase[brand].variants) {
+      return carDatabase[brand].variants;
+    }
+    return ['2.4L ZX DIESEL', '2.4L VX DIESEL', '2.7L GX PETROL', 'Standard Variant'];
+  };
+
   const carDatabase = {
     'MARUTI': {
       models: ['ALTO', 'ALTO 800', 'ALTO K10', 'BALENO', 'BREZZA', 'CIAZ', 'DZIRE', 'ERTIGA', 'GRAND VITARA', 'IGNIS', 'JIMNY', 'S-CROSS', 'S-PRESSO', 'SWIFT', 'WAGON R', 'XL6'],
@@ -624,6 +707,7 @@ export const ModernAutomotiveHomepage = () => {
                         setSelectedBrand(val);
                         setSelectedModel('');
                         setSelectedYear('');
+                        setSelectedVariant('');
                       }}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-800 outline-none focus:border-[#FF5722]"
                     >
@@ -635,7 +719,12 @@ export const ModernAutomotiveHomepage = () => {
 
                     <select
                       value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedModel(val);
+                        setSelectedYear('');
+                        setSelectedVariant('');
+                      }}
                       disabled={!selectedBrand}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-800 outline-none focus:border-[#FF5722] disabled:opacity-50"
                     >
@@ -660,11 +749,11 @@ export const ModernAutomotiveHomepage = () => {
                     <select
                       value={selectedVariant}
                       onChange={(e) => setSelectedVariant(e.target.value)}
-                      disabled={!selectedYear}
+                      disabled={!selectedModel}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-800 outline-none focus:border-[#FF5722] disabled:opacity-50"
                     >
                       <option value="">Variant</option>
-                      {selectedBrand && carDatabase[selectedBrand] && carDatabase[selectedBrand].variants.map(v => (
+                      {getVariantsForModel(selectedBrand, selectedModel).map(v => (
                         <option key={v} value={v}>{v}</option>
                       ))}
                     </select>
