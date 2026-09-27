@@ -795,14 +795,15 @@ h4 { font-size: 1rem; font-weight: 700; }
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 87, 34, 0.4);
-  border-radius: 4px;
+  background: rgba(203, 213, 225, 0.8);
+  border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 87, 34, 0.8);

@@ -494,7 +494,7 @@ export const BrandView = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
             {MAIN_CATEGORIES.map((cat) => {
               const isCatActive = activeCategory === cat.id;
               return (
@@ -506,11 +506,11 @@ export const BrandView = () => {
                   }}
                   className={`px-4 py-2.5 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 shrink-0 border ${
                     isCatActive
-                      ? 'bg-[#FF5722] text-white border-[#FF5722] shadow-lg shadow-orange-500/20 scale-105 ring-2 ring-[#FF5722]/30'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-[#FF5722] hover:text-slate-900'
+                      ? 'bg-gradient-to-r from-[#FF5722] to-orange-600 text-white border-[#FF5722] shadow-lg shadow-orange-500/25 scale-105 ring-2 ring-[#FF5722]/30'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-[#FF5722] hover:text-[#FF5722] hover:bg-orange-50/50 shadow-sm'
                   }`}
                 >
-                  <span>{cat.icon}</span>
+                  <span className="text-sm">{cat.icon}</span>
                   <span>{cat.name}</span>
                 </button>
               );
@@ -519,15 +519,15 @@ export const BrandView = () => {
         </div>
 
         {/* Filter Dropdowns Bar */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-md grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
           
           {/* Model Selector */}
           <div>
-            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Filter Model</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1 tracking-wider">Filter Model</label>
             <select
               value={activeModel}
               onChange={(e) => setActiveModel(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50/90 hover:bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 outline-none focus:border-[#FF5722] focus:ring-2 focus:ring-[#FF5722]/20 transition-all cursor-pointer"
             >
               <option value="">All {currentBrand} Models</option>
               {availableModels.map(m => (
@@ -538,11 +538,11 @@ export const BrandView = () => {
 
           {/* Fuel Type */}
           <div>
-            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Fuel Type</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1 tracking-wider">Fuel Type</label>
             <select
               value={activeFuel}
               onChange={(e) => setActiveFuel(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50/90 hover:bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 outline-none focus:border-[#FF5722] focus:ring-2 focus:ring-[#FF5722]/20 transition-all cursor-pointer"
             >
               <option value="All">All Fuel Types (Petrol/Diesel/CNG/EV)</option>
               <option value="Petrol">Petrol</option>
@@ -554,11 +554,11 @@ export const BrandView = () => {
 
           {/* Model Year */}
           <div>
-            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Year</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1 tracking-wider">Year</label>
             <select
               value={activeYear}
               onChange={(e) => setActiveYear(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50/90 hover:bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 outline-none focus:border-[#FF5722] focus:ring-2 focus:ring-[#FF5722]/20 transition-all cursor-pointer"
             >
               <option value="All">All Years (2000 - 2026)</option>
               {['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'].map(y => (
@@ -569,14 +569,14 @@ export const BrandView = () => {
 
           {/* Search Part Keyword */}
           <div>
-            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Search Part Name / OEM No.</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1 tracking-wider">Search Part Name / OEM No.</label>
             <div className="relative">
               <input
                 type="text"
                 placeholder="e.g. Brake Pad, Oil Filter..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#FF5722] placeholder-slate-400"
+                className="w-full bg-slate-50/90 hover:bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl pl-3.5 pr-9 py-2.5 outline-none focus:border-[#FF5722] focus:ring-2 focus:ring-[#FF5722]/20 transition-all placeholder-slate-400"
               />
               <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
