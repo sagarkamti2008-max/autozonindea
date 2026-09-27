@@ -261,60 +261,60 @@ export const BrandView = () => {
   const isShowingFallback = false;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-24 selection:bg-[#FF5722] selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-24 selection:bg-[#FF5722] selection:text-white">
       
       {/* -------------------------------------------------------------
           1. BREADCRUMB NAVIGATION & HERO BRAND HEADER
       ------------------------------------------------------------- */}
-      <div className="bg-slate-950 border-b border-slate-800/80 py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="bg-white border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-sm">
         
         {/* Glowing Background FX */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#0B5394]/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FF5722]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-50 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto space-y-5 relative z-10">
           
           {/* SEO Breadcrumbs */}
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
             <span onClick={() => navigateTo('home')} className="hover:text-[#FF5722] cursor-pointer transition">
               Home
             </span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             <span onClick={() => navigateTo('home')} className="hover:text-[#FF5722] cursor-pointer transition">
               Spares By Make
             </span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-[#FF5722] font-black uppercase tracking-wider">
               {currentBrand} SPARE PARTS
             </span>
           </div>
 
           {/* Main Brand Card Banner */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-[#0B5394]/40 rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-slate-800 backdrop-blur-xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 text-slate-900 shadow-md border border-slate-200 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             <div className="flex items-center gap-5 z-10">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-white p-3 flex items-center justify-center shrink-0 shadow-2xl border-2 border-slate-700/50 group hover:scale-105 transition-transform duration-300">
-                <img src={logoUrl} alt={currentBrand} className="max-h-full max-w-full object-contain filter drop-shadow-md" />
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-slate-50 p-3 flex items-center justify-center shrink-0 shadow-sm border border-slate-200 group hover:scale-105 transition-transform duration-300">
+                <img src={logoUrl} alt={currentBrand} className="max-h-full max-w-full object-contain filter drop-shadow-sm" />
               </div>
 
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span className="bg-emerald-500/20 text-emerald-400 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-500/30 shadow">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> 100% Genuine {currentBrand} Parts
+                  <span className="bg-emerald-50 text-emerald-700 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-200 shadow-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 100% Genuine {currentBrand} Parts
                   </span>
-                  <span className="bg-amber-400/10 text-amber-400 font-extrabold text-[10px] px-3 py-1 rounded-full border border-amber-400/30 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Direct OEM Warranty
+                  <span className="bg-amber-50 text-amber-800 font-extrabold text-[10px] px-3 py-1 rounded-full border border-amber-200 flex items-center gap-1 shadow-sm">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600" /> Direct OEM Warranty
                   </span>
-                  <span className="bg-blue-500/10 text-blue-400 font-extrabold text-[10px] px-3 py-1 rounded-full border border-blue-500/30">
+                  <span className="bg-blue-50 text-blue-700 font-extrabold text-[10px] px-3 py-1 rounded-full border border-blue-200 shadow-sm">
                     🚚 Express Pan-India Delivery
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase flex items-center gap-3">
+                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 uppercase flex items-center gap-3">
                   <span>{currentBrand} SPARE PARTS & ACCESSORIES</span>
                 </h1>
                 
-                <p className="text-slate-300 text-xs sm:text-sm mt-1.5 max-w-2xl font-medium leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm mt-1.5 max-w-2xl font-medium leading-relaxed">
                   Select your specific <strong>{currentBrand}</strong> car model below to get 100% fitment guarantee on genuine OEM & OES spare parts, filters, oils, and body components.
                 </p>
               </div>
@@ -329,47 +329,47 @@ export const BrandView = () => {
                   setSearchTerm('');
                   showToast(`Cleared filters for ${currentBrand}`);
                 }}
-                className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-black text-xs px-5 py-3 rounded-xl border border-slate-700 transition cursor-pointer flex items-center justify-center gap-2 shadow-lg hover:border-[#FF5722]"
+                className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs px-5 py-3 rounded-xl border border-slate-300 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:border-[#FF5722]"
               >
                 <Filter className="w-4 h-4 text-[#FF5722]" /> Reset Filters
               </button>
             </div>
 
             {/* Subtle background brand glow */}
-            <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#0B5394]/30 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-slate-100 to-transparent pointer-events-none" />
           </div>
 
           {/* Quick Assurance Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
+              <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
               <div>
-                <div className="text-xs font-black text-white">100% Genuine Guarantee</div>
-                <div className="text-[10px] text-slate-400">Direct from OEM factories</div>
+                <div className="text-xs font-black text-slate-900">100% Genuine Guarantee</div>
+                <div className="text-[10px] text-slate-500 font-medium">Direct from OEM factories</div>
               </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3">
-              <Truck className="w-5 h-5 text-blue-400 shrink-0" />
+            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
+              <Truck className="w-5 h-5 text-[#0B5394] shrink-0" />
               <div>
-                <div className="text-xs font-black text-white">Fast Doorstep Delivery</div>
-                <div className="text-[10px] text-slate-400">Safe packaging across 19,000+ pin codes</div>
+                <div className="text-xs font-black text-slate-900">Fast Doorstep Delivery</div>
+                <div className="text-[10px] text-slate-500 font-medium">Safe packaging across 19,000+ pin codes</div>
               </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3">
-              <RotateCcw className="w-5 h-5 text-amber-400 shrink-0" />
+            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
+              <RotateCcw className="w-5 h-5 text-amber-600 shrink-0" />
               <div>
-                <div className="text-xs font-black text-white">Easy Returns</div>
-                <div className="text-[10px] text-slate-400">Hassle-free 10-day replacement</div>
+                <div className="text-xs font-black text-slate-900">Easy Returns</div>
+                <div className="text-[10px] text-slate-500 font-medium">Hassle-free 10-day replacement</div>
               </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3">
+            <div className="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm">
               <Zap className="w-5 h-5 text-[#FF5722] shrink-0" />
               <div>
-                <div className="text-xs font-black text-white">Verified Fitment Engine</div>
-                <div className="text-[10px] text-slate-400">Match by chassis & registration</div>
+                <div className="text-xs font-black text-slate-900">Verified Fitment Engine</div>
+                <div className="text-[10px] text-slate-500 font-medium">Match by chassis & registration</div>
               </div>
             </div>
           </div>
@@ -385,17 +385,17 @@ export const BrandView = () => {
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight flex items-center gap-2.5">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2.5">
               <Car className="w-6 h-6 text-[#FF5722]" />
               <span>Select {currentBrand} Car Model</span>
             </h2>
-            <p className="text-xs text-slate-400 font-semibold mt-0.5">
+            <p className="text-xs text-slate-500 font-semibold mt-0.5">
               Click on your car model below to filter compatible spare parts, service kits, and accessories.
             </p>
           </div>
 
           {activeModel && (
-            <div className="bg-[#FF5722]/15 border border-[#FF5722]/40 px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-bold text-white shadow-lg animate-pulse">
+            <div className="bg-orange-50 border border-orange-300 px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-bold text-slate-900 shadow-md">
               <span>Selected Model: <strong className="text-[#FF5722] font-black uppercase">{activeModel}</strong></span>
               <button 
                 onClick={() => setActiveModel('')} 
@@ -425,37 +425,37 @@ export const BrandView = () => {
                 }}
                 className={`rounded-2xl p-4 flex flex-col justify-between h-[155px] transition-all duration-300 cursor-pointer relative overflow-hidden group border ${
                   isSelected
-                    ? 'bg-gradient-to-b from-[#0B5394]/40 via-slate-800 to-slate-900 border-2 border-[#FF5722] shadow-2xl ring-4 ring-[#FF5722]/20 -translate-y-1'
-                    : 'bg-slate-800/90 border-slate-700/80 hover:border-[#FF5722] hover:bg-slate-800 hover:shadow-xl hover:-translate-y-1'
+                    ? 'bg-orange-50/90 border-2 border-[#FF5722] shadow-xl ring-4 ring-[#FF5722]/10 -translate-y-1'
+                    : 'bg-white border-slate-200 hover:border-[#FF5722] hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1'
                 }`}
               >
                 {/* Badge */}
                 <div className="flex items-center justify-between">
                   <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-md uppercase ${
-                    isSelected ? 'bg-[#FF5722] text-white' : 'bg-slate-700 text-slate-300 group-hover:bg-[#FF5722]/20 group-hover:text-[#FF5722]'
+                    isSelected ? 'bg-[#FF5722] text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-[#FF5722]/15 group-hover:text-[#FF5722]'
                   }`}>
                     {car.tag || car.type}
                   </span>
-                  <Car className={`w-4 h-4 ${isSelected ? 'text-[#FF5722]' : 'text-slate-500 group-hover:text-[#FF5722]'}`} />
+                  <Car className={`w-4 h-4 ${isSelected ? 'text-[#FF5722]' : 'text-slate-400 group-hover:text-[#FF5722]'}`} />
                 </div>
 
                 {/* Car Info */}
                 <div className="my-2">
                   <h3 className={`font-black text-sm sm:text-base leading-tight line-clamp-1 transition-colors ${
-                    isSelected ? 'text-[#FF5722]' : 'text-white group-hover:text-[#FF5722]'
+                    isSelected ? 'text-[#FF5722]' : 'text-slate-900 group-hover:text-[#FF5722]'
                   }`}>
                     {car.name}
                   </h3>
-                  <p className="text-[11px] font-bold text-slate-400 mt-1">
+                  <p className="text-[11px] font-bold text-slate-500 mt-1">
                     {car.years}
                   </p>
                 </div>
 
                 {/* Button / Action */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-700/60">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase">{car.type}</span>
                   <span className={`text-[10px] font-black flex items-center gap-0.5 ${
-                    isSelected ? 'text-[#FF5722]' : 'text-slate-400 group-hover:text-[#FF5722]'
+                    isSelected ? 'text-[#FF5722]' : 'text-slate-500 group-hover:text-[#FF5722]'
                   }`}>
                     {isSelected ? 'Active ✓' : 'View Parts →'}
                   </span>
@@ -476,7 +476,7 @@ export const BrandView = () => {
         {/* Category Pills Bar */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#FF5722]" /> Select Spare Parts Category
             </h3>
             {activeCategory !== 'all' && (
@@ -502,7 +502,7 @@ export const BrandView = () => {
                   className={`px-4 py-2.5 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 shrink-0 border ${
                     isCatActive
                       ? 'bg-[#FF5722] text-white border-[#FF5722] shadow-lg shadow-orange-500/20 scale-105 ring-2 ring-[#FF5722]/30'
-                      : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-[#FF5722] hover:text-slate-900'
                   }`}
                 >
                   <span>{cat.icon}</span>
@@ -514,15 +514,15 @@ export const BrandView = () => {
         </div>
 
         {/* Filter Dropdowns Bar */}
-        <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 shadow-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           
           {/* Model Selector */}
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Filter Model</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Filter Model</label>
             <select
               value={activeModel}
               onChange={(e) => setActiveModel(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
             >
               <option value="">All {currentBrand} Models</option>
               {availableModels.map(m => (
@@ -533,11 +533,11 @@ export const BrandView = () => {
 
           {/* Fuel Type */}
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Fuel Type</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Fuel Type</label>
             <select
               value={activeFuel}
               onChange={(e) => setActiveFuel(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
             >
               <option value="All">All Fuel Types (Petrol/Diesel/CNG/EV)</option>
               <option value="Petrol">Petrol</option>
@@ -549,11 +549,11 @@ export const BrandView = () => {
 
           {/* Model Year */}
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Year</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Year</label>
             <select
               value={activeYear}
               onChange={(e) => setActiveYear(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#FF5722]"
             >
               <option value="All">All Years (2000 - 2026)</option>
               {['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'].map(y => (
@@ -564,16 +564,16 @@ export const BrandView = () => {
 
           {/* Search Part Keyword */}
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Search Part Name / OEM No.</label>
+            <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Search Part Name / OEM No.</label>
             <div className="relative">
               <input
                 type="text"
                 placeholder="e.g. Brake Pad, Oil Filter..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 text-white text-xs font-bold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#FF5722] placeholder-slate-500"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#FF5722] placeholder-slate-400"
               />
-              <Search className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
@@ -588,32 +588,32 @@ export const BrandView = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
-          <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
+          <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
             <span>{currentBrand} GENUINE SPARE PARTS CATALOG</span>
             {activeModel && <span className="text-[#FF5722] font-extrabold text-sm">({activeModel})</span>}
           </h3>
           
           <div className="flex items-center gap-2">
             {isShowingFallback && (
-              <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full flex items-center gap-1">
+              <span className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full flex items-center gap-1">
                 ⭐ Featured Fast-Moving OEM Catalog
               </span>
             )}
-            <span className="text-xs font-bold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+            <span className="text-xs font-bold text-slate-700 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
               Showing {displayProducts.length} Items
             </span>
           </div>
         </div>
 
         {displayProducts.length === 0 ? (
-          <div className="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center py-16 px-6 text-center w-full mb-8 relative overflow-hidden">
-            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-800 text-amber-500">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center justify-center py-16 px-6 text-center w-full mb-8 relative overflow-hidden">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-200 text-amber-500">
               <Search size={32} />
             </div>
-            <h3 className="font-black text-2xl text-white mb-3 uppercase tracking-tight">
+            <h3 className="font-black text-2xl text-slate-900 mb-3 uppercase tracking-tight">
               No products found for {currentBrand} {activeModel || ''} {activeCategory !== 'all' ? activeCategory.replace('-', ' ') : ''}
             </h3>
-            <p className="text-slate-400 font-medium text-xs sm:text-sm max-w-md mx-auto mb-8 leading-relaxed">
+            <p className="text-slate-500 font-medium text-xs sm:text-sm max-w-md mx-auto mb-8 leading-relaxed">
               We couldn't find any products matching your specific vehicle model and category selection. Try selecting another category or speak with our live fitment team.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -625,7 +625,7 @@ export const BrandView = () => {
                   setActiveYear('All');
                   setSearchTerm('');
                 }}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 px-6 rounded-xl transition-all cursor-pointer border border-slate-700"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs py-3 px-6 rounded-xl transition-all cursor-pointer border border-slate-200"
               >
                 Reset Vehicle & Category Filters
               </button>
@@ -643,11 +643,11 @@ export const BrandView = () => {
               return (
                 <div
                   key={product.id}
-                  className="bg-slate-950 border border-slate-800 hover:border-[#FF5722] rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/10 group relative"
+                  className="bg-white border border-slate-200 hover:border-[#FF5722] rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-xl group relative"
                 >
                   <div>
                     {/* Product Image & Badges */}
-                    <div className="relative h-48 bg-slate-900 rounded-xl overflow-hidden mb-3.5 flex items-center justify-center p-3 border border-slate-800/80">
+                    <div className="relative h-48 bg-slate-50 rounded-xl overflow-hidden mb-3.5 flex items-center justify-center p-3 border border-slate-100">
                       <img
                         src={product.image || product.image_url || '/images/synthetic_engine_oil.jpg'}
                         alt={product.title}
@@ -666,27 +666,27 @@ export const BrandView = () => {
                         className={`absolute top-2 right-2 p-2 rounded-full border backdrop-blur-md transition ${
                           isWishlisted 
                             ? 'bg-red-500 text-white border-red-400' 
-                            : 'bg-slate-900/80 text-slate-400 hover:text-white border-slate-700'
+                            : 'bg-white/80 text-slate-400 hover:text-slate-800 border-slate-200'
                         }`}
                       >
                         <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
                       </button>
 
                       {(product.oemPartNumber || product.partNumber) && (
-                        <span className="absolute bottom-2 left-2 bg-slate-950/90 text-amber-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-800">
+                        <span className="absolute bottom-2 left-2 bg-slate-900/90 text-amber-300 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-800">
                           OEM: {product.oemPartNumber || product.partNumber}
                         </span>
                       )}
 
                       {discountPercent > 0 && (
-                        <span className="absolute bottom-2 right-2 bg-emerald-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded">
+                        <span className="absolute bottom-2 right-2 bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded">
                           {discountPercent}% OFF
                         </span>
                       )}
                     </div>
 
                     {/* Brand & SubCategory */}
-                    <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-400 mb-1">
+                    <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-500 mb-1">
                       <span className="text-[#FF5722]">{product.brand || currentBrand}</span>
                       <span className="text-slate-500">{product.subCategory || product.category || 'Spare Part'}</span>
                     </div>
@@ -694,39 +694,39 @@ export const BrandView = () => {
                     {/* Product Title */}
                     <h4
                       onClick={() => navigateTo('product-detail', product.id)}
-                      className="font-extrabold text-white text-sm line-clamp-2 hover:text-[#FF5722] cursor-pointer transition leading-snug"
+                      className="font-extrabold text-slate-900 text-sm line-clamp-2 hover:text-[#FF5722] cursor-pointer transition leading-snug"
                     >
                       {product.title}
                     </h4>
 
                     {/* Rating Stars */}
-                    <div className="flex items-center gap-1.5 mt-2 text-amber-400 text-xs font-extrabold">
+                    <div className="flex items-center gap-1.5 mt-2 text-amber-500 text-xs font-extrabold">
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className="w-3 h-3 fill-current text-amber-400" />
                         ))}
                       </div>
-                      <span className="text-[10px] text-slate-400 font-bold">(4.9 • Verified Fit)</span>
+                      <span className="text-[10px] text-slate-500 font-bold">(4.9 • Verified Fit)</span>
                     </div>
                   </div>
 
                   {/* Price & Actions */}
-                  <div className="pt-4 border-t border-slate-800/80 mt-4 space-y-2">
+                  <div className="pt-4 border-t border-slate-100 mt-4 space-y-2">
                     <div className="flex items-baseline justify-between">
                       <div>
-                        <div className="text-lg font-black text-white">
+                        <div className="text-lg font-black text-slate-900">
                           ₹{product.price ? product.price.toLocaleString('en-IN') : '1,299'}
                         </div>
                         {product.mrp && product.mrp > product.price && (
-                          <div className="text-[10px] text-slate-500 line-through font-bold">
+                          <div className="text-[10px] text-slate-400 line-through font-bold">
                             ₹{product.mrp.toLocaleString('en-IN')}
                           </div>
                         )}
                       </div>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
                         isOutOfStock 
-                          ? 'text-rose-400 bg-rose-500/10 border-rose-500/30' 
-                          : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                          ? 'text-rose-600 bg-rose-50 border-rose-200' 
+                          : 'text-emerald-700 bg-emerald-50 border-emerald-200'
                       }`}>
                         {isOutOfStock ? 'Out of Stock' : 'In Stock'}
                       </span>
@@ -742,8 +742,8 @@ export const BrandView = () => {
                         }}
                         className={`p-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs font-bold ${
                           isOutOfStock
-                            ? 'bg-slate-900 text-slate-600 border border-slate-800 cursor-not-allowed'
-                            : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-[#FF5722] cursor-pointer'
+                            ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 hover:border-[#FF5722] cursor-pointer'
                         }`}
                       >
                         <ShoppingCart className="w-3.5 h-3.5 text-[#FF5722]" />
@@ -761,7 +761,7 @@ export const BrandView = () => {
                         }}
                         className={`p-2.5 rounded-xl transition-all flex items-center justify-center gap-1 text-xs font-black ${
                           isOutOfStock
-                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                             : 'bg-gradient-to-r from-[#FF5722] to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md shadow-orange-500/20 cursor-pointer'
                         }`}
                       >
@@ -789,7 +789,8 @@ export const BrandView = () => {
         <PhoneCall className="w-4 h-4 animate-bounce" />
         <span>Ask {currentBrand} Fitment Expert</span>
       </a>
-
     </div>
   );
 };
+
+

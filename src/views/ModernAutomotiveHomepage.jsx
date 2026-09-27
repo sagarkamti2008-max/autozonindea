@@ -649,33 +649,33 @@ export const ModernAutomotiveHomepage = () => {
 
 
       {/* -------------------------------------------------------------
-          2. HERO BANNER SECTION (Exact Match with Image 1 Screenshot)
+          2. HERO BANNER SECTION (Exact Match with White Theme)
       ------------------------------------------------------------- */}
-      <section className="relative bg-[#050D1A] border-b border-slate-800 overflow-hidden py-12 sm:py-16 lg:py-20">
-        {/* Background Image Overlay matching Screenshot */}
+      <section className="relative bg-[#F8FAFC] border-b border-slate-200 overflow-hidden py-12 sm:py-16 lg:py-20">
+        {/* Background Image Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity pointer-events-none" 
+          className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none" 
           style={{ backgroundImage: `url('/images/autozon_warehouse_bg.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#030914] via-[#050D1A]/90 to-[#030914]/80 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-100/90 via-[#F8FAFC]/95 to-slate-100/80 pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             {/* Left Typography & Hero Action */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 bg-white/95 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
+              <div className="inline-flex items-center gap-2 bg-white text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-sm border border-slate-200">
                 <span className="w-2 h-2 rounded-full bg-[#FF5722] animate-pulse"></span>
                 <span>INDIA'S AUTO PARTS MARKETPLACE</span>
               </div>
 
-              <h1 className="font-black leading-[0.9] tracking-tight text-white text-4xl sm:text-6xl lg:text-7xl font-sans uppercase">
+              <h1 className="font-black leading-[0.9] tracking-tight text-slate-900 text-4xl sm:text-6xl lg:text-7xl font-sans uppercase">
                 FIND THE RIGHT <br />
                 <span className="text-[#FF5722] bg-gradient-to-r from-[#FF5722] to-amber-500 bg-clip-text text-transparent">PARTS</span> <br />
                 FOR YOUR RIDE.
               </h1>
               
-              <p className="text-slate-300 text-sm sm:text-base lg:text-lg font-medium max-w-xl leading-relaxed">
+              <p className="text-slate-600 text-sm sm:text-base lg:text-lg font-medium max-w-xl leading-relaxed">
                 From genuine OEM to trusted aftermarket — find the exact fit for your vehicle, delivered across India.
               </p>
 
@@ -689,8 +689,8 @@ export const ModernAutomotiveHomepage = () => {
               </div>
             </div>
 
-            {/* Right Card: SEARCH BY VEHICLE & NUMBER PLATE (Image 1 Exact Replica) */}
-            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-slate-900 relative z-20">
+            {/* Right Card: SEARCH BY VEHICLE & NUMBER PLATE */}
+            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 text-slate-900 relative z-20">
               
               {/* SECTION A: SEARCH BY VEHICLE */}
               <div className="mb-6">
@@ -765,7 +765,7 @@ export const ModernAutomotiveHomepage = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-[#0B192C] hover:bg-slate-900 text-white font-extrabold text-sm py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full bg-[#FF5722] hover:bg-[#e04816] text-white font-extrabold text-sm py-3.5 rounded-xl transition-all shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <Search className="w-4 h-4" />
                     <span>Find Parts</span>
@@ -799,7 +799,7 @@ export const ModernAutomotiveHomepage = () => {
                   className="flex items-center gap-2"
                 >
                   <div className="flex-1 flex items-center bg-white border border-slate-300 rounded-xl overflow-hidden shadow-sm">
-                    <div className="bg-[#0B192C] text-white px-2.5 py-2.5 text-[10px] font-black flex items-center gap-1 border-r border-slate-300 shrink-0">
+                    <div className="bg-slate-900 text-white px-2.5 py-2.5 text-[10px] font-black flex items-center gap-1 border-r border-slate-300 shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                       <span>IND</span>
                     </div>
@@ -815,7 +815,7 @@ export const ModernAutomotiveHomepage = () => {
                   <button
                     type="submit"
                     disabled={isSearchingVahan}
-                    className="bg-[#0B192C] hover:bg-slate-900 text-white font-extrabold text-xs px-5 py-3 rounded-xl transition-all shadow-md flex items-center gap-1.5 shrink-0"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-5 py-3 rounded-xl transition-all shadow-md flex items-center gap-1.5 shrink-0"
                   >
                     <Search className="w-3.5 h-3.5" />
                     <span>{isSearchingVahan ? 'Searching...' : 'Find'}</span>
@@ -830,11 +830,11 @@ export const ModernAutomotiveHomepage = () => {
       </section>
 
       {/* -------------------------------------------------------------
-          PROMO CAROUSEL BANNER SECTION (Exact Match with Image 2 Screenshot)
+          PROMO CAROUSEL BANNER SECTION
       ------------------------------------------------------------- */}
-      <section className="py-8 bg-[#030914] border-b border-slate-800 font-sans">
+      <section className="py-8 bg-white border-b border-slate-200 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-[#0b1b36] via-[#0f2847] to-[#0b1b36] rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-2xl relative overflow-hidden text-white flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden text-white flex flex-col md:flex-row items-center justify-between gap-8">
             
             {/* Left Content */}
             <div className="flex-1 space-y-4">
