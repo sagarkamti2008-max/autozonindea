@@ -3,7 +3,7 @@
  * Real-time Automotive Part Recommendation & Natural Language Query Processor
  */
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_CUSTOM_SEARCH_API_KEY || '';
 
 export const callGeminiAI = async (userPrompt, availableProducts = [], selectedVehicle = null) => {
   try {
