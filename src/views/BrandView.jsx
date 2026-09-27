@@ -425,18 +425,23 @@ export const BrandView = () => {
                 }}
                 className={`rounded-2xl p-4 flex flex-col justify-between h-[155px] transition-all duration-300 cursor-pointer relative overflow-hidden group border ${
                   isSelected
-                    ? 'bg-orange-50/90 border-2 border-[#FF5722] shadow-xl ring-4 ring-[#FF5722]/10 -translate-y-1'
-                    : 'bg-white border-slate-200 hover:border-[#FF5722] hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1'
+                    ? 'bg-gradient-to-br from-orange-50 via-white to-amber-50/50 border-2 border-[#FF5722] shadow-xl shadow-orange-500/10 ring-4 ring-orange-500/15 -translate-y-1'
+                    : 'bg-white border-slate-200 hover:border-[#FF5722] hover:bg-slate-50/80 hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
+                {/* Accent top line for selected card */}
+                {isSelected && <div className="absolute top-0 left-0 right-0 h-1 bg-[#FF5722]" />}
+
                 {/* Badge */}
                 <div className="flex items-center justify-between">
-                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-md uppercase ${
-                    isSelected ? 'bg-[#FF5722] text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-[#FF5722]/15 group-hover:text-[#FF5722]'
+                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider ${
+                    isSelected ? 'bg-[#FF5722] text-white shadow-sm' : 'bg-slate-100 text-slate-700 group-hover:bg-orange-50 group-hover:text-[#FF5722]'
                   }`}>
                     {car.tag || car.type}
                   </span>
-                  <Car className={`w-4 h-4 ${isSelected ? 'text-[#FF5722]' : 'text-slate-400 group-hover:text-[#FF5722]'}`} />
+                  <div className={`p-1.5 rounded-lg transition-colors ${isSelected ? 'bg-orange-100 text-[#FF5722]' : 'bg-slate-50 text-slate-400 group-hover:text-[#FF5722] group-hover:bg-orange-50'}`}>
+                    <Car className="w-4 h-4" />
+                  </div>
                 </div>
 
                 {/* Car Info */}
