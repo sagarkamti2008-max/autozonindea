@@ -736,7 +736,11 @@ export const ModernAutomotiveHomepage = () => {
 
                     <select
                       value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedYear(val);
+                        setSelectedVariant('');
+                      }}
                       disabled={!selectedModel}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-800 outline-none focus:border-[#FF5722] disabled:opacity-50"
                     >
@@ -749,7 +753,7 @@ export const ModernAutomotiveHomepage = () => {
                     <select
                       value={selectedVariant}
                       onChange={(e) => setSelectedVariant(e.target.value)}
-                      disabled={!selectedModel}
+                      disabled={!selectedYear}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-800 outline-none focus:border-[#FF5722] disabled:opacity-50"
                     >
                       <option value="">Variant</option>
