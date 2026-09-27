@@ -1,108 +1,112 @@
 // Automotive Vehicle Fitment & Compatibility Engine for AutoZonIndia
 
+export const getVehicleSlug = (make, model) => {
+  if (!model && !make) return '';
+  const cleanMake = (make || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+  const cleanModel = (model || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  
+  if (cleanMake && cleanModel) {
+    if (cleanModel.startsWith(cleanMake)) return cleanModel;
+    return `${cleanMake}-${cleanModel}`;
+  }
+  return cleanModel || cleanMake || '';
+};
+
 export const checkVehicleProductCompatibility = (product, selectedVehicle) => {
   if (!product) {
-    return { compatible: false, status: 'Invalid Product', badge: '✕ Incompatible' };
+    return { compatible: false, isCompatible: false, status: 'Invalid Product', badge: '✕ Incompatible' };
   }
 
   if (product.isActive === false || product.status === 'inactive' || product.activeStatus === 'inactive') {
-    return { compatible: false, status: 'Inactive Product', badge: '✕ Inactive' };
+    return { compatible: false, isCompatible: false, status: 'Inactive Product', badge: '✕ Inactive' };
   }
 
   if (!selectedVehicle) {
-    return { compatible: true, status: 'No Vehicle Selected', badge: '⚠ Select Vehicle' };
+    return { compatible: true, isCompatible: true, status: 'No Vehicle Selected', badge: '⚠ Select Vehicle' };
   }
 
-  if (product.isUniversal || product.is_universal) {
-    return { compatible: true, status: 'Universal Fitment', badge: '✓ Universal Fit' };
+  if (product.isUniversal || product.is_universal || product.brand === 'Universal' || product.isUniversalFit) {
+    return { compatible: true, isCompatible: true, status: 'Universal Fitment', badge: '✓ Universal Fit' };
   }
 
-  const targetMake = (selectedVehicle.makeName || selectedVehicle.makeId || '').toLowerCase().trim();
-  const targetModel = (selectedVehicle.modelName || selectedVehicle.modelId || '').toLowerCase().trim();
-  const targetVariant = (selectedVehicle.variant || '').toLowerCase().trim();
-  const targetYear = selectedVehicle.year ? parseInt(selectedVehicle.year, 10) : null;
+  const targetMake = (selectedVehicle.makeName || selectedVehicle.make || selectedVehicle.makeId || '').toLowerCase().trim();
+  const targetModel = (selectedVehicle.modelName || selectedVehicle.model || selectedVehicle.modelId || '').toLowerCase().trim();
+  const targetSlug = selectedVehicle.vehicleId || selectedVehicle.modelId || getVehicleSlug(targetMake, targetModel);
 
-  // 1. Check compatibleVehicles array (New Primary Schema)
-  if (Array.isArray(product.compatibleVehicles) && product.compatibleVehicles.length > 0) {
-    const isMatch = product.compatibleVehicles.some(v => {
-      if (!v) return false;
-      if (typeof v === 'string') {
-        const vLower = v.toLowerCase();
-        return vLower.includes(targetModel) || vLower.includes(targetMake);
-      }
-      const vMake = (v.make || v.makeName || v.brand || '').toLowerCase().trim();
-      const vModel = (v.model || v.modelName || '').toLowerCase().trim();
-      const vVariant = (v.variant || '').toLowerCase().trim();
-      const vStart = v.yearStart ? parseInt(v.yearStart, 10) : (v.yearFrom ? parseInt(v.yearFrom, 10) : null);
-      const vEnd = v.yearEnd ? parseInt(v.yearEnd, 10) : (v.yearTo ? parseInt(v.yearTo, 10) : null);
+  // If selectedVehicle has a specific model (e.g. 'Innova Crysta')
+  if (targetModel && targetModel !== 'all' && targetModel !== 'all models') {
+    const pVehicleId = (product.vehicleId || product.modelId || '').toLowerCase().trim();
+    const pCarModel = (product.carModel || product.model || '').toLowerCase().trim();
+    const pCompat = (product.compatibleVehicles || []).map(v => typeof v === 'string' ? v.toLowerCase().trim() : (v.vehicleId || v.modelId || v.model || '').toLowerCase().trim());
+    const pTitle = (product.title || product.name || '').toLowerCase();
+    const pDesc = (product.description || '').toLowerCase();
 
-      const makeOk = !vMake || vMake.includes(targetMake) || targetMake.includes(vMake);
-      const modelOk = !vModel || vModel.includes(targetModel) || targetModel.includes(vModel);
-      const variantOk = !targetVariant || !vVariant || vVariant.includes(targetVariant) || targetVariant.includes(vVariant);
-      let yearOk = true;
-      if (targetYear && vStart && vEnd) {
-        yearOk = targetYear >= vStart && targetYear <= vEnd;
-      }
+    // Specific sub-model disambiguation for Innova Crysta, Hycross, Innova (old), Fortuner, etc.
+    if (targetSlug.includes('crysta') || targetModel.includes('crysta')) {
+      const match = pVehicleId.includes('crysta') || pCarModel.includes('crysta') || pCompat.some(v => v.includes('crysta')) || pTitle.includes('crysta') || pDesc.includes('crysta');
+      return match
+        ? { compatible: true, isCompatible: true, status: 'Verified Fitment for Crysta', badge: '✓ Verified Compatible' }
+        : { compatible: false, isCompatible: false, status: 'Not Compatible with Crysta', badge: '✕ Incompatible' };
+    }
 
-      return makeOk && modelOk && variantOk && yearOk;
-    });
-    if (isMatch) {
-      return { compatible: true, status: 'Verified Fitment', badge: '✓ Verified Compatible' };
+    if (targetSlug.includes('hycross') || targetModel.includes('hycross')) {
+      const match = pVehicleId.includes('hycross') || pCarModel.includes('hycross') || pCompat.some(v => v.includes('hycross')) || pTitle.includes('hycross') || pDesc.includes('hycross');
+      return match
+        ? { compatible: true, isCompatible: true, status: 'Verified Fitment for Hycross', badge: '✓ Verified Compatible' }
+        : { compatible: false, isCompatible: false, status: 'Not Compatible with Hycross', badge: '✕ Incompatible' };
+    }
+
+    if (targetSlug === 'toyota-innova' || targetModel === 'innova') {
+      const isCrystaOrHycross = pVehicleId.includes('crysta') || pVehicleId.includes('hycross') || pTitle.includes('crysta') || pTitle.includes('hycross') || pCarModel.includes('crysta') || pCarModel.includes('hycross') || pCompat.some(v => v.includes('crysta') || v.includes('hycross'));
+      const hasInnova = pVehicleId.includes('innova') || pCarModel.includes('innova') || pCompat.some(v => v.includes('innova')) || pTitle.includes('innova');
+      const match = hasInnova && !isCrystaOrHycross;
+      return match
+        ? { compatible: true, isCompatible: true, status: 'Verified Fitment for Innova', badge: '✓ Verified Compatible' }
+        : { compatible: false, isCompatible: false, status: 'Not Compatible with Innova (Old)', badge: '✕ Incompatible' };
+    }
+
+    if (targetSlug.includes('fortuner') || targetModel.includes('fortuner')) {
+      const match = pVehicleId.includes('fortuner') || pCarModel.includes('fortuner') || pCompat.some(v => v.includes('fortuner')) || pTitle.includes('fortuner') || pDesc.includes('fortuner');
+      return match
+        ? { compatible: true, isCompatible: true, status: 'Verified Fitment for Fortuner', badge: '✓ Verified Compatible' }
+        : { compatible: false, isCompatible: false, status: 'Not Compatible with Fortuner', badge: '✕ Incompatible' };
+    }
+
+    if (targetSlug.includes('glanza') || targetModel.includes('glanza')) {
+      const match = pVehicleId.includes('glanza') || pCarModel.includes('glanza') || pCompat.some(v => v.includes('glanza')) || pTitle.includes('glanza') || pDesc.includes('glanza');
+      return match
+        ? { compatible: true, isCompatible: true, status: 'Verified Fitment for Glanza', badge: '✓ Verified Compatible' }
+        : { compatible: false, isCompatible: false, status: 'Not Compatible with Glanza', badge: '✕ Incompatible' };
+    }
+
+    // General Model / VehicleId slug match
+    const modelSlug = targetModel.replace(/\s+/g, '-');
+    const isDirectMatch = pVehicleId === targetSlug ||
+                          pVehicleId === modelSlug ||
+                          pCarModel === targetModel ||
+                          pCompat.includes(targetSlug) ||
+                          pCompat.includes(modelSlug) ||
+                          pTitle.includes(targetModel);
+
+    if (isDirectMatch) {
+      return { compatible: true, isCompatible: true, status: 'Verified Fitment', badge: '✓ Verified Compatible' };
     }
   }
 
-  // 2. Check fitments array
-  if (Array.isArray(product.fitments) && product.fitments.length > 0) {
-    const hasFitmentMatch = product.fitments.some(f => {
-      if (!f) return false;
-      const fitMake = (f.make || f.makeName || '').toLowerCase();
-      const fitModel = (f.model || f.modelName || '').toLowerCase();
-      const fitVariant = (f.variant || '').toLowerCase();
-      const fitFrom = f.yearFrom ? parseInt(f.yearFrom, 10) : null;
-      const fitTo = f.yearTo ? parseInt(f.yearTo, 10) : null;
-
-      const makeOk = !fitMake || fitMake.includes(targetMake) || targetMake.includes(fitMake);
-      const modelOk = !fitModel || fitModel.includes(targetModel) || targetModel.includes(fitModel);
-      const variantOk = !targetVariant || !fitVariant || fitVariant.includes(targetVariant) || targetVariant.includes(fitVariant);
-      let yearOk = true;
-      if (targetYear && fitFrom && fitTo) {
-        yearOk = targetYear >= fitFrom && targetYear <= fitTo;
-      }
-
-      return makeOk && modelOk && variantOk && yearOk;
-    });
-    if (hasFitmentMatch) {
-      return { compatible: true, status: 'Verified Fitment', badge: '✓ Verified Compatible' };
-    }
+  // Fallback: Check if product has any vehicle constraints at all
+  const hasFitmentData = (product.compatibleVehicles && product.compatibleVehicles.length > 0) || product.carModel || product.vehicleId;
+  if (!hasFitmentData) {
+    return { compatible: true, isCompatible: true, status: 'General Fitment', badge: '✓ Compatible' };
   }
 
-  // 3. Check product_compatibility array
-  if (Array.isArray(product.product_compatibility) && product.product_compatibility.length > 0) {
-    const hasCompatMatch = product.product_compatibility.some(c => {
-      const notes = (c.notes || '').toLowerCase();
-      return notes.includes(targetMake) || notes.includes(targetModel);
-    });
-    if (hasCompatMatch) {
-      return { compatible: true, status: 'Verified Fitment', badge: '✓ Verified Compatible' };
-    }
-  }
-
-  // 4. Fallback: If no vehicle constraints are specified, consider it generally compatible
-  const hasAnyFitmentData = (product.fitments && product.fitments.length > 0) ||
-                            (product.compatibleVehicles && product.compatibleVehicles.length > 0) ||
-                            (product.product_compatibility && product.product_compatibility.length > 0);
-  if (!hasAnyFitmentData) {
-    return { compatible: true, status: 'General Fitment', badge: '✓ Compatible' };
-  }
-
-  return { compatible: false, status: 'Not Verified', badge: '⚠ Needs Verification' };
+  return { compatible: false, isCompatible: false, status: 'Not Verified', badge: '✕ Incompatible' };
 };
 
 export const filterCatalogByVehicleFitment = (products, selectedVehicle) => {
   if (!selectedVehicle) return products;
   return products.filter(p => {
     const check = checkVehicleProductCompatibility(p, selectedVehicle);
-    return check.compatible;
+    return check.compatible || check.isCompatible;
   });
 };
 
@@ -122,6 +126,20 @@ export const isProductMatchingVehicleAndCategory = (
     return false;
   }
 
+  // Universal product always matches
+  if (product.isUniversal || product.is_universal || product.brand === 'Universal' || product.isUniversalFit) {
+    if (activeCategory && activeCategory !== 'all') {
+      const catLower = activeCategory.toLowerCase().trim();
+      const pCat = (product.category || product.categorySlug || '').toLowerCase().trim();
+      const pSub = (product.subCategory || '').toLowerCase().trim();
+      const pTitle = (product.title || product.name || '').toLowerCase();
+      if (!pCat.includes(catLower) && !pSub.includes(catLower) && !pTitle.includes(catLower)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   // 1. BRAND MATCHING
   if (activeBrand && activeBrand !== 'all') {
     const brandSlug = activeBrand.toLowerCase().trim();
@@ -135,104 +153,24 @@ export const isProductMatchingVehicleAndCategory = (
                        pDesc.includes(brandSlug) ||
                        pCompat.some(v => v.includes(brandSlug));
 
-    if (!brandMatch && !product.isUniversal && product.brand !== 'Universal') {
+    if (!brandMatch) {
       return false;
     }
   }
 
-  // 2. STRICT EXACT MODEL MATCHING
-  if (activeModel && activeModel !== 'all') {
-    const modelClean = activeModel.toLowerCase().trim();
-    const pModelId = (product.modelId || product.vehicleId || '').toLowerCase().trim();
-    const pCarModel = (product.carModel || '').toLowerCase().trim();
-    const pTitle = (product.title || product.name || '').toLowerCase();
-    const pDesc = (product.description || product.desc || '').toLowerCase();
-    const pCompat = (product.compatibleVehicles || []).map(v => typeof v === 'string' ? v.toLowerCase() : JSON.stringify(v).toLowerCase());
-    const pFitments = (product.fitments || []).map(f => `${f.make || ''} ${f.model || ''} ${f.variant || ''}`.toLowerCase());
+  // 2. MODEL MATCHING (Strict model-specific disambiguation)
+  if (activeModel && activeModel !== 'all' && activeModel !== 'All Models') {
+    const targetSlug = getVehicleSlug(activeBrand, activeModel);
+    
+    const check = checkVehicleProductCompatibility(product, {
+      makeName: activeBrand,
+      modelName: activeModel,
+      vehicleId: targetSlug,
+      year: activeYear,
+      variant: activeVariant
+    });
 
-    let modelMatch = false;
-
-    // Direct ID match
-    if (pModelId && (pModelId === modelClean || pModelId === `toyota-${modelClean}` || pModelId.replace(/_/g, '-') === modelClean.replace(/_/g, '-'))) {
-      modelMatch = true;
-    }
-
-    if (!modelMatch && pCarModel && pCarModel === modelClean) {
-      modelMatch = true;
-    }
-
-    // Check compatibleVehicles structured items
-    if (!modelMatch && Array.isArray(product.compatibleVehicles)) {
-      modelMatch = product.compatibleVehicles.some(v => {
-        if (!v) return false;
-        if (typeof v === 'string') return v.toLowerCase().includes(modelClean);
-        const m = (v.model || v.modelName || '').toLowerCase();
-        return m === modelClean || m.includes(modelClean);
-      });
-    }
-
-    // Sub-models strict disambiguation table
-    const subModels = [
-      { name: 'innova crysta', sub: 'crysta' },
-      { name: 'innova hycross', sub: 'hycross' },
-      { name: 'etios liva', sub: 'liva' },
-      { name: 'corolla altis', sub: 'altis' },
-      { name: 'landcruiser prado', sub: 'prado' },
-      { name: 'thar roxx', sub: 'roxx' },
-      { name: 'scorpio-n', sub: 'scorpio-n' },
-      { name: 'scorpio classic', sub: 'classic' },
-      { name: 'xuv3xo', sub: '3xo' },
-      { name: 'bolero neo', sub: 'neo' },
-      { name: 'nexon ev', sub: 'nexon ev' },
-      { name: 'punch ev', sub: 'punch ev' },
-      { name: 'tiago ev', sub: 'tiago ev' },
-      { name: 'tigor ev', sub: 'tigor ev' },
-      { name: 'curvv ev', sub: 'curvv ev' },
-      { name: 'grand vitara', sub: 'vitara' },
-      { name: 'alto k10', sub: 'k10' },
-      { name: 'alto 800', sub: '800' },
-      { name: 'elite i20', sub: 'elite' },
-      { name: 'grand i10', sub: 'grand' }
-    ];
-
-    if (!modelMatch) {
-      const isSelectedSubModel = subModels.find(m => modelClean.includes(m.sub) || modelClean === m.name);
-
-      if (isSelectedSubModel) {
-        const sub = isSelectedSubModel.sub;
-        modelMatch = pTitle.includes(sub) ||
-                     pDesc.includes(sub) ||
-                     pCarModel.includes(sub) ||
-                     pCompat.some(v => v.includes(sub)) ||
-                     pFitments.some(f => f.includes(sub));
-      } else {
-        if (modelClean.includes('innova')) {
-          const hasInnova = pTitle.includes('innova') || pCarModel.includes('innova') || pCompat.some(v => v.includes('innova')) || pFitments.some(f => f.includes('innova'));
-          const hasCrystaOrHycross = pTitle.includes('crysta') || pTitle.includes('hycross') || pCarModel.includes('crysta') || pCarModel.includes('hycross') || pCompat.some(v => v.includes('crysta') || v.includes('hycross'));
-          modelMatch = hasInnova && !hasCrystaOrHycross;
-        } else if (modelClean.includes('etios')) {
-          const hasEtios = pTitle.includes('etios') || pCarModel.includes('etios') || pCompat.some(v => v.includes('etios'));
-          const hasLiva = pTitle.includes('liva') || pCarModel.includes('liva') || pCompat.some(v => v.includes('liva'));
-          modelMatch = hasEtios && !hasLiva;
-        } else if (modelClean.includes('corolla')) {
-          const hasCorolla = pTitle.includes('corolla') || pCarModel.includes('corolla') || pCompat.some(v => v.includes('corolla'));
-          const hasAltis = pTitle.includes('altis') || pCarModel.includes('altis') || pCompat.some(v => v.includes('altis'));
-          modelMatch = hasCorolla && !hasAltis;
-        } else if (modelClean.includes('scorpio')) {
-          const hasScorpio = pTitle.includes('scorpio') || pCarModel.includes('scorpio') || pCompat.some(v => v.includes('scorpio'));
-          const hasScorpioN = pTitle.includes('scorpio-n') || pTitle.includes('classic') || pCarModel.includes('scorpio-n') || pCarModel.includes('classic');
-          modelMatch = hasScorpio && !hasScorpioN;
-        } else {
-          const mainWord = modelClean.split(' ')[0];
-          modelMatch = pTitle.includes(mainWord) ||
-                       pCarModel.includes(mainWord) ||
-                       pCompat.some(v => v.includes(mainWord)) ||
-                       pFitments.some(f => f.includes(mainWord));
-        }
-      }
-    }
-
-    if (!modelMatch && !product.isUniversal && product.brand !== 'Universal') {
+    if (!check.compatible && !check.isCompatible) {
       return false;
     }
   }

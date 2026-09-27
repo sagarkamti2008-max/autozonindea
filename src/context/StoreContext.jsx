@@ -593,7 +593,7 @@ export const StoreProvider = ({ children }) => {
     
     return products.filter(prod => {
       const comp = checkVehicleProductCompatibility(prod, selectedVehicle);
-      return comp.isCompatible;
+      return comp.compatible || comp.isCompatible;
     });
   }, [products, selectedVehicle]);
 
