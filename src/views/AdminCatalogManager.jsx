@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 import { useStore } from '../context/StoreContext';
 import { VEHICLE_MAKES } from '../data/vehicles';
 import { BRANDS_DATABASE } from '../data/brands';
+import { CATEGORIES_DATABASE } from '../data/mockData';
 import { ProductImageUploader } from '../components/ProductImageUploader';
 import {
   Package, Plus, Trash2, Edit, CheckCircle2, AlertTriangle, ShieldCheck,
@@ -978,9 +979,9 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                     onChange={(e) => setFilterCategory(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-bold focus:border-blue-500 focus:outline-none"
                   >
-                    <option value="all">All Categories ({Object.keys(CATEGORY_TAXONOMY).length})</option>
-                    {Object.keys(CATEGORY_TAXONOMY).map(catName => (
-                      <option key={catName} value={catName}>{catName}</option>
+                    <option value="all">All Categories ({CATEGORIES_DATABASE.length})</option>
+                    {CATEGORIES_DATABASE.map(cat => (
+                      <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1218,23 +1219,55 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                                 Save
                               </button>
                             ) : (
-                              <div className="flex items-center justify-end gap-1.5">
+                              <div className="flex items-center justify-end gap-1.5 flex-wrap">
                                 <button
-                                  onClick={() => {
-                                    setInlineEditingId(prod.id);
-                                    setInlinePrice(prod.price);
-                                    setInlineStock(prod.stock);
-                                  }}
+                                  onClick={() => navigateTo('product-detail', prod.id)}
                                   className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer transition"
-                                  title="Quick Edit Price & Stock"
+                                  title="View Product Details"
                                 >
-                                  ⚡ Quick Edit
+                                  👁️ View
                                 </button>
                                 <button
                                   onClick={() => handleEditProductClick(prod)}
                                   className="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer transition"
                                 >
-                                  Edit
+                                  ✏️ Edit
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const dup = {
+                                      ...prod,
+                                      id: `prod-${Date.now()}`,
+                                      title: `${prod.title || prod.name} (Copy)`,
+                                      name: `${prod.title || prod.name} (Copy)`,
+                                      sku: `${prod.sku || 'SKU'}-COPY-${Math.floor(Math.random() * 1000)}`,
+                                      created_at: new Date().toISOString()
+                                    };
+                                    setProducts([dup, ...products]);
+                                    showToast(`📋 Duplicated "${prod.title || prod.name}"`);
+                                  }}
+                                  className="bg-purple-900/60 hover:bg-purple-700 border border-purple-500/40 text-purple-200 hover:text-white px-2 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer transition"
+                                  title="Duplicate Product"
+                                >
+                                  📋 Duplicate
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const updated = products.map(p => {
+                                      if (p.id === prod.id) {
+                                        const isAct = p.status === 'Published' || p.status === 'Active';
+                                        const newStatus = isAct ? 'Deactivated' : 'Published';
+                                        return { ...p, status: newStatus, isActive: !isAct };
+                                      }
+                                      return p;
+                                    });
+                                    setProducts(updated);
+                                    showToast(`Updated status for "${prod.title || prod.name}"`);
+                                  }}
+                                  className="bg-amber-950/80 hover:bg-amber-600 border border-amber-500/40 text-amber-300 hover:text-white px-2 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer transition"
+                                  title="Deactivate / Activate"
+                                >
+                                  {prod.status === 'Deactivated' || prod.status === 'Inactive' || prod.isActive === false ? '⚡ Activate' : '⏸️ Deactivate'}
                                 </button>
                                 <button
                                   onClick={() => {
@@ -1454,31 +1487,48 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
               </div>
             </div>
 
-            {/* 4. Category + Classification ✅ */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* 4. Category + Subcategory + Classification ✅ */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
                   4️⃣ Category ✅ <span className="text-rose-400">*</span>
                 </label>
                 <select
                   value={productForm.category}
-                  onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                  onChange={(e) => {
+                    const newCat = e.target.value;
+                    const catObj = CATEGORIES_DATABASE.find(c => c.name === newCat);
+                    const firstSub = catObj?.subcategories?.[0] || '';
+                    setProductForm({
+                      ...productForm,
+                      category: newCat,
+                      subCategory: firstSub
+                    });
+                  }}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
                 >
-                  <option value="Brake Parts">Brake Parts</option>
-                  <option value="Engine Parts">Engine Parts</option>
-                  <option value="Electrical">Electrical</option>
-                  <option value="Suspension">Suspension</option>
-                  <option value="Body Parts">Body Parts</option>
-                  <option value="Filters">Filters</option>
-                  <option value="AC Parts">AC Parts</option>
-                  <option value="Lights">Lights</option>
-                  <option value="Transmission">Transmission</option>
-                  <option value="Steering">Steering</option>
-                  <option value="Lubricants">Lubricants</option>
-                  <option value="Car Accessories">Car Accessories</option>
-                  <option value="Tyres">Tyres</option>
-                  <option value="Batteries">Batteries</option>
+                  {CATEGORIES_DATABASE.map(cat => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                  Subcategory ✅ <span className="text-rose-400">*</span>
+                </label>
+                <select
+                  value={productForm.subCategory}
+                  onChange={(e) => setProductForm({ ...productForm, subCategory: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
+                >
+                  {(() => {
+                    const selectedCatObj = CATEGORIES_DATABASE.find(c => c.name === productForm.category);
+                    const subs = selectedCatObj?.subcategories || ['General'];
+                    return subs.map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ));
+                  })()}
                 </select>
               </div>
 

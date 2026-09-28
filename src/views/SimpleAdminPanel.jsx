@@ -1,6 +1,7 @@
 // src/views/SimpleAdminPanel.jsx
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
+import { CATEGORIES_DATABASE } from '../data/mockData';
 import {
   fetchProductsFromFirestore,
   addProductToFirestore,
@@ -61,7 +62,8 @@ export const SimpleAdminPanel = () => {
     carBrand: '',
     carModel: '',
     variant: '',
-    category: 'Engine Parts',
+    category: CATEGORIES_DATABASE[0]?.name || 'Maintenance Service Parts',
+    subcategory: CATEGORIES_DATABASE[0]?.subcategories?.[0] || '',
     mrp: '',
     sellingPrice: '',
     stock: 10,
@@ -1190,16 +1192,30 @@ export const SimpleAdminPanel = () => {
                   <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Category</label>
                   <select 
                     value={productForm.category} 
-                    onChange={e => setProductForm({ ...productForm, category: e.target.value })} 
+                    onChange={e => {
+                      const selectedCat = e.target.value;
+                      const catObj = CATEGORIES_DATABASE.find(c => c.name === selectedCat);
+                      const firstSub = catObj?.subcategories?.[0] || '';
+                      setProductForm({ ...productForm, category: selectedCat, subcategory: firstSub });
+                    }} 
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500 cursor-pointer"
                   >
-                    <option value="Engine Parts">Engine Parts</option>
-                    <option value="Engine Oil & Fluids">Engine Oil & Fluids</option>
-                    <option value="Brakes">Brakes</option>
-                    <option value="Filters">Filters</option>
-                    <option value="Body & Bumper">Body & Bumper</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Accessories">Accessories</option>
+                    {CATEGORIES_DATABASE.map(cat => (
+                      <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subcategory</label>
+                  <select 
+                    value={productForm.subcategory || ''} 
+                    onChange={e => setProductForm({ ...productForm, subcategory: e.target.value })} 
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500 cursor-pointer"
+                  >
+                    {(CATEGORIES_DATABASE.find(c => c.name === productForm.category)?.subcategories || []).map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
                   </select>
                 </div>
 

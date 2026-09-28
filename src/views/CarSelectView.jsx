@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { VEHICLE_DATABASE, CATEGORIES_DATABASE } from '../data/mockData';
+import { CategoryIcon } from '../components/CategoryIcon';
 import { Search, ChevronDown, Car, CheckCircle2, ArrowRight, ShieldCheck, Wrench, Settings, Zap, Snowflake, Thermometer, Fuel, Layers, Lightbulb, Disc, Sparkles } from 'lucide-react';
 
 export const CarSelectView = () => {
@@ -220,39 +221,35 @@ export const CarSelectView = () => {
           </div>
         )}
 
-        {/* 15 CATEGORIES SECTION FOR SELECTED CAR */}
-        <div className="space-y-4">
+        {/* 34 CATEGORIES SECTION matching customer reference layout */}
+        <div className="space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                {selectedVehicle 
-                  ? `${selectedVehicle.makeName || selectedVehicle.make} ${selectedVehicle.modelName || selectedVehicle.model} ${selectedVehicle.year} Parts Categories`
-                  : 'Automotive Parts Categories'}
+                Select the required category of part:
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                Select a category below to explore verified compatible parts for your vehicle.
+                {selectedVehicle 
+                  ? `Showing parts categories verified for ${selectedVehicle.makeName} ${selectedVehicle.modelName} (${selectedVehicle.year})`
+                  : 'Click any category to browse verified OEM & replacement automotive parts.'}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
+          {/* Categories Grid - Clean White Cards with Blue Line-Art Icons */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {CATEGORIES_DATABASE.map(cat => (
               <div
                 key={cat.id}
                 onClick={() => handleCategoryClick(cat.id)}
-                className="p-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-900 hover:border-slate-900 hover:text-white shadow-sm hover:shadow-xl cursor-pointer transition-all hover:-translate-y-1 flex flex-col justify-between h-32 group"
+                className="p-5 rounded-2xl border border-slate-200/90 bg-white hover:border-sky-400 shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center h-44 group relative overflow-hidden"
               >
-                <div className="text-3xl mb-1 group-hover:scale-110 transition-transform">
-                  {cat.icon}
+                <div className="mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                  <CategoryIcon name={cat.name} className="w-14 h-14" />
                 </div>
-                <div>
-                  <h3 className="font-black text-xs text-slate-900 group-hover:text-amber-300 transition-colors leading-tight">
-                    {cat.name}
-                  </h3>
-                  <span className="text-[10px] text-slate-400 group-hover:text-slate-300 font-bold block mt-1 truncate">
-                    {cat.subcategories?.[0] || 'Explore Parts'} &rarr;
-                  </span>
-                </div>
+                <h3 className="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-[#0EA5E9] transition-colors leading-snug px-1 line-clamp-2">
+                  {cat.name}
+                </h3>
               </div>
             ))}
           </div>
