@@ -421,7 +421,7 @@ export const ProductDetailView = () => {
             </div>
 
             {/* Details & Actions Column (Right) */}
-            <div className="lg:col-span-7 p-6 lg:p-10 flex flex-col justify-between bg-white">
+            <div className="lg:col-span-7 p-6 lg:p-10 flex flex-col justify-start bg-white">
               <div>
                 {/* 1. Product Title */}
                 <h1 className="text-2xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
