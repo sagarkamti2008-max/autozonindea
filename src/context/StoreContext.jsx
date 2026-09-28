@@ -64,6 +64,19 @@ const safeSetStorage = (key, value) => {
 export const StoreProvider = ({ children }) => {
   const [currentRole, setCurrentRole] = useState('customer');
   const [user, setUser] = useState(() => safeGetStorage('autozon_user', null));
+  const [isAdminUnlocked, setIsAdminUnlocked] = useState(() => sessionStorage.getItem('autozon_admin_master_unlocked') === 'true');
+
+  const unlockAdminConsole = () => {
+    sessionStorage.setItem('autozon_admin_master_unlocked', 'true');
+    setIsAdminUnlocked(true);
+    setCurrentRole('admin');
+  };
+
+  const lockAdminConsole = () => {
+    sessionStorage.removeItem('autozon_admin_master_unlocked');
+    setIsAdminUnlocked(false);
+    setCurrentRole('customer');
+  };
 
   const getInitialView = () => {
     try {
@@ -709,6 +722,9 @@ export const StoreProvider = ({ children }) => {
       setIsCheckoutOpen,
       toasts,
       showToast,
+      isAdminUnlocked,
+      unlockAdminConsole,
+      lockAdminConsole,
       blogs: INITIAL_BLOGS,
       faqs: INITIAL_FAQS
     }}>

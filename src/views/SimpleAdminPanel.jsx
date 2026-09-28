@@ -28,7 +28,8 @@ export const SimpleAdminPanel = () => {
     setProducts,
     navigateTo,
     showToast,
-    setCurrentRole
+    setCurrentRole,
+    lockAdminConsole
   } = useStore();
 
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'products' | 'orders' | 'customers' | 'content' | 'settings'
@@ -525,12 +526,25 @@ export const SimpleAdminPanel = () => {
               <span>Firebase Guard Active</span>
             </div>
 
-            <button
-              onClick={handleAdminLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-slate-800 bg-slate-900 text-slate-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-xs font-bold transition cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" /> Sign Out
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => {
+                  if (lockAdminConsole) lockAdminConsole();
+                  else navigateTo('home');
+                }}
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-bold transition cursor-pointer"
+                title="Lock Master Admin Console"
+              >
+                <Lock className="w-3.5 h-3.5" /> Lock
+              </button>
+
+              <button
+                onClick={handleAdminLogout}
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-xs font-bold transition cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Logout
+              </button>
+            </div>
           </div>
         </div>
       </aside>

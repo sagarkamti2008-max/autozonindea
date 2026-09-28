@@ -126,9 +126,28 @@ import { AIPartsAssistantView } from './views/AIPartsAssistantView';
 import { CustomerTicketDetailView } from './views/CustomerTicketDetailView';
 import { AdminSupportHub } from './views/AdminSupportHub';
 import { SitemapView } from './views/SitemapView';
+import { AdminLockModal } from './components/AdminLockModal';
 
 const ViewRenderer = () => {
-  const { currentView, currentRole, navigateTo, products, activeProductId } = useStore();
+  const { currentView, currentRole, navigateTo, products, activeProductId, isAdminUnlocked, unlockAdminConsole } = useStore();
+
+  const isAdminRoute = currentView.startsWith('admin') || 
+                       currentView.includes('admin') || 
+                       currentView === 'catalog-manager' || 
+                       currentView === 'fulfillment' || 
+                       currentView === 'inventory' || 
+                       currentView === 'fitment-review';
+
+  if (isAdminRoute && !isAdminUnlocked) {
+    return (
+      <AdminLockModal 
+        onUnlock={() => {
+          unlockAdminConsole();
+        }}
+        onCancel={() => navigateTo('home')}
+      />
+    );
+  }
 
   switch (currentView) {
     case 'sitemap':
