@@ -175,12 +175,34 @@ export const StoreProvider = ({ children }) => {
   const [recentSearches, setRecentSearches] = useState(() => safeGetStorage('autozon_recent_searches', []));
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategoryState] = useState('all');
+  const [selectedSubcategory, setSelectedSubcategoryState] = useState('all');
+  const [selectedPartType, setSelectedPartTypeState] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [selectedClassification, setSelectedClassification] = useState('all');
   const [filterFitsVehicle, setFilterFitsVehicle] = useState(false);
   const [priceRange, setPriceRange] = useState(500000);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(500000);
+  const [availabilityFilter, setAvailabilityFilter] = useState('in_stock'); // 'in_stock' | 'out_of_stock' | 'on_order' | 'all'
+  const [productTypeFilter, setProductTypeFilter] = useState('all'); // 'vehicle_specific' | 'universal' | 'all'
   const [sortBy, setSortBy] = useState('featured');
+
+  // Cascading Category -> Subcategory -> Part Type setters
+  const setSelectedCategory = (cat) => {
+    setSelectedCategoryState(cat);
+    setSelectedSubcategoryState('all');
+    setSelectedPartTypeState('all');
+  };
+
+  const setSelectedSubcategory = (sub) => {
+    setSelectedSubcategoryState(sub);
+    setSelectedPartTypeState('all');
+  };
+
+  const setSelectedPartType = (pt) => {
+    setSelectedPartTypeState(pt);
+  };
 
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
@@ -713,6 +735,10 @@ export const StoreProvider = ({ children }) => {
       setSearchQuery,
       selectedCategory,
       setSelectedCategory,
+      selectedSubcategory,
+      setSelectedSubcategory,
+      selectedPartType,
+      setSelectedPartType,
       selectedBrand,
       setSelectedBrand,
       selectedClassification,
@@ -721,6 +747,14 @@ export const StoreProvider = ({ children }) => {
       setFilterFitsVehicle,
       priceRange,
       setPriceRange,
+      minPrice,
+      setMinPrice,
+      maxPrice,
+      setMaxPrice,
+      availabilityFilter,
+      setAvailabilityFilter,
+      productTypeFilter,
+      setProductTypeFilter,
       sortBy,
       setSortBy,
       filteredProducts: globalFilteredProducts,

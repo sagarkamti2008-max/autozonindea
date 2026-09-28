@@ -1,4 +1,5 @@
 import { checkProductCompatibility } from './fitmentEngine';
+import { MASTER_CATEGORIES_DATA } from '../data/categoryMasterData';
 
 export const getVehicleSlug = (make, model) => {
   if (!model && !make) return '';
@@ -31,205 +32,191 @@ export const filterCatalogByVehicleFitment = (products, selectedVehicle) => {
   });
 };
 
+/**
+ * System 4 - Advanced Product & Category Filter Engine
+ * Evaluates VEHICLE + CATEGORY + SUBCATEGORY + PART TYPE + PRICE + BRAND + STOCK + CLASSIFICATION
+ */
 export const isProductMatchingVehicleAndCategory = (
   product,
-  activeBrand,
-  activeModel,
-  activeCategory,
-  activeSubCategory,
+  activeBrand = 'all',
+  activeModel = 'all',
+  activeCategory = 'all',
+  activeSubCategory = 'all',
   activeVariant = '',
-  activeYear = ''
+  activeYear = '',
+  activePartType = 'all',
+  activeEngine = '',
+  activeFuelType = '',
+  options = {}
 ) => {
   if (!product) return false;
 
-  // 0. ACTIVE / INACTIVE CHECK
-  if (product.isActive === false || product.status === 'inactive' || product.activeStatus === 'inactive' || product.statusText === 'Inactive') {
+  const {
+    minPrice = 0,
+    maxPrice = Infinity,
+    availability = 'in_stock', // 'in_stock' | 'out_of_stock' | 'on_order' | 'all'
+    classification = 'all', // 'OEM' | 'Aftermarket' | 'Genuine' | 'Equivalent' | 'all'
+    productType = 'all', // 'vehicle_specific' | 'universal' | 'all'
+    selectedVehicle = null,
+    searchQuery = ''
+  } = options;
+
+  // 0. Active Status Check
+  if (
+    product.isActive === false || 
+    product.status === 'inactive' || 
+    product.activeStatus === 'inactive' || 
+    product.statusText === 'Inactive'
+  ) {
     return false;
   }
 
-  // Universal product always matches
-  if (product.isUniversal || product.is_universal || product.brand === 'Universal' || product.isUniversalFit) {
-    if (activeCategory && activeCategory !== 'all') {
-      const catLower = activeCategory.toLowerCase().trim();
-      const pCat = (product.category || product.categorySlug || '').toLowerCase().trim();
-      const pSub = (product.subCategory || '').toLowerCase().trim();
-      const pTitle = (product.title || product.name || '').toLowerCase();
-      if (!pCat.includes(catLower) && !pSub.includes(catLower) && !pTitle.includes(catLower)) {
-        return false;
-      }
-    }
-    return true;
+  // 1. Price Filtering
+  const price = Number(product.sellingPrice || product.price || 0);
+  if (price < minPrice || price > maxPrice) {
+    return false;
   }
 
-  // 1. BRAND MATCHING
-  if (activeBrand && activeBrand !== 'all') {
-    const brandSlug = activeBrand.toLowerCase().trim();
-    const pBrand = (product.carBrand || product.brand || '').toLowerCase().trim();
-    const pTitle = (product.title || product.name || '').toLowerCase();
-    const pDesc = (product.description || product.desc || '').toLowerCase();
-    const pCompat = (product.compatibleVehicles || []).map(v => typeof v === 'string' ? v.toLowerCase() : JSON.stringify(v).toLowerCase());
+  // 2. Stock & Availability Filtering
+  const stock = Number(product.stock !== undefined ? product.stock : (product.stockCount || 10));
+  const isOutOfStock = stock <= 0 || product.inStock === false || product.status === 'out_of_stock';
+  
+  if (availability === 'in_stock' && isOutOfStock) {
+    return false;
+  } else if (availability === 'out_of_stock' && !isOutOfStock) {
+    return false;
+  } else if (availability === 'on_order' && product.status !== 'available_on_order' && product.isAvailableOnOrder !== true) {
+    return false;
+  }
 
-    const brandMatch = pBrand.includes(brandSlug) ||
-                       pTitle.includes(brandSlug) ||
-                       pDesc.includes(brandSlug) ||
-                       pCompat.some(v => v.includes(brandSlug));
-
-    if (!brandMatch) {
+  // 3. Product Classification (OEM, Aftermarket, Genuine, Equivalent)
+  if (classification !== 'all') {
+    const prodClass = (product.classification || product.productClassification || product.type || '').toLowerCase().trim();
+    if (prodClass && prodClass !== classification.toLowerCase().trim()) {
       return false;
     }
   }
 
-  // 2. MODEL MATCHING (Strict model-specific disambiguation)
-  if (activeModel && activeModel !== 'all' && activeModel !== 'All Models') {
-    const targetSlug = getVehicleSlug(activeBrand, activeModel);
-    
-    const check = checkVehicleProductCompatibility(product, {
-      makeName: activeBrand,
-      modelName: activeModel,
-      vehicleId: targetSlug,
-      year: activeYear,
-      variant: activeVariant
-    });
+  // 4. Product Type (Vehicle Specific vs Universal)
+  const isUniversalProd = product.isUniversal === true || 
+                           product.is_universal === true || 
+                           product.productType === 'universal' ||
+                           product.brand === 'Universal';
 
-    if (!check.compatible && !check.isCompatible) {
+  if (productType === 'vehicle_specific' && isUniversalProd) {
+    return false;
+  } else if (productType === 'universal' && !isUniversalProd) {
+    return false;
+  }
+
+  // 5. Vehicle Fitment Check (If vehicle or make/model active)
+  const vehicleObj = selectedVehicle || (activeBrand !== 'all' && activeModel !== 'all' ? {
+    makeName: activeBrand,
+    modelName: activeModel,
+    year: activeYear,
+    variant: activeVariant,
+    engine: activeEngine,
+    fuelType: activeFuelType
+  } : null);
+
+  if (vehicleObj && !isUniversalProd) {
+    const check = checkProductCompatibility(product, vehicleObj);
+    if (check.status !== 'COMPATIBLE') {
       return false;
     }
   }
 
-  // 3. VARIANT MATCHING
-  if (activeVariant && activeVariant !== 'all' && activeVariant !== 'All') {
-    const vLower = activeVariant.toLowerCase().trim();
-    const pVariant = (product.variant || product.variantId || '').toLowerCase().trim();
-    const pTitle = (product.title || product.name || '').toLowerCase();
-    const pCompat = (product.compatibleVehicles || []).map(v => typeof v === 'string' ? v.toLowerCase() : JSON.stringify(v).toLowerCase());
-    const pFitments = (product.fitments || []).map(f => (f.variant || '').toLowerCase());
-
-    const variantMatch = pVariant.includes(vLower) ||
-                         pTitle.includes(vLower) ||
-                         pCompat.some(v => v.includes(vLower)) ||
-                         pFitments.some(f => f.includes(vLower));
-
-    if (!variantMatch && !product.isUniversal) {
-      return false;
-    }
-  }
-
-  // 4. YEAR MATCHING
-  if (activeYear && activeYear !== 'all' && activeYear !== 'All') {
-    const targetYr = parseInt(activeYear, 10);
-    if (!isNaN(targetYr)) {
-      let yearMatch = false;
-
-      // Single year field
-      if (product.year && parseInt(product.year, 10) === targetYr) {
-        yearMatch = true;
-      }
-
-      // Start/End year
-      if (!yearMatch && product.yearStart && product.yearEnd) {
-        const yS = parseInt(product.yearStart, 10);
-        const yE = parseInt(product.yearEnd, 10);
-        if (targetYr >= yS && targetYr <= yE) yearMatch = true;
-      }
-
-      // Check fitments
-      if (!yearMatch && Array.isArray(product.fitments)) {
-        yearMatch = product.fitments.some(f => {
-          const yF = parseInt(f.yearFrom || f.yearStart, 10);
-          const yT = parseInt(f.yearTo || f.yearEnd, 10);
-          if (!isNaN(yF) && !isNaN(yT)) {
-            return targetYr >= yF && targetYr <= yT;
-          }
-          return false;
-        });
-      }
-
-      // Check compatibleVehicles
-      if (!yearMatch && Array.isArray(product.compatibleVehicles)) {
-        yearMatch = product.compatibleVehicles.some(v => {
-          if (typeof v === 'string') return v.includes(String(targetYr));
-          const yS = parseInt(v.yearStart || v.yearFrom, 10);
-          const yE = parseInt(v.yearEnd || v.yearTo, 10);
-          if (!isNaN(yS) && !isNaN(yE)) {
-            return targetYr >= yS && targetYr <= yE;
-          }
-          return false;
-        });
-      }
-
-      // Check title string for year range e.g. "2016-2020" or "2014"
-      if (!yearMatch) {
-        const pTitle = (product.title || '').toLowerCase();
-        if (pTitle.includes(String(targetYr))) yearMatch = true;
-      }
-
-      if (!yearMatch && !product.isUniversal) {
-        return false;
-      }
-    }
-  }
-
-  // 5. CATEGORY MATCHING (14 Master Parts Categories)
+  // 6. Category Matching (29 Main Categories Taxonomy)
   if (activeCategory && activeCategory !== 'all') {
-    const catLower = activeCategory.toLowerCase().trim();
-    const pCat = (product.category || product.categorySlug || '').toLowerCase().trim();
-    const pSub = (product.subCategory || '').toLowerCase().trim();
+    const catQuery = activeCategory.toLowerCase().trim();
+    const pCat = (product.category || product.categoryId || product.categorySlug || '').toLowerCase().trim();
+    const pSub = (product.subCategory || product.subcategoryId || product.subcategorySlug || '').toLowerCase().trim();
     const pTitle = (product.title || product.name || '').toLowerCase();
 
-    let catMatch = false;
+    // Map Master Categories
+    const masterCat = MASTER_CATEGORIES_DATA.find(c => 
+      c.id.toLowerCase() === catQuery ||
+      c.slug.toLowerCase() === catQuery ||
+      c.name.toLowerCase() === catQuery ||
+      catQuery.includes(c.name.toLowerCase()) ||
+      c.name.toLowerCase().includes(catQuery)
+    );
 
-    if (catLower === 'engine-parts' || catLower === 'cat-engine' || catLower === 'engine_parts' || catLower === 'engine parts' || catLower === 'engine') {
-      // ENGINE PARTS STRICT: pistons, spark plugs, belts, mounts, gaskets, timing chain, cylinder head (EXCLUDES filters, EXCLUDES fluids)
-      const isFilter = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
-      const isOilFluid = (pCat.includes('oil') || pTitle.includes('engine oil') || pTitle.includes('fluid') || pTitle.includes('coolant')) && !pTitle.includes('sump') && !pTitle.includes('pump') && !pTitle.includes('pan');
-      if (isFilter || isOilFluid) {
-        catMatch = false;
-      } else {
-        catMatch = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') || pTitle.includes('spark') || pTitle.includes('clutch') || pTitle.includes('piston') || pTitle.includes('gasket') || pTitle.includes('belt') || pTitle.includes('mount') || pTitle.includes('valve') || pTitle.includes('camshaft') || pTitle.includes('crankshaft');
-      }
-    } else if (catLower === 'oils-fluids' || catLower === 'lubricants' || catLower === 'engine-oil-fluids' || catLower === 'oils & fluids') {
-      catMatch = pCat.includes('oil') || pCat.includes('fluid') || pCat.includes('lubricant') || pSub.includes('oil') || pSub.includes('fluid') || pTitle.includes('engine oil') || pTitle.includes('synthetic') || pTitle.includes('brake fluid') || pTitle.includes('coolant') || pTitle.includes('transmission fluid');
-    } else if (catLower === 'brake-parts' || catLower === 'cat-brakes' || catLower === 'braking_system' || catLower === 'brake parts' || catLower === 'brake-system' || catLower === 'brakes') {
-      catMatch = pCat.includes('brake') || pSub.includes('brake') || pTitle.includes('brake') || pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('rotor') || pTitle.includes('caliper');
-    } else if (catLower === 'filters' || catLower === 'cat-filters' || catLower === 'filters_oils' || catLower === 'filter') {
-      catMatch = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
-    } else if (catLower === 'body-parts' || catLower === 'cat-body' || catLower === 'body-bumper' || catLower === 'body parts' || catLower === 'body & bumper') {
-      catMatch = pCat.includes('body') || pCat.includes('bumper') || pSub.includes('bumper') || pTitle.includes('bumper') || pTitle.includes('fender') || pTitle.includes('door') || pTitle.includes('mirror') || pTitle.includes('grille');
-    } else if (catLower === 'electrical-parts' || catLower === 'cat-electrical' || catLower === 'lighting_electrical' || catLower === 'electrical parts' || catLower === 'electrical') {
-      catMatch = pCat.includes('electric') || pCat.includes('lighting') || pSub.includes('electric') || pSub.includes('light') || pTitle.includes('light') || pTitle.includes('headlight') || pTitle.includes('battery') || pTitle.includes('switch') || pTitle.includes('alternator') || pTitle.includes('starter') || pTitle.includes('fuse');
-    } else if (catLower === 'ac-parts' || catLower === 'cat-ac' || catLower === 'air-conditioning' || catLower === 'ac parts' || catLower === 'ac') {
-      catMatch = pCat.includes('ac') || pCat.includes('air-condition') || pSub.includes('ac') || pTitle.includes('ac') || pTitle.includes('compressor') || pTitle.includes('condenser') || pTitle.includes('cooling coil');
-    } else if (catLower === 'clutch-parts' || catLower === 'cat-clutch' || catLower === 'clutch parts' || catLower === 'clutch') {
-      catMatch = pCat.includes('clutch') || pSub.includes('clutch') || pTitle.includes('clutch') || pTitle.includes('friction disc') || pTitle.includes('pressure plate');
-    } else if (catLower === 'suspension-parts' || catLower === 'cat-suspension' || catLower === 'suspension parts' || catLower === 'suspension') {
-      catMatch = pCat.includes('suspension') || pSub.includes('suspension') || pTitle.includes('shock') || pTitle.includes('strut') || pTitle.includes('arm') || pTitle.includes('bushing') || pTitle.includes('absorber');
-    } else if (catLower === 'transmission-parts' || catLower === 'cat-transmission' || catLower === 'transmission parts' || catLower === 'transmission') {
-      catMatch = pCat.includes('transmission') || pSub.includes('transmission') || pTitle.includes('gear') || pTitle.includes('cv axle') || pTitle.includes('drive shaft');
-    } else if (catLower === 'steering-parts' || catLower === 'cat-steering' || catLower === 'steering parts' || catLower === 'steering') {
-      catMatch = pCat.includes('steering') || pSub.includes('steering') || pTitle.includes('steering') || pTitle.includes('tie rod') || pTitle.includes('rack end');
-    } else if (catLower === 'cooling-system' || catLower === 'cat-cooling' || catLower === 'cooling system' || catLower === 'cooling') {
-      catMatch = pCat.includes('cool') || pSub.includes('cool') || pTitle.includes('radiator') || pTitle.includes('water pump') || pTitle.includes('thermostat');
-    } else if (catLower === 'fuel-system' || catLower === 'cat-fuel' || catLower === 'fuel system' || catLower === 'fuel') {
-      catMatch = pCat.includes('fuel') || pSub.includes('fuel') || pTitle.includes('fuel pump') || pTitle.includes('injector');
-    } else if (catLower === 'interior-parts' || catLower === 'cat-interior' || catLower === 'accessories' || catLower === 'cat-accessories' || catLower === 'car-accessories' || catLower === 'interior parts') {
-      catMatch = pCat.includes('interior') || pCat.includes('accessori') || pSub.includes('accessori') || pTitle.includes('holder') || pTitle.includes('mat') || pTitle.includes('cover') || pTitle.includes('seat') || pTitle.includes('dash cam');
+    const mainCatName = masterCat ? masterCat.name.toLowerCase() : catQuery;
+
+    let catMatched = false;
+
+    // Strict Category Rules: No Brake Parts inside Engine, No Engine Parts inside Brakes
+    if (mainCatName.includes('engine') && !mainCatName.includes('cooling')) {
+      const isBrake = pCat.includes('brake') || pSub.includes('brake') || pTitle.includes('brake') || pTitle.includes('disc') || pTitle.includes('pad');
+      const isAC = pCat.includes('ac') || pSub.includes('ac') || pTitle.includes('ac compressor');
+      if (isBrake || isAC) return false;
+
+      catMatched = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') ||
+                 pTitle.includes('piston') || pTitle.includes('gasket') || pTitle.includes('crankshaft') ||
+                 pTitle.includes('camshaft') || pTitle.includes('cylinder') || pTitle.includes('valve');
+    } else if (mainCatName.includes('brake')) {
+      const isEngine = (pCat.includes('engine') || pSub.includes('engine')) && !pTitle.includes('vacuum booster');
+      if (isEngine) return false;
+
+      catMatched = pCat.includes('brake') || pSub.includes('brake') || pTitle.includes('brake') ||
+                 pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('rotor') || pTitle.includes('caliper');
+    } else if (mainCatName.includes('filter')) {
+      catMatched = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
+    } else if (mainCatName.includes('cooling')) {
+      catMatched = pCat.includes('cool') || pSub.includes('cool') || pTitle.includes('radiator') || pTitle.includes('thermostat') || pTitle.includes('water pump');
+    } else if (mainCatName.includes('oil') || mainCatName.includes('fluid') || mainCatName.includes('lubricant')) {
+      catMatched = pCat.includes('oil') || pCat.includes('fluid') || pCat.includes('lubricant') || pSub.includes('oil') || pSub.includes('fluid') || pTitle.includes('synthetic') || pTitle.includes('engine oil') || pTitle.includes('brake fluid') || pTitle.includes('coolant');
     } else {
-      catMatch = pCat.includes(catLower) || pSub.includes(catLower) || pTitle.includes(catLower);
+      catMatched = pCat.includes(mainCatName) || 
+                 pSub.includes(mainCatName) || 
+                 pTitle.includes(mainCatName) ||
+                 (masterCat && masterCat.subcategories.some(s => pSub.includes(s.name.toLowerCase()) || pTitle.includes(s.name.toLowerCase())));
     }
 
-    if (!catMatch) return false;
+    if (!catMatched) return false;
   }
 
-  // 6. SUB-CATEGORY MATCHING
+  // 7. Subcategory Matching
   if (activeSubCategory && activeSubCategory !== 'all') {
-    const subLower = activeSubCategory.toLowerCase().trim();
-    const pSub = (product.subCategory || '').toLowerCase().trim();
+    const subQuery = activeSubCategory.toLowerCase().trim();
+    const pSub = (product.subCategory || product.subcategoryId || product.subcategorySlug || '').toLowerCase().trim();
     const pTitle = (product.title || product.name || '').toLowerCase();
 
-    const subMatch = pSub.includes(subLower) || pTitle.includes(subLower);
-    if (!subMatch) return false;
+    const subMatched = pSub.includes(subQuery) || pTitle.includes(subQuery) || subQuery.includes(pSub);
+    if (!subMatched) return false;
+  }
+
+  // 8. Part Type Matching
+  if (activePartType && activePartType !== 'all') {
+    const partTypeQuery = activePartType.toLowerCase().trim();
+    const pPartType = (product.partType || product.partTypeId || '').toLowerCase().trim();
+    const pTitle = (product.title || product.name || '').toLowerCase();
+
+    const partTypeMatched = pPartType.includes(partTypeQuery) || pTitle.includes(partTypeQuery);
+    if (!partTypeMatched) return false;
+  }
+
+  // 9. Brand Filter
+  if (activeBrand && activeBrand !== 'all') {
+    const brandQuery = activeBrand.toLowerCase().trim();
+    const pBrand = (product.brand || product.manufacturer || '').toLowerCase().trim();
+    if (pBrand && !pBrand.includes(brandQuery) && !brandQuery.includes(pBrand)) {
+      return false;
+    }
+  }
+
+  // 10. Search Query Filter
+  if (searchQuery && searchQuery.trim()) {
+    const q = searchQuery.toLowerCase().trim();
+    const pTitle = (product.title || product.name || '').toLowerCase();
+    const pOem = (product.oemPartNumber || product.oem || '').toLowerCase();
+    const pSku = (product.sku || '').toLowerCase();
+    const pBrand = (product.brand || '').toLowerCase();
+
+    const searchMatch = pTitle.includes(q) || pOem.includes(q) || pSku.includes(q) || pBrand.includes(q);
+    if (!searchMatch) return false;
   }
 
   return true;
 };
-
