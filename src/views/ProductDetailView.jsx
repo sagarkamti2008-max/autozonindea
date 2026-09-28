@@ -16,8 +16,15 @@ import {
   Car, ShieldCheck, Truck, RefreshCw, Star, ArrowRight,
   CheckCircle, ShoppingBag, Heart, Wrench, AlertTriangle, MapPin,
   ChevronRight, Share2, Tag, FileText, Check, Lock, MessageSquare,
-  HelpCircle, Bell, TrendingDown, Camera, ThumbsUp, Filter, Send, AlertCircle, X, Phone
 } from 'lucide-react';
+
+const RATING_LABELS = {
+  5: '5.0 - Excellent! 🌟 Perfect fitment & quality',
+  4: '4.0 - Very Good! 👍 Satisfied with purchase',
+  3: '3.0 - Average 😐 Decent product for price',
+  2: '2.0 - Below Average 👎 Needs improvement',
+  1: '1.0 - Poor Quality 😡 Dissatisfied with part'
+};
 
 export const ProductDetailView = () => {
   const [flyInfo, setFlyInfo] = useState(null);
@@ -132,6 +139,7 @@ export const ProductDetailView = () => {
 
   // Review Form state
   const [revRating, setRevRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
   const [revTitle, setRevTitle] = useState('');
   const [revText, setRevText] = useState('');
   const [revImages, setRevImages] = useState([]);
@@ -1129,90 +1137,176 @@ export const ProductDetailView = () => {
       ============================================================= */}
       {/* 1. Write Review Modal */}
       {isWriteReviewOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl p-6 max-w-lg w-full shadow-2xl relative">
+        <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Close Button */}
             <button
               onClick={() => setIsWriteReviewOpen(false)}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-xl font-bold mb-1">Write a Review</h2>
-            <p className="text-xs text-muted-foreground mb-4">{product.name}</p>
+            {/* Modal Title & Header */}
+            <div className="flex items-center gap-2.5 mb-1">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+              </div>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Write a Verified Review</h2>
+            </div>
+            <p className="text-xs text-slate-500 font-medium mb-4 pl-10">Share your feedback to help other vehicle owners select genuine parts</p>
+
+            {/* Product Card Preview */}
+            <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200/60 mb-5">
+              <img
+                src={product.images?.[0] || product.image || '/images/piston_set.jpg'}
+                alt={product.name}
+                className="w-12 h-12 object-contain rounded-xl bg-white p-1 border border-slate-200/80 shrink-0 shadow-sm"
+              />
+              <div className="overflow-hidden">
+                <h4 className="font-extrabold text-slate-900 text-xs truncate">{product.name}</h4>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  Part #: <span className="text-slate-700">{product.oemPartNumber || product.sku || 'AZI-GENUINE'}</span>
+                </p>
+              </div>
+            </div>
 
             {reviewEligibility && !reviewEligibility.eligible ? (
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-800 text-xs font-medium mb-4">
-                <AlertCircle className="w-4 h-4 inline mr-1 text-amber-600" />
-                {reviewEligibility.message}
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-amber-800 text-xs font-medium mb-4 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
+                <span>{reviewEligibility.message}</span>
               </div>
             ) : (
-              <form onSubmit={handleSubmitReviewForm} className="space-y-4">
+              <form onSubmit={handleSubmitReviewForm} className="space-y-5">
                 {revFeedback && (
                   <div
-                    className={`p-3 rounded-xl text-xs font-medium ${
+                    className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2 ${
                       revFeedback.type === 'success'
                         ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                         : 'bg-rose-50 text-rose-800 border border-rose-200'
                     }`}
                   >
-                    {revFeedback.text}
+                    {revFeedback.type === 'success' ? <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" /> : <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                    <span>{revFeedback.text}</span>
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Rating</label>
-                  <div className="flex space-x-2">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <button type="button" key={s} onClick={() => setRevRating(s)}>
-                        <Star
-                          className={`w-7 h-7 ${s <= revRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`}
-                        />
-                      </button>
-                    ))}
+                {/* Rating Picker */}
+                <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl text-center space-y-2">
+                  <span className="block text-[11px] font-black uppercase tracking-widest text-amber-900">Select Overall Rating</span>
+                  <div className="flex justify-center items-center gap-2.5">
+                    {[1, 2, 3, 4, 5].map((s) => {
+                      const active = s <= (hoverRating || revRating);
+                      return (
+                        <button
+                          type="button"
+                          key={s}
+                          onMouseEnter={() => setHoverRating(s)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setRevRating(s)}
+                          className="p-1 hover:scale-125 active:scale-95 transition-all cursor-pointer focus:outline-none"
+                        >
+                          <Star
+                            className={`w-8 h-8 transition-colors ${
+                              active ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-300 fill-slate-100'
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs font-black text-amber-900">
+                    {RATING_LABELS[hoverRating || revRating]}
                   </div>
                 </div>
 
+                {/* Review Title Input */}
                 <div>
-                  <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Review Title</label>
+                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5 flex items-center justify-between">
+                    <span>Review Title <span className="text-rose-500">*</span></span>
+                    <span className="text-[10px] text-slate-400 font-normal">One line headline</span>
+                  </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Perfect fitment for my car!"
+                    placeholder="e.g. 100% Genuine OES Part - Perfect Fitment!"
                     value={revTitle}
                     onChange={(e) => setRevTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-xl text-sm bg-background"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm font-semibold bg-slate-50 focus:bg-white focus:border-[#0B5394] focus:ring-4 focus:ring-[#0B5394]/10 transition-all text-slate-900 placeholder:text-slate-400 placeholder:font-normal"
                   />
                 </div>
 
+                {/* Review Description Textarea */}
                 <div>
-                  <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Review Text</label>
+                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5 flex items-center justify-between">
+                    <span>Detailed Review <span className="text-rose-500">*</span></span>
+                    <span className="text-[10px] text-slate-400 font-normal">Min 10 characters</span>
+                  </label>
                   <textarea
                     required
                     rows={4}
-                    placeholder="Describe product performance, build quality, and fitment..."
+                    placeholder="Describe product performance, build quality, installation fitment, and seller packaging..."
                     value={revText}
                     onChange={(e) => setRevText(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-xl text-sm bg-background"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm font-semibold bg-slate-50 focus:bg-white focus:border-[#0B5394] focus:ring-4 focus:ring-[#0B5394]/10 transition-all text-slate-900 placeholder:text-slate-400 placeholder:font-normal resize-none"
                   />
                 </div>
 
+                {/* Photo Upload Box */}
                 <div>
-                  <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Photo Upload (Optional)</label>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(e) => setRevImages(Array.from(e.target.files))}
-                    className="text-xs text-muted-foreground"
-                  />
+                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5 flex items-center justify-between">
+                    <span>Upload Part Photos (Optional)</span>
+                    <span className="text-[10px] text-slate-400 font-normal">Max 3 photos (JPG, PNG)</span>
+                  </label>
+                  <div className="relative border-2 border-dashed border-slate-200 hover:border-[#0B5394] bg-slate-50 hover:bg-slate-100/60 rounded-2xl p-4 text-center cursor-pointer transition-all group">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files).slice(0, 3);
+                        setRevImages(files);
+                      }}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                    />
+                    <div className="flex flex-col items-center justify-center gap-1.5 text-slate-500 group-hover:text-[#0B5394]">
+                      <Camera className="w-6 h-6 text-slate-400 group-hover:text-[#0B5394] transition-colors" />
+                      <span className="text-xs font-extrabold">
+                        {revImages.length > 0 ? `✓ ${revImages.length} photo(s) selected` : 'Click or Drag photos here to upload'}
+                      </span>
+                    </div>
+                  </div>
+                  {revImages.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {revImages.map((f, i) => (
+                        <div key={i} className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1.5 truncate max-w-[150px]">
+                          <span className="truncate">{f.name}</span>
+                          <button type="button" onClick={() => setRevImages(revImages.filter((_, idx) => idx !== i))} className="text-slate-400 hover:text-rose-600">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
+                {/* Submit Action Button */}
                 <button
                   type="submit"
                   disabled={revSubmitting}
-                  className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl text-sm shadow-md"
+                  className="w-full py-4 bg-gradient-to-r from-[#0B5394] to-[#073763] hover:from-[#094378] hover:to-[#052848] text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-[#0B5394]/20 hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
                 >
-                  {revSubmitting ? 'Submitting...' : 'Submit Review'}
+                  {revSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Publishing Review...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Submit Verified Review</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
