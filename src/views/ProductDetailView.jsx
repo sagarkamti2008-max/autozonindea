@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AddToCartAnimation } from '../components/AddToCartAnimation';
 import { useStore } from '../context/StoreContext';
 import { checkProductCompatibility } from '../services/cartCheckoutEngine';
+import PincodeDeliveryChecker from '../components/PincodeDeliveryChecker';
 import {
   getProductReviewSummary,
   submitProductReview,
@@ -446,6 +447,11 @@ export const ProductDetailView = () => {
                     <span className="font-bold text-slate-800">{product.specs?.['Warranty'] || '6 Month Manufacturer Warranty'}</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Live Pincode Serviceability & Delivery Speed Checker */}
+              <div className="mt-3">
+                <PincodeDeliveryChecker compact={true} variant="light" />
               </div>
             </div>
 
