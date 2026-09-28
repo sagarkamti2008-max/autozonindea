@@ -79,9 +79,15 @@ export const ProductCard = ({ product }) => {
 
       {/* Card Content */}
       <div className="card-content">
-        <div className="brand-part-row">
+        <div className="brand-part-row flex-wrap gap-1">
           <span className="card-brand">{product.brand}</span>
-          {product.oemPartNumber && <span className="card-partno">Part #: {product.oemPartNumber}</span>}
+          {product.matchedIdentifier ? (
+            <span className="card-partno bg-blue-50 text-[#0B5394] font-black px-1.5 py-0.5 rounded border border-blue-200 text-[10px]">
+              {product.matchedIdentifier.type}: {product.matchedIdentifier.value}
+            </span>
+          ) : (product.oemPartNumber || product.oemNumber) ? (
+            <span className="card-partno">OEM #: {product.oemPartNumber || product.oemNumber}</span>
+          ) : null}
         </div>
 
         <h3 className="card-title cursor-pointer" onClick={() => navigateTo('product-detail', product)}>

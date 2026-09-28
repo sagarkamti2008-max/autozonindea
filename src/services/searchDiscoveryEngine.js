@@ -1,4 +1,4 @@
-// 9-Level Priority Ranking Engine, Hinglish/Typo Normalizer & Search Engine for AutoZonIndia
+// 9-Level Priority Ranking Engine, Hinglish/Typo Normalizer & OEM/Cross-Reference Search Engine for AutoZonIndia
 
 // Automotive Typo & Hinglish Normalizer Dictionary
 export const TYPO_NORMALIZER_MAP = {
@@ -29,9 +29,62 @@ export const normalizeAutomotiveQuery = (query) => {
   return q;
 };
 
-// 9-Level Priority Ranking Engine with Bulletproof Parameter Handling
+/**
+ * Identifies if query matches an OEM Number, MPN, SKU, Barcode, Old Part Number, or Cross Reference.
+ * Returns matched identifier detail or null.
+ */
+export const findMatchedPartIdentifier = (product, searchQuery) => {
+  if (!product || !searchQuery) return null;
+  const qClean = searchQuery.trim().replace(/[^a-z0-9]/gi, '').toLowerCase();
+  if (!qClean) return null;
+
+  // 1. OEM Part Number
+  const oemVal = product.oemNumber || product.oemPartNumber || product.oem || '';
+  if (oemVal && oemVal.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+    return { type: 'OEM Part Number', value: oemVal };
+  }
+
+  // 2. Manufacturer Part Number (MPN)
+  const mpnVal = product.mpn || product.manufacturerPartNumber || '';
+  if (mpnVal && mpnVal.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+    return { type: 'Manufacturer Part Number (MPN)', value: mpnVal };
+  }
+
+  // 3. SKU
+  const skuVal = product.sku || '';
+  if (skuVal && skuVal.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+    return { type: 'SKU', value: skuVal };
+  }
+
+  // 4. Barcode / EAN / UPC
+  const barcodeVal = product.barcode || product.ean || product.upc || '';
+  if (barcodeVal && barcodeVal.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+    return { type: 'Barcode / EAN', value: barcodeVal };
+  }
+
+  // 5. Old / Alternate Part Number
+  const oldPartVal = product.oldPartNumber || product.supersededPartNumber || product.alternatePartNumber || '';
+  if (oldPartVal && oldPartVal.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+    return { type: 'Old / Superseded Part Number', value: oldPartVal };
+  }
+
+  // 6. Cross-Reference Numbers
+  const rawCrossRefs = product.crossReferences || product.crossReferenceNumbers || product.cross_references || [];
+  const crossRefList = Array.isArray(rawCrossRefs) 
+    ? rawCrossRefs 
+    : (typeof rawCrossRefs === 'string' ? rawCrossRefs.split(',').map(s => s.trim()) : []);
+
+  for (const cr of crossRefList) {
+    if (cr && cr.replace(/[^a-z0-9]/gi, '').toLowerCase().includes(qClean)) {
+      return { type: 'Cross Reference Number', value: cr };
+    }
+  }
+
+  return null;
+};
+
+// 9-Level Priority Ranking Engine with OEM / Cross-Reference Support
 export const rankProductSearchResults = (productsParam, searchQueryParam, selectedVehicleParam = null) => {
-  // Support both (products, searchQuery) and (searchQuery, products) order safely
   let products = Array.isArray(productsParam) ? productsParam : (Array.isArray(searchQueryParam) ? searchQueryParam : []);
   let searchQuery = typeof searchQueryParam === 'string' ? searchQueryParam : (typeof productsParam === 'string' ? productsParam : '');
   let selectedVehicle = (typeof selectedVehicleParam === 'object') ? selectedVehicleParam : null;
@@ -45,36 +98,26 @@ export const rankProductSearchResults = (productsParam, searchQueryParam, select
   return products.map(product => {
     if (!product) return { searchScore: 0 };
     let score = 0;
-    const cleanProdPartNo = (product.partNumber || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
 
-    // Level 1: Exact Part Number (+1000)
-    if (cleanProdPartNo && cleanPartNoQuery && cleanProdPartNo === cleanPartNoQuery) {
-      score += 1000;
+    const matchedIdent = findMatchedPartIdentifier(product, searchQuery);
+
+    if (matchedIdent) {
+      if (matchedIdent.type === 'OEM Part Number') score += 1000;
+      else if (matchedIdent.type === 'Manufacturer Part Number (MPN)') score += 950;
+      else if (matchedIdent.type === 'SKU') score += 900;
+      else if (matchedIdent.type === 'Old / Superseded Part Number') score += 850;
+      else if (matchedIdent.type === 'Barcode / EAN') score += 800;
+      else if (matchedIdent.type === 'Cross Reference Number') score += 750;
     }
 
-    // Level 2: Exact OEM Number (+900)
-    if (product.oemNumber && cleanPartNoQuery && product.oemNumber.replace(/[^a-z0-9]/gi, '').toLowerCase() === cleanPartNoQuery) {
-      score += 900;
-    }
-
-    // Level 3: Exact SKU (+800)
-    if (product.sku && cleanPartNoQuery && product.sku.toLowerCase() === cleanPartNoQuery) {
-      score += 800;
-    }
-
-    // Level 4: Verified Cross-Reference Match (+700)
-    if (product.crossReferences && cleanPartNoQuery && product.crossReferences.some(cr => cr.replace(/[^a-z0-9]/gi, '').toLowerCase() === cleanPartNoQuery)) {
-      score += 700;
-    }
-
-    // Level 5: Title / Name Match (+300)
+    // Title / Name Match (+300)
     const prodTitle = (product.title || product.name || '').toLowerCase();
     const queryStem = normalizedQuery.replace(/s$/i, ''); // e.g. "air filters" -> "air filter"
     if (prodTitle && (prodTitle.includes(normalizedQuery) || (queryStem.length > 3 && prodTitle.includes(queryStem)))) {
       score += 300;
     }
 
-    // Level 6: Brand / Car Brand / Category / Car Model Match (+200)
+    // Brand / Car Brand / Category / Car Model Match (+200)
     const prodCategory = (product.category || '').toLowerCase();
     const prodBrand = (product.brand || product.carBrand || '').toLowerCase();
     const prodModel = (product.carModel || product.model || '').toLowerCase();
@@ -87,23 +130,18 @@ export const rankProductSearchResults = (productsParam, searchQueryParam, select
       score += 200;
     }
 
-    // Level 7: Verified Vehicle Fitment Boost (+250)
+    // Verified Vehicle Fitment Boost (+250)
     if (selectedVehicle) {
-      const isFit = product.isUniversal || (product.compatibleVehicles && product.compatibleVehicles.some(v => 
-        v.makeName?.toLowerCase() === selectedVehicle.makeName?.toLowerCase() &&
-        v.modelName?.toLowerCase() === selectedVehicle.modelName?.toLowerCase()
+      const isFit = product.isUniversal || (product.fitments && product.fitments.some(v => 
+        (v.make || v.brand || '').toLowerCase().includes((selectedVehicle.brand || selectedVehicle.make || '').toLowerCase()) &&
+        (v.model || '').toLowerCase().includes((selectedVehicle.model || '').toLowerCase())
       ));
       if (isFit) {
         score += 250;
       }
     }
 
-    // Level 8: High Rating Boost (+50)
-    if (product.rating >= 4.5) {
-      score += 50;
-    }
-
-    // Level 9: In-Stock Boost (+40)
+    // In-Stock Boost (+40)
     if (product.stock > 0) {
       score += 40;
     }
@@ -111,73 +149,23 @@ export const rankProductSearchResults = (productsParam, searchQueryParam, select
     return {
       ...product,
       searchScore: score,
-      isVerifiedFit: selectedVehicle ? (product.isUniversal || (product.compatibleVehicles && product.compatibleVehicles.some(v => v.modelName === selectedVehicle.modelName))) : true
+      matchedIdentifier: matchedIdent
     };
-  }).sort((a, b) => b.searchScore - a.searchScore);
+  })
+  .filter(p => p.searchScore > 0)
+  .sort((a, b) => b.searchScore - a.searchScore);
 };
 
 // Aliases for backwards compatibility
-export const rankProductSearch = (a, b, c) => {
-  return rankProductSearchResults(a, b, c);
-};
-
-export const processVoiceSearchQuery = (spokenText) => {
-  return {
-    rawSpeech: spokenText,
-    cleanQuery: normalizeAutomotiveQuery(spokenText),
-    intent: parseAISearchIntent(spokenText)
-  };
-};
+export const rankProductSearch = (a, b, c) => rankProductSearchResults(a, b, c);
 
 export const parseNaturalLanguagePartQuery = (query) => {
-  return parseAISearchIntent(query);
-};
-
-// AI Natural Language Search Intent Parser
-export const parseAISearchIntent = (userPrompt) => {
-  if (!userPrompt || typeof userPrompt !== 'string') return { confidence: 'Unknown' };
-  const q = userPrompt.toLowerCase();
-  let detectedMake = null;
-  let detectedModel = null;
-  let detectedCategory = null;
-
-  if (q.includes('innova')) { detectedMake = 'Toyota'; detectedModel = 'Innova Crysta'; }
-  if (q.includes('creta')) { detectedMake = 'Hyundai'; detectedModel = 'Creta'; }
-  if (q.includes('swift')) { detectedMake = 'Maruti Suzuki'; detectedModel = 'Swift'; }
-
-  if (q.includes('brake') || q.includes('pad') || q.includes('stop the car')) detectedCategory = 'Brake System';
-  if (q.includes('filter') || q.includes('oil') || q.includes('cleans air')) detectedCategory = 'Filters';
-  if (q.includes('spark') || q.includes('plug')) detectedCategory = 'Electrical';
-
+  if (!query) return { intent: 'general_search', keywords: [] };
+  const normalized = normalizeAutomotiveQuery(query);
   return {
-    detectedMake,
-    detectedModel,
-    detectedCategory,
-    confidence: '96% High Confidence'
+    rawQuery: query,
+    normalizedQuery: normalized,
+    intent: 'part_lookup',
+    keywords: normalized.split(/\s+/).filter(Boolean)
   };
 };
-
-export const SAMPLE_SEARCH_ANALYTICS = {
-  totalSearches: 18450,
-  conversionRate: '9.4%',
-  topQueries: [
-    { query: 'Innova Brake Pads', count: 482, ctr: '14.2%', conversion: '8.1%' },
-    { query: 'Creta Oil Filter', count: 320, ctr: '12.8%', conversion: '6.5%' },
-    { query: 'Bosch 0986AB1234', count: 215, ctr: '22.0%', conversion: '15.4%' }
-  ],
-  noResultQueries: [
-    { query: 'bmw x5 brake pad', count: 18, timestamp: '2026-08-24 12:10 PM', actionNeeded: 'Add BMW Catalog SKUs' },
-    { query: 'audi a4 air filter', count: 12, timestamp: '2026-08-24 01:45 PM', actionNeeded: 'Add Audi OEM References' }
-  ]
-};
-
-export const AUTOMOTIVE_SYNONYMS = {
-  'brakepad': 'Brake Pad',
-  'shocker': 'Shock Absorber',
-  'cltch': 'Clutch Assembly'
-};
-
-export const ZERO_RESULT_LOGS = [
-  { query: 'bmw x5 brake pad', timestamp: '2026-08-24 12:10 PM', count: 18, actionNeeded: 'Add BMW Catalog SKUs' },
-  { query: 'audi a4 air filter', timestamp: '2026-08-24 01:45 PM', count: 12, actionNeeded: 'Add Audi OEM References' }
-];

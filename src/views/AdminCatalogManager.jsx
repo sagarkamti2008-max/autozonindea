@@ -1452,38 +1452,120 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
               />
             </div>
 
-            {/* 3. Part Number (SKU/OEM) ✅ + Manufacturer Brand ✅ */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
+            {/* 3. SYSTEM 2 — OEM & Part Numbers Section ✅ */}
+            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
-                  3️⃣ Part Number (SKU / OEM) ✅ <span className="text-rose-400">*</span>
+                  3️⃣ Part Identifiers &amp; Cross-Reference Numbers (SYSTEM 2) ✅
+                </label>
+                <span className="text-[10px] text-slate-400 font-semibold">
+                  Allows customers to search by any part/OEM/cross-ref code
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    OEM Part Number <span className="text-rose-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.oemNumber || productForm.oemNumbers || ''}
+                    onChange={(e) => setProductForm({ ...productForm, oemNumber: e.target.value, oemNumbers: e.target.value })}
+                    placeholder="e.g. 90915-YZZN2"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    Manufacturer Part No (MPN)
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.mpn || ''}
+                    onChange={(e) => setProductForm({ ...productForm, mpn: e.target.value })}
+                    placeholder="e.g. BOSCH-0986"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    SKU Code <span className="text-rose-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.sku}
+                    onChange={(e) => handleSkuChange(e.target.value)}
+                    placeholder="e.g. KAMTI-8492"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    Barcode / EAN / UPC
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.barcode || ''}
+                    onChange={(e) => setProductForm({ ...productForm, barcode: e.target.value })}
+                    placeholder="e.g. 8901234567890"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    Old / Alternate Part Number
+                  </label>
+                  <input
+                    type="text"
+                    value={productForm.oldPartNumber || ''}
+                    onChange={(e) => setProductForm({ ...productForm, oldPartNumber: e.target.value })}
+                    placeholder="e.g. 90915-03001"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                    Manufacturer Brand <span className="text-rose-400">*</span>
+                  </label>
+                  <select
+                    value={productForm.brand}
+                    onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold text-xs focus:border-orange-500 focus:outline-none cursor-pointer"
+                  >
+                    {BRANDS_DATABASE.map(b => (
+                      <option key={b.id} value={b.name} className="bg-slate-900 text-slate-100">{b.name}</option>
+                    ))}
+                    <option value="AutoZon Originals" className="bg-slate-900 text-slate-100">AutoZon Originals</option>
+                    <option value="Toyota Genuine" className="bg-slate-900 text-slate-100">Toyota Genuine</option>
+                    <option value="Maruti Suzuki Genuine" className="bg-slate-900 text-slate-100">Maruti Suzuki Genuine</option>
+                    <option value="Hyundai Genuine" className="bg-slate-900 text-slate-100">Hyundai Genuine</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold uppercase text-slate-300 block mb-1">
+                  Cross-Reference Numbers (Comma-separated)
                 </label>
                 <input
                   type="text"
-                  value={productForm.sku}
-                  onChange={(e) => handleSkuChange(e.target.value)}
-                  placeholder="e.g. BOSCH-BP-2026"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono font-bold text-sm focus:border-orange-500 focus:outline-none"
+                  value={Array.isArray(productForm.crossReferences) ? productForm.crossReferences.join(', ') : (productForm.crossReferences || '')}
+                  onChange={(e) => {
+                    const vals = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                    setProductForm({ ...productForm, crossReferences: vals });
+                  }}
+                  placeholder="e.g. ABC123, XYZ456, FILTER-001, MANN-W68/3"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:border-orange-500 focus:outline-none"
                 />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
-                  Manufacturer Brand ✅ <span className="text-rose-400">*</span>
-                </label>
-                <select
-                  value={productForm.brand}
-                  onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
-                >
-                  {BRANDS_DATABASE.map(b => (
-                    <option key={b.id} value={b.name}>{b.name}</option>
-                  ))}
-                  <option value="AutoZon Originals">AutoZon Originals</option>
-                  <option value="Toyota Genuine">Toyota Genuine</option>
-                  <option value="Maruti Suzuki Genuine">Maruti Suzuki Genuine</option>
-                  <option value="Hyundai Genuine">Hyundai Genuine</option>
-                </select>
+                <span className="text-[10px] text-slate-400 mt-1 block">
+                  ℹ️ Cross-reference numbers enable part-number search matches. (Note: Vehicle compatibility is verified separately by vehicle compatibility records).
+                </span>
               </div>
             </div>
 
