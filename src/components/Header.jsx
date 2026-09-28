@@ -257,14 +257,7 @@ export const Header = () => {
               )}
             </button>
 
-            {/* Admin Console Pill Button */}
-            <button 
-              onClick={() => navigateTo('admin-dashboard')}
-              className="bg-[#0b192c] hover:bg-slate-900 text-amber-400 font-extrabold text-xs px-3.5 py-1.5 rounded-full shadow-sm border border-amber-400/30 flex items-center gap-1.5 transition-all"
-            >
-              <Settings className="w-3.5 h-3.5 text-amber-400" />
-              <span>Admin</span>
-            </button>
+
 
           </div>
 
