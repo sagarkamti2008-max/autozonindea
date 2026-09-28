@@ -1615,128 +1615,236 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
               </div>
 
               {!productForm.isUniversal && (
-                <div className="space-y-3">
-                  {productForm.fitments.map((fit, idx) => (
-                    <div key={idx} className="bg-slate-900 border border-slate-700 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-5 gap-2.5 items-center text-xs">
-                      <div>
-                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Car Brand *</label>
-                        <select
-                          value={fit.make}
-                          onChange={(e) => handleFitmentChange(idx, 'make', e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold"
-                        >
-                          {VEHICLE_MAKES.map(m => (
-                            <option key={m.id} value={m.name}>{m.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Car Model *</label>
-                        <select
-                          value={fit.model}
-                          onChange={(e) => handleFitmentChange(idx, 'model', e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold"
-                        >
-                          <option value="">Select Model...</option>
-                          {(() => {
-                            const selectedMakeObj = VEHICLE_MAKES.find(m => 
-                              m.name.toLowerCase().includes((fit.make || '').toLowerCase()) || 
-                              (fit.make || '').toLowerCase().includes(m.id)
-                            );
-                            if (selectedMakeObj && selectedMakeObj.models) {
-                              return selectedMakeObj.models.map(mod => (
-                                <option key={mod.id} value={mod.name}>{mod.name}</option>
-                              ));
-                            }
-                            return [
-                              'Innova', 'Innova Crysta', 'Innova Hycross', 'Fortuner', 'Legender', 'Glanza', 'Etios', 'Etios Liva', 'Camry', 'Corolla Altis',
-                              'Swift', 'Baleno', 'Brezza', 'Ertiga', 'Dzire', 'Thar', 'Scorpio-N', 'Scorpio Classic', 'XUV700', 'XUV300', 'Bolero', 'Creta', 'Venue', 'i20', 'Verna'
-                            ].map(m => (
-                              <option key={m} value={m}>{m}</option>
-                            ));
-                          })()}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Variant *</label>
-                        <input
-                          type="text"
-                          value={fit.variant || ''}
-                          onChange={(e) => handleFitmentChange(idx, 'variant', e.target.value)}
-                          placeholder="e.g. VXi"
-                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Year Range *</label>
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="text"
-                            value={fit.yearFrom || '2020'}
-                            onChange={(e) => handleFitmentChange(idx, 'yearFrom', e.target.value)}
-                            placeholder="2020"
-                            className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white font-mono text-center font-bold"
-                          />
-                          <span className="text-slate-500">-</span>
-                          <input
-                            type="text"
-                            value={fit.yearTo || '2024'}
-                            onChange={(e) => handleFitmentChange(idx, 'yearTo', e.target.value)}
-                            placeholder="2024"
-                            className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white font-mono text-center font-bold"
-                          />
+                <div className="space-y-4">
+                  {productForm.fitments.map((fit, idx) => {
+                    const yearErr = parseInt(fit.yearFrom, 10) > parseInt(fit.yearTo, 10);
+                    return (
+                      <div key={fit.id || idx} className="bg-slate-900 border border-slate-700 rounded-2xl p-4 space-y-3 shadow-md relative">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                          <span className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                            🚗 Compatibility Record #{idx + 1}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const dupRow = { ...fit, id: `compat-${Date.now()}` };
+                                const updated = [...productForm.fitments];
+                                updated.splice(idx + 1, 0, dupRow);
+                                setProductForm({ ...productForm, fitments: updated });
+                                showToast(`📋 Duplicated compatibility record #${idx + 1}`);
+                              }}
+                              className="text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg transition cursor-pointer"
+                              title="Duplicate Record"
+                            >
+                              📋 Duplicate
+                            </button>
+                            {productForm.fitments.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFitmentRow(idx)}
+                                className="text-[10px] font-bold bg-rose-950/80 hover:bg-rose-700 text-rose-300 px-2.5 py-1 rounded-lg transition cursor-pointer"
+                                title="Delete Record"
+                              >
+                                🗑️ Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {yearErr && (
+                          <div className="bg-rose-500/20 border border-rose-500/50 text-rose-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                            <span>Invalid Year Range: Year From ({fit.yearFrom}) cannot be greater than Year To ({fit.yearTo}).</span>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Brand / Make *</label>
+                            <select
+                              value={fit.make || fit.brand || 'Toyota'}
+                              onChange={(e) => handleFitmentChange(idx, 'make', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold cursor-pointer"
+                            >
+                              {VEHICLE_MAKES.map(m => (
+                                <option key={m.id} value={m.name} className="bg-slate-900 text-slate-100">{m.name}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Model *</label>
+                            <select
+                              value={fit.model || ''}
+                              onChange={(e) => handleFitmentChange(idx, 'model', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold cursor-pointer"
+                            >
+                              <option value="" className="bg-slate-900 text-slate-100">Select Model...</option>
+                              {(() => {
+                                const selectedMakeObj = VEHICLE_MAKES.find(m => 
+                                  m.name.toLowerCase().includes((fit.make || '').toLowerCase()) || 
+                                  (fit.make || '').toLowerCase().includes(m.id)
+                                );
+                                if (selectedMakeObj && selectedMakeObj.models) {
+                                  return selectedMakeObj.models.map(mod => (
+                                    <option key={mod.id} value={mod.name} className="bg-slate-900 text-slate-100">{mod.name}</option>
+                                  ));
+                                }
+                                return ['Camry', 'Swift', 'Innova Crysta', 'Fortuner', 'Creta', 'Nexon', 'City', 'Seltos'].map(m => (
+                                  <option key={m} value={m} className="bg-slate-900 text-slate-100">{m}</option>
+                                ));
+                              })()}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Year Range *</label>
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                value={fit.yearFrom || 2018}
+                                onChange={(e) => handleFitmentChange(idx, 'yearFrom', e.target.value)}
+                                placeholder="2018"
+                                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-2 text-white font-mono text-center font-bold"
+                              />
+                              <span className="text-slate-500 font-bold">-</span>
+                              <input
+                                type="number"
+                                value={fit.yearTo || 2024}
+                                onChange={(e) => handleFitmentChange(idx, 'yearTo', e.target.value)}
+                                placeholder="2024"
+                                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-2 text-white font-mono text-center font-bold"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Generation</label>
+                            <input
+                              type="text"
+                              value={fit.generation || ''}
+                              onChange={(e) => handleFitmentChange(idx, 'generation', e.target.value)}
+                              placeholder="e.g. XV70"
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Variant / Trim</label>
+                            <input
+                              type="text"
+                              value={fit.variant || ''}
+                              onChange={(e) => handleFitmentChange(idx, 'variant', e.target.value)}
+                              placeholder="e.g. 2.5 V"
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Engine</label>
+                            <input
+                              type="text"
+                              value={fit.engine || ''}
+                              onChange={(e) => handleFitmentChange(idx, 'engine', e.target.value)}
+                              placeholder="e.g. 2.5L Petrol"
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Fuel Type</label>
+                            <select
+                              value={fit.fuelType || 'Petrol'}
+                              onChange={(e) => handleFitmentChange(idx, 'fuelType', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold cursor-pointer"
+                            >
+                              {['Petrol', 'Diesel', 'Petrol Hybrid', 'Diesel Hybrid', 'Electric', 'CNG', 'LPG', 'Not specified'].map(ft => (
+                                <option key={ft} value={ft} className="bg-slate-900 text-slate-100">{ft}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold block mb-1">Transmission</label>
+                            <select
+                              value={fit.transmission || 'Automatic'}
+                              onChange={(e) => handleFitmentChange(idx, 'transmission', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-white font-bold cursor-pointer"
+                            >
+                              {['Manual', 'Automatic', 'CVT', 'DCT / DSG', 'AMT', 'Not specified'].map(tr => (
+                                <option key={tr} value={tr} className="bg-slate-900 text-slate-100">{tr}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-end gap-2 pt-4 sm:pt-0">
-                        {productForm.fitments.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveFitmentRow(idx)}
-                            className="text-rose-400 hover:text-rose-300 font-bold p-1 cursor-pointer"
-                            title="Remove Car"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   <button
                     type="button"
                     onClick={handleAddFitmentRow}
-                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer border border-slate-700 shadow-sm"
                   >
                     <Plus className="w-4 h-4 text-orange-400" />
-                    <span>+ Add Another Compatible Car</span>
+                    <span>+ Add Compatibility Record</span>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* 8. Product Status ✅ */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
-                8️⃣ Product Status ✅
-              </label>
-              <select
-                value={productForm.status || 'Published'}
-                onChange={(e) => setProductForm({ ...productForm, status: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
-              >
-                <option value="Published">🟢 Active (Visible in Store)</option>
-                <option value="Draft">⚪ Inactive (Draft / Hidden)</option>
-              </select>
+            {/* 8. Product Status & Verification Status ✅ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                  8️⃣ Product Status ✅
+                </label>
+                <select
+                  value={productForm.status || 'Active'}
+                  onChange={(e) => setProductForm({ ...productForm, status: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none cursor-pointer"
+                >
+                  <option value="Active" className="bg-slate-900 text-slate-100">🟢 Active (Published in Store)</option>
+                  <option value="Draft" className="bg-slate-900 text-slate-100">⚪ Draft (Hidden)</option>
+                  <option value="Inactive" className="bg-slate-900 text-slate-100">🔴 Inactive</option>
+                  <option value="Out of Stock" className="bg-slate-900 text-slate-100">🟡 Out of Stock</option>
+                  <option value="Compatibility Pending" className="bg-slate-900 text-slate-100">⏳ Compatibility Pending</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                  Compatibility Verification Status ✅
+                </label>
+                <select
+                  value={productForm.compatibilityStatus || (productForm.isUniversal ? 'Universal' : 'Verified')}
+                  onChange={(e) => setProductForm({ ...productForm, compatibilityStatus: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none cursor-pointer"
+                >
+                  <option value="Verified" className="bg-slate-900 text-slate-100">✓ Verified</option>
+                  <option value="Pending Verification" className="bg-slate-900 text-slate-100">⏳ Pending Verification</option>
+                  <option value="Incomplete" className="bg-slate-900 text-slate-100">⚠ Incomplete</option>
+                  <option value="Universal" className="bg-slate-900 text-slate-100">🌐 Universal Fit</option>
+                </select>
+              </div>
             </div>
 
-            {/* 9. 🟠 Publish Product Button */}
-            <div className="pt-4 border-t border-slate-800 flex items-center gap-4">
+            {/* 9. 🟠 Action Buttons */}
+            <div className="pt-4 border-t border-slate-800 flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => handleSaveProduct('Published')}
-                className="w-full bg-[#FF5722] hover:bg-orange-600 text-white font-black text-sm py-4 rounded-2xl shadow-xl shadow-orange-600/30 cursor-pointer transition uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
+                onClick={() => handleSaveProduct('Active')}
+                className="flex-1 bg-[#FF5722] hover:bg-orange-600 text-white font-black text-sm py-4 rounded-2xl shadow-xl shadow-orange-600/30 cursor-pointer transition uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>🟠 Publish Product</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSaveProduct('Draft')}
+                className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm px-6 py-4 rounded-2xl border border-slate-700 cursor-pointer transition"
+              >
+                Save as Draft
               </button>
             </div>
 

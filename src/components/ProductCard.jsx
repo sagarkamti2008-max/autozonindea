@@ -1,18 +1,15 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
-import { Star, ShoppingCart, Heart, CheckCircle, Shield, Eye, Wrench } from 'lucide-react';
+import { checkProductCompatibility } from '../services/fitmentEngine';
+import { Star, ShoppingCart, Heart, CheckCircle, Shield, Eye, Wrench, AlertTriangle, XCircle, Info } from 'lucide-react';
 
 export const ProductCard = ({ product }) => {
-  const { selectedVehicle, addToCart, buyNow, toggleWishlist, wishlist, setActiveProductModal, navigateTo } = useStore();
+  const { selectedVehicle, selectedCategory, addToCart, buyNow, toggleWishlist, wishlist, setActiveProductModal, navigateTo } = useStore();
 
   const isWishlisted = wishlist.some(item => item.id === product.id);
 
-  // Check compatibility with selected garage vehicle
-  let isCompatible = true;
-  if (selectedVehicle) {
-    const vehicleKey = `${selectedVehicle.makeId}-${selectedVehicle.modelId}`;
-    isCompatible = product.isUniversal || product.compatibleVehicles.includes(vehicleKey);
-  }
+  // Evaluate strict compatibility status
+  const compatResult = checkProductCompatibility(product, selectedVehicle, selectedCategory);
 
   // Primary Image Resolution Logic
   const getPrimaryImageUrl = () => {
@@ -38,12 +35,19 @@ export const ProductCard = ({ product }) => {
       {/* Top Badges */}
       <div className="card-top-badges">
         {product.discount && <span className="badge-discount">{product.discount}</span>}
-        {product.isUniversal ? (
-          <span className="badge-fit universal"><CheckCircle size={12} /> Universal Fit</span>
-        ) : (
-          <span className={`badge-fit ${isCompatible ? 'fits' : 'not-fits'}`}>
-            <CheckCircle size={12} /> {selectedVehicle ? (isCompatible ? `Fits ${selectedVehicle.modelName}` : 'Check Fitment') : 'Model Specific'}
+        {compatResult.status === 'COMPATIBLE' && (
+          <span className="badge-fit fits"><CheckCircle size={12} /> {compatResult.badgeText}</span>
+        )}
+        {compatResult.status === 'COMPATIBILITY_NOT_VERIFIED' && (
+          <span className="badge-fit pending" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#D97706', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
+            <AlertTriangle size={12} /> ⚠ Compatibility Not Verified
           </span>
+        )}
+        {compatResult.status === 'NOT_COMPATIBLE' && (
+          <span className="badge-fit not-fits"><XCircle size={12} /> ✕ Not Compatible</span>
+        )}
+        {compatResult.status === 'NO_VEHICLE_SELECTED' && (
+          <span className="badge-fit model-specific"><Info size={12} /> Select Vehicle to Check Fit</span>
         )}
       </div>
 

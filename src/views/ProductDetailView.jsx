@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AddToCartAnimation } from '../components/AddToCartAnimation';
 import { useStore } from '../context/StoreContext';
-import { checkProductCompatibility } from '../services/cartCheckoutEngine';
+import { checkProductCompatibility } from '../services/fitmentEngine';
 import PincodeDeliveryChecker from '../components/PincodeDeliveryChecker';
 import {
   getProductReviewSummary,
@@ -425,37 +425,82 @@ export const ProductDetailView = () => {
               </div>
 
               {/* Vehicle Compatibility & Warranty Guarantee Card */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-2.5 mt-1">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <div className="flex items-center gap-2 text-xs font-black text-slate-900">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Fitment & Quality Guarantee</span>
+              {(() => {
+                const compatRes = checkProductCompatibility(product, selectedVehicle);
+                return (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-3 mt-1">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2 text-xs font-black text-slate-900">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Fitment & Quality Guarantee</span>
+                      </div>
+                      <button
+                        onClick={() => navigateTo('car-select')}
+                        className="text-[11px] font-extrabold text-[#0B5394] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Car className="w-3.5 h-3.5" /> Change Vehicle
+                      </button>
+                    </div>
+                    
+                    {/* Status Badge */}
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-slate-600 shrink-0">Compatibility Result:</span>
+                        <span className={`px-2.5 py-1 rounded-xl text-[11px] font-black border ${compatRes.badgeColor}`}>
+                          {compatRes.badgeText}
+                        </span>
+                      </div>
+
+                      {selectedVehicle && (
+                        <div className="flex items-center justify-between text-slate-600 gap-2">
+                          <span className="font-bold shrink-0">Selected Vehicle:</span>
+                          <span className="font-extrabold text-slate-900 text-right truncate">
+                            {selectedVehicle.brand || selectedVehicle.make} {selectedVehicle.model} ({selectedVehicle.year})
+                          </span>
+                        </div>
+                      )}
+
+                      {compatRes.status === 'COMPATIBILITY_NOT_VERIFIED' && (
+                        <div className="bg-amber-50 border border-amber-200 text-amber-900 p-2.5 rounded-xl text-[11px] space-y-1">
+                          <div className="font-bold flex items-center gap-1">
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                            <span>Compatibility Not Verified</span>
+                          </div>
+                          <p className="text-[10px] text-amber-700">Check compatibility with seller or manufacturer before purchasing.</p>
+                          <button
+                            onClick={() => setIsVehicleModalOpen(true)}
+                            className="mt-1 bg-amber-600 hover:bg-amber-500 text-white font-bold text-[10px] px-3 py-1 rounded-lg cursor-pointer"
+                          >
+                            Check Compatibility
+                          </button>
+                        </div>
+                      )}
+
+                      {compatRes.status === 'NOT_COMPATIBLE' && (
+                        <div className="bg-rose-50 border border-rose-200 text-rose-900 p-2.5 rounded-xl text-[11px] space-y-1">
+                          <div className="font-bold flex items-center gap-1">
+                            <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                            <span>✕ Not Compatible with your selected vehicle</span>
+                          </div>
+                          <p className="text-[10px] text-rose-700">{compatRes.reason}</p>
+                        </div>
+                      )}
+
+                      {compatRes.status === 'NO_VEHICLE_SELECTED' && (
+                        <div className="bg-blue-50 border border-blue-200 text-blue-900 p-2.5 rounded-xl text-[11px] flex items-center justify-between gap-2">
+                          <span>Select your vehicle to check compatibility.</span>
+                          <button
+                            onClick={() => navigateTo('car-select')}
+                            className="bg-[#0B5394] hover:bg-[#073763] text-white font-bold text-[10px] px-3 py-1 rounded-lg shrink-0 cursor-pointer"
+                          >
+                            Select Your Vehicle
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <button
-                    onClick={() => setIsVehicleModalOpen(true)}
-                    className="text-[11px] font-bold text-[#0B5394] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <Car className="w-3.5 h-3.5" /> Check Fit
-                  </button>
-                </div>
-                
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-slate-600 gap-2">
-                    <span className="font-bold shrink-0">Compatible Vehicle:</span>
-                    <span className="font-extrabold text-slate-900 text-right truncate">
-                      {selectedVehicle ? `${selectedVehicle.makeName || selectedVehicle.make || ''} ${selectedVehicle.modelName || selectedVehicle.model || ''}` : (product.specs?.['Fits'] || 'Universal / Exact Fit')}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-600">
-                    <span className="font-bold">Quality Grade:</span>
-                    <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">100% Genuine OES</span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-600">
-                    <span className="font-bold">Warranty:</span>
-                    <span className="font-bold text-slate-800">{product.specs?.['Warranty'] || '6 Month Manufacturer Warranty'}</span>
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Live Pincode Serviceability & Delivery Speed Checker */}
               <div className="mt-3">

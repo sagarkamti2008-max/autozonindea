@@ -9,6 +9,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { AIPartFinderModal } from './components/AIPartFinderModal';
 import { SlideOutCart } from './components/SlideOutCart';
 import { ProductModal } from './components/ProductModal';
+import { MyCarHeaderBanner } from './components/MyCarHeaderBanner';
 
 import { CustomerHome } from './views/CustomerHome';
 import { ModernAutomotiveHomepage } from './views/ModernAutomotiveHomepage';
@@ -552,6 +553,7 @@ const MainApp = () => {
             onOpenAIPartFinder={() => setIsAIPartFinderOpen(true)} 
             onOpenFreeTools={() => setIsFreeToolsOpen(true)}
           />
+          <MyCarHeaderBanner />
           <Navigation onOpenFreeTools={() => setIsFreeToolsOpen(true)} />
         </>
       )}
