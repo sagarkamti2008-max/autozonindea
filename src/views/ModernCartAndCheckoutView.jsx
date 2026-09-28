@@ -611,27 +611,7 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-lg sticky top-24">
                   <h3 className="font-black text-slate-900 text-xl border-b border-slate-100 pb-4">Order Summary</h3>
 
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-center gap-2 text-sm text-slate-600 font-medium">
-                      <Tag className="w-4 h-4 text-orange-500" /> Have a Coupon?
-                    </div>
-                    <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                      <input type="text" value={couponCode} onChange={e=>setCouponCode(e.target.value)} placeholder="e.g. AUTO100" className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 font-bold uppercase" />
-                      <button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 rounded-xl text-sm transition-colors shadow-sm cursor-pointer">Apply</button>
-                    </form>
-                    {couponMessage && (
-                      <div className={`text-xs font-bold flex items-center gap-1.5 mt-2 ${couponMessage.type === 'success' ? 'text-emerald-600' : 'text-red-500'}`}>
-                        {couponMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4"/> : <AlertCircle className="w-4 h-4"/>}
-                        {couponMessage.text}
-                      </div>
-                    )}
-                    {appliedCouponCode && (
-                       <div className="flex items-center justify-between bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl mt-2">
-                         <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5"/> {appliedCouponCode} Applied</span>
-                         <button onClick={handleRemoveCoupon} className="text-xs font-bold text-emerald-700 hover:text-emerald-900 underline">Remove</button>
-                       </div>
-                    )}
-                  </div>
+
 
                   <div className="space-y-4 text-sm text-slate-600 border-t border-slate-100 pt-6">
                     <div className="flex justify-between items-center">
@@ -992,12 +972,7 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
                     ))}
                   </div>
 
-                  <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-800/80 p-3">
-                    <div className="flex gap-2">
-                      <input type="text" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Promo code" className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-orange-500" />
-                      <button type="button" onClick={handleApplyCoupon} className="rounded-xl bg-orange-500 hover:bg-orange-600 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow transition">Apply</button>
-                    </div>
-                  </div>
+
 
                   <div className="mt-5 space-y-2.5 border-t border-slate-800 pt-4 text-sm text-slate-300">
                     <div className="flex items-center justify-between"><span>Subtotal</span><span className="font-bold text-white">₹{totals.subtotal.toLocaleString('en-IN')}</span></div>
