@@ -92,31 +92,57 @@ export function PincodeDeliveryChecker({ compact = false, variant = 'light' }) {
       {result && (
         <div className={`p-3.5 rounded-xl border text-xs transition-all ${
           result.isServiceable
-            ? isLight ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-            : isLight ? 'bg-rose-50/80 border-rose-200 text-rose-900' : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            ? isLight ? 'bg-emerald-50 border-emerald-300 text-slate-900 shadow-sm' : 'bg-emerald-950/80 border-emerald-600/40 text-emerald-200'
+            : isLight ? 'bg-rose-50 border-rose-300 text-slate-900 shadow-sm' : 'bg-rose-950/80 border-rose-600/40 text-rose-200'
         }`}>
           <div className="flex items-start space-x-2.5">
             {result.isServiceable ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             ) : (
-              <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+              <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             )}
             <div className="flex-1">
-              <h4 className="font-extrabold text-xs">
-                {result.isServiceable ? '✓ Delivery Available to Pincode ' + result.pincode : 'Delivery Currently Unavailable'}
-              </h4>
-              <p className="text-[11px] mt-0.5 font-medium leading-relaxed opacity-90">{result.message}</p>
+              <div className="flex items-center justify-between gap-2">
+                <h4 className={`font-black text-xs sm:text-sm ${
+                  result.isServiceable
+                    ? isLight ? 'text-emerald-950' : 'text-emerald-300'
+                    : isLight ? 'text-rose-950' : 'text-rose-300'
+                }`}>
+                  {result.isServiceable ? `✓ Delivery Available to Pincode ${result.pincode}` : 'Delivery Currently Unavailable'}
+                </h4>
+                {result.isLiveApi && (
+                  <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide rounded-md bg-emerald-600 text-white shadow-xs">
+                    ⚡ Live API
+                  </span>
+                )}
+              </div>
+              
+              <p className={`text-[11px] mt-1 font-semibold leading-relaxed ${
+                isLight ? 'text-slate-700' : 'text-slate-300'
+              }`}>
+                {result.message}
+              </p>
 
               {result.isServiceable && (
-                <div className={`flex flex-wrap items-center gap-3 mt-2.5 pt-2 border-t text-[11px] ${isLight ? 'border-emerald-200/60' : 'border-slate-800'}`}>
+                <div className={`flex flex-wrap items-center gap-3 mt-2.5 pt-2 border-t text-[11px] ${isLight ? 'border-emerald-200' : 'border-slate-800'}`}>
                   <div className="flex items-center space-x-1 font-bold">
                     <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>Est. Speed: <strong className="text-emerald-700">{result.estimatedDays || 3} Business Days</strong></span>
+                    <span className={isLight ? 'text-slate-800' : 'text-slate-200'}>Est. Speed: <strong className="text-emerald-700 dark:text-emerald-400">{result.estimatedDays || 3} Business Days</strong></span>
                   </div>
                   <div className="flex items-center space-x-1 font-bold">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>Cash on Delivery: <strong className="text-emerald-700">{result.codAvailable ? 'Available' : 'Prepaid Only'}</strong></span>
+                    <span className={isLight ? 'text-slate-800' : 'text-slate-200'}>Cash on Delivery: <strong className="text-emerald-700 dark:text-emerald-400">{result.codAvailable ? 'Available' : 'Prepaid Only'}</strong></span>
                   </div>
+                  {result.couriers && result.couriers.length > 0 && (
+                    <div className="w-full mt-1 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] text-slate-500 font-medium">Couriers:</span>
+                      {result.couriers.slice(0, 4).map((c, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/80 border border-slate-200 text-slate-700 shadow-2xs">
+                          {c.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

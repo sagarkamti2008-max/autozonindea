@@ -71,19 +71,44 @@ export async function checkPincodeServiceability(pincode) {
   const cleanPin = pincode.trim();
 
   try {
-    const { data: record, error } = await supabase
+    // 1. Try Live Shiprocket API Serviceability Lookup
+    const provider = getCourierProvider('shiprocket');
+    const srRes = await provider.getServiceability({ deliveryPincode: cleanPin });
+
+    if (srRes && srRes.success && srRes.couriers && srRes.couriers.length > 0) {
+      const topCouriers = srRes.couriers.slice(0, 3).map(c => c.name).join(', ');
+      const minDays = srRes.estimatedDays || 3;
+      const codAvail = srRes.couriers.some(c => c.codAvailable);
+
+      return {
+        success: true,
+        pincode: cleanPin,
+        isServiceable: srRes.isServiceable,
+        isLiveApi: true,
+        couriers: srRes.couriers,
+        courierSummary: topCouriers,
+        estimatedDays: minDays,
+        codAvailable: codAvail,
+        cheapestRate: srRes.cheapestRate,
+        message: srRes.isServiceable
+          ? `Live ETA: Delivery available via ${topCouriers} in approx ${minDays} business days.`
+          : `Delivery currently unavailable to pincode ${cleanPin}.`
+      };
+    }
+
+    // 2. Check Database record fallback
+    const { data: record } = await supabase
       .from('serviceable_pincodes')
       .select('*')
       .eq('pincode', cleanPin)
       .maybeSingle();
-
-    if (error) throw error;
 
     if (record) {
       return {
         success: true,
         pincode: cleanPin,
         isServiceable: record.is_serviceable,
+        isLiveApi: false,
         city: record.city,
         state: record.state,
         estimatedDays: record.estimated_days || 3,
@@ -94,13 +119,12 @@ export async function checkPincodeServiceability(pincode) {
       };
     }
 
-    // Fallback: Configuration-based availability for standard 6-digit pincodes
+    // 3. Standard fallback for valid 6-digit pincodes
     return {
       success: true,
       pincode: cleanPin,
       isServiceable: true,
-      city: 'Standard Logistics Hub',
-      state: 'India',
+      isLiveApi: false,
       estimatedDays: 3,
       codAvailable: true,
       message: `Delivery available. Estimated delivery in 3 to 5 business days.`
@@ -110,8 +134,7 @@ export async function checkPincodeServiceability(pincode) {
       success: true,
       pincode: cleanPin,
       isServiceable: true,
-      city: 'Logistics Zone',
-      state: 'India',
+      isLiveApi: false,
       estimatedDays: 3,
       codAvailable: true,
       message: `Delivery available. Estimated delivery in 3 to 5 business days.`
