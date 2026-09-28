@@ -236,26 +236,125 @@ export const VEHICLE_DATABASE = [
     ]
   },
   {
-    id: 'kia',
-    name: 'Kia',
-    country: 'South Korea',
-    logo: '🚘',
+    id: 'bmw',
+    name: 'BMW',
+    country: 'Germany',
+    logo: '🏎️',
     models: [
       {
-        id: 'seltos',
-        name: 'Seltos',
-        years: ['2023-2024', '2019-2022'],
+        id: '3-series',
+        name: '3 Series / 3 Series Gran Limousine',
+        years: ['2023-2024', '2019-2022', '2012-2018'],
         variants: [
-          { id: 'seltos-gtx', name: 'GTX+ 1.5L Turbo GDi 7DCT', engine: '1482 cc Turbo Petrol', transmission: '7-Speed DCT' },
-          { id: 'seltos-htx-d', name: 'HTX+ 1.5L CRDi Diesel AT', engine: '1493 cc Diesel', transmission: '6-Speed AT' }
+          { id: '330li', name: '330Li M Sport (2.0L Turbo Petrol)', engine: '1998 cc Turbo Petrol', transmission: '8-Speed Steptronic AT' },
+          { id: '320d', name: '320d Luxury Line (2.0L Turbo Diesel)', engine: '1995 cc Turbo Diesel', transmission: '8-Speed AT' }
         ]
       },
       {
-        id: 'sonet',
-        name: 'Sonet',
-        years: ['2020-2024'],
+        id: 'x5',
+        name: 'X5',
+        years: ['2023-2024', '2019-2022'],
         variants: [
-          { id: 'sonet-gtx', name: 'GTX+ 1.0L Turbo 7DCT', engine: '998 cc Turbo Petrol', transmission: '7-Speed DCT' }
+          { id: 'x5-xDrive30d', name: 'xDrive30d M Sport (3.0L Inline-6 Diesel)', engine: '2993 cc Turbo Diesel', transmission: '8-Speed Steptronic AT' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'mercedes',
+    name: 'Mercedes-Benz',
+    country: 'Germany',
+    logo: '⭐',
+    models: [
+      {
+        id: 'e-class',
+        name: 'E-Class (LWB)',
+        years: ['2021-2024', '2017-2020'],
+        variants: [
+          { id: 'e220d', name: 'E 220d Exclusive (2.0L Turbo Diesel)', engine: '1950 cc Diesel', transmission: '9G-TRONIC AT' },
+          { id: 'e200', name: 'E 200 Expression (2.0L Turbo Petrol)', engine: '1991 cc Petrol', transmission: '9G-TRONIC AT' }
+        ]
+      },
+      {
+        id: 'glc',
+        name: 'GLC SUV',
+        years: ['2023-2024', '2016-2022'],
+        variants: [
+          { id: 'glc220d', name: 'GLC 220d 4MATIC (2.0L Diesel)', engine: '1993 cc Diesel', transmission: '9G-TRONIC AT' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'audi',
+    name: 'Audi',
+    country: 'Germany',
+    logo: '⭕',
+    models: [
+      {
+        id: 'a4',
+        name: 'A4',
+        years: ['2021-2024', '2016-2020'],
+        variants: [
+          { id: 'a4-40tfsi', name: '40 TFSI Technology (2.0L Turbo Petrol)', engine: '1984 cc Turbo Petrol', transmission: '7-Speed S tronic' }
+        ]
+      },
+      {
+        id: 'q5',
+        name: 'Q5',
+        years: ['2021-2024', '2018-2020'],
+        variants: [
+          { id: 'q5-45tfsi', name: '45 TFSI Technology quattro', engine: '1984 cc Turbo Petrol', transmission: '7-Speed S tronic' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'volkswagen',
+    name: 'Volkswagen',
+    country: 'Germany',
+    logo: '🚗',
+    models: [
+      {
+        id: 'virtus',
+        name: 'Virtus',
+        years: ['2022-2024'],
+        variants: [
+          { id: 'virtus-gt', name: 'GT Plus 1.5L TSI EVO (7DSG)', engine: '1498 cc TSI Petrol', transmission: '7-Speed DSG' },
+          { id: 'virtus-topline', name: 'Topline 1.0L TSI (6AT)', engine: '999 cc TSI Petrol', transmission: '6-Speed AT' }
+        ]
+      },
+      {
+        id: 'taigun',
+        name: 'Taigun',
+        years: ['2021-2024'],
+        variants: [
+          { id: 'taigun-gt', name: 'GT Edge 1.5L TSI DSG', engine: '1498 cc TSI Petrol', transmission: '7-Speed DSG' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'skoda',
+    name: 'Skoda',
+    country: 'Czech Republic',
+    logo: '🚗',
+    models: [
+      {
+        id: 'slavia',
+        name: 'Slavia',
+        years: ['2022-2024'],
+        variants: [
+          { id: 'slavia-style-15', name: 'Style 1.5L TSI DSG', engine: '1498 cc TSI Petrol', transmission: '7-Speed DSG' },
+          { id: 'slavia-style-10', name: 'Style 1.0L TSI MT', engine: '999 cc TSI Petrol', transmission: '6-Speed MT' }
+        ]
+      },
+      {
+        id: 'kushaq',
+        name: 'Kushaq',
+        years: ['2021-2024'],
+        variants: [
+          { id: 'kushaq-monte-carlo', name: 'Monte Carlo 1.5L TSI DSG', engine: '1498 cc TSI Petrol', transmission: '7-Speed DSG' }
         ]
       }
     ]
@@ -277,20 +376,21 @@ export const SAMPLE_REGISTRATION_DATABASE = {
 };
 
 export const CATEGORIES_DATABASE = [
-  { id: 'Brake Parts', name: 'Brake Parts', icon: '🛑', subcategories: ['Brake Pads', 'Brake Discs & Rotors', 'Brake Drums', 'Brake Shoes', 'Brake Fluid', 'Brake Calipers'] },
-  { id: 'Engine Parts', name: 'Engine Parts', icon: '⚙️', subcategories: ['Gaskets', 'Timing Belts', 'Pistons', 'Valves', 'Spark Plugs', 'Fuel Injectors', 'Engine Oil'] },
-  { id: 'Electrical', name: 'Electrical', icon: '⚡', subcategories: ['Batteries', 'Alternators', 'Starters', 'Horns', 'Relays', 'Fuses', 'Ignition Coils'] },
-  { id: 'Suspension', name: 'Suspension', icon: '🔩', subcategories: ['Shock Absorbers', 'Struts', 'Control Arms', 'Ball Joints', 'Tie Rod Ends', 'Coil Springs'] },
-  { id: 'Body Parts', name: 'Body Parts', icon: '🚘', subcategories: ['Bumpers', 'Fenders', 'Doors', 'Mirrors', 'Grilles', 'Bonnets', 'Wiper Blades'] },
+  { id: 'Engine Parts', name: 'Engine Parts', icon: '🔧', subcategories: ['Cylinder Block', 'Piston', 'Piston Rings', 'Gaskets', 'Timing Belts', 'Valves', 'Spark Plugs', 'Engine Mounts'] },
+  { id: 'Transmission Parts', name: 'Transmission Parts', icon: '⚙️', subcategories: ['Clutch Kit', 'Flywheel', 'Gearbox', 'Drive Shaft', 'CV Joint', 'Automatic Transmission Filter'] },
+  { id: 'Brake Parts', name: 'Brake Parts', icon: '🛑', subcategories: ['Brake Pads', 'Brake Discs & Rotors', 'Brake Calipers', 'Brake Drums', 'Brake Shoes', 'Brake Caliper Piston', 'Brake Fluid'] },
+  { id: 'Suspension & Steering', name: 'Suspension & Steering', icon: '🚗', subcategories: ['Shock Absorbers', 'Struts', 'Control Arms', 'Steering Rack', 'Power Steering Pump', 'Tie Rod Ends', 'Ball Joints'] },
+  { id: 'Electrical Parts', name: 'Electrical Parts', icon: '⚡', subcategories: ['Alternators', 'Starter Motors', 'Sensors (O2, ABS, MAP)', 'Relays & Fuses', 'Horns', 'Ignition Coils'] },
+  { id: 'AC & HVAC', name: 'AC & HVAC', icon: '❄️', subcategories: ['AC Compressor', 'Condenser', 'Cabin AC Filter', 'Expansion Valve', 'Evaporator Core'] },
+  { id: 'Cooling System', name: 'Cooling System', icon: '🌡️', subcategories: ['Radiator Assembly', 'Water Pump', 'Coolant Hose', 'Thermostat Valve', 'Coolant Reservoir'] },
+  { id: 'Fuel System', name: 'Fuel System', icon: '⛽', subcategories: ['Fuel Injectors', 'Fuel Pump Assembly', 'Fuel Rail', 'Fuel Filter', 'Fuel Pressure Regulator'] },
+  { id: 'Exhaust System', name: 'Exhaust System', icon: '💨', subcategories: ['Exhaust Manifold', 'Catalytic Converter', 'Muffler', 'Exhaust Pipe', 'O2 Lambda Sensor'] },
+  { id: 'Body Parts', name: 'Body Parts', icon: '🚘', subcategories: ['Bumpers', 'Fenders', 'Side Mirrors', 'Wiper Blades', 'Grilles', 'Bonnet & Hood', 'Door Handles'] },
+  { id: 'Lighting', name: 'Lighting', icon: '💡', subcategories: ['Headlight Assemblies', 'Tail Lights', 'Fog Lamps', 'LED Bulbs', 'Turn Signals'] },
+  { id: 'Interior Parts', name: 'Interior Parts', icon: '🪑', subcategories: ['Seat Covers', '7D Floor Mats', 'Dashboard Trims', 'Steering Covers', 'Mobile Holders', 'Dash Cams'] },
+  { id: 'Wheels & Tyres', name: 'Wheels & Tyres', icon: '🛞', subcategories: ['Tubeless Tyres', 'Alloy Wheels', 'TPMS Sensors', 'Wheel Bearings', 'Valves & Caps'] },
   { id: 'Filters', name: 'Filters', icon: '🌀', subcategories: ['Engine Air Filters', 'Oil Filters', 'Cabin AC Filters', 'Fuel Filters', 'Transmission Filters'] },
-  { id: 'AC Parts', name: 'AC Parts', icon: '❄️', subcategories: ['AC Compressors', 'Condensers', 'Expansion Valves', 'Evaporator Cores', 'AC Gas & Oils'] },
-  { id: 'Lights', name: 'Lights', icon: '💡', subcategories: ['Headlight Assemblies', 'Tail Lights', 'Fog Lights', 'LED Bulbs', 'Turn Indicators'] },
-  { id: 'Transmission', name: 'Transmission', icon: '🔄', subcategories: ['Clutch Plates', 'Pressure Plates', 'Flywheels', 'Gearboxes', 'Drive Shafts', 'Axles'] },
-  { id: 'Steering', name: 'Steering', icon: '🎯', subcategories: ['Steering Racks', 'Power Steering Pumps', 'Tie Rod Ends', 'Steering Columns', 'EPS Modules'] },
-  { id: 'Lubricants', name: 'Lubricants', icon: '🛢️', subcategories: ['Engine Oil 5W-30', 'Synthetic Oils', 'Gear Oils', 'Brake Fluid DOT 4', 'Coolants & Antifreeze'] },
-  { id: 'Car Accessories', name: 'Car Accessories', icon: '📱', subcategories: ['7D Floor Mats', 'Seat Covers', 'Mobile Holders', 'Dash Cameras', 'Body Covers', 'Car Wash & Wax'] },
-  { id: 'Tyres', name: 'Tyres', icon: '🛞', subcategories: ['Tubeless Tyres', 'Alloy Wheels', 'Tyre Pressure Sensors (TPMS)', 'Valves & Caps'] },
-  { id: 'Batteries', name: 'Batteries', icon: '🔋', subcategories: ['Car Batteries (Amaron, Exide)', 'Inverter Batteries', 'Battery Jump Cables', 'Terminals'] }
+  { id: 'Service Parts', name: 'Service Parts', icon: '🧰', subcategories: ['Comprehensive Maintenance Kits', 'Spark Plugs', 'Engine Oil 5W-30', 'Coolants', 'Wiper Fluid'] }
 ];
 
 export const BRANDS_DATABASE = [

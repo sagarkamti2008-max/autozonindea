@@ -486,21 +486,42 @@ export const ProductCatalog = () => {
               <div className="flex flex-col items-center w-full">
                 <div className="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center py-16 px-6 text-center w-full mb-8 relative overflow-hidden">
                   <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-800">
-                    <Search size={32} className="text-slate-500" />
+                    <Search size={32} className="text-[#FF5722]" />
                   </div>
                   <h3 className="font-black text-2xl text-white mb-3">
-                    0 Parts Found {(searchQuery || localSearch) ? `for "${searchQuery || localSearch}"` : (selectedCategory !== 'all' ? `in "${selectedCategory.replace(/-/g, ' ').toUpperCase()}"` : '')}
+                    {selectedVehicle 
+                      ? `No compatible parts found for ${selectedVehicle.makeName} ${selectedVehicle.modelName} (${selectedVehicle.year})` 
+                      : (searchQuery || localSearch) ? `0 Parts Found for "${searchQuery || localSearch}"` : `0 Parts Found in "${selectedCategory.replace(/-/g, ' ').toUpperCase()}"`}
                   </h3>
-                  <p className="text-slate-400 font-medium text-xs sm:text-sm max-w-md mx-auto mb-8 leading-relaxed">
-                    We couldn't find an exact match for your active filters. Try clearing your search term, resetting price range, or speak to our live fitment team.
+                  <p className="text-slate-400 font-medium text-xs sm:text-sm max-w-lg mx-auto mb-8 leading-relaxed">
+                    {selectedVehicle 
+                      ? `We couldn't find an exact verified match in our active catalog for ${selectedVehicle.makeName} ${selectedVehicle.modelName}. Try changing your car, browsing all parts, or contact Kamti Automotive live support for custom sourcing.`
+                      : "We couldn't find an exact match for your active filters. Try clearing your search term, resetting price range, or speak to our live fitment team."}
                   </p>
                   
                   <div className="flex flex-wrap justify-center gap-4">
+                    {selectedVehicle && (
+                      <button 
+                        onClick={() => setIsVehicleModalOpen(true)}
+                        className="bg-[#FF5722] hover:bg-orange-600 text-white font-black text-xs py-3 px-6 rounded-xl transition-all cursor-pointer shadow-lg shadow-orange-500/20 flex items-center gap-2"
+                      >
+                        <Car className="w-4 h-4" /> Change Vehicle
+                      </button>
+                    )}
                     <button 
                       onClick={clearFilters}
                       className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs py-3 px-6 rounded-xl transition-all cursor-pointer border border-slate-700"
                     >
-                      Clear Search & Filters
+                      Browse All Parts
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const msg = `Hi Kamti Automotive! I am looking for parts for my vehicle: ${selectedVehicle ? `${selectedVehicle.makeName} ${selectedVehicle.modelName} ${selectedVehicle.year}` : 'Car Parts'}. Can you help me find compatible items?`;
+                        window.open(`https://wa.me/918591719499?text=${encodeURIComponent(msg)}`, '_blank');
+                      }}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 px-6 rounded-xl transition-all cursor-pointer shadow-lg flex items-center gap-2"
+                    >
+                      <span>WhatsApp Kamti Support</span>
                     </button>
                   </div>
                 </div>
@@ -557,9 +578,21 @@ export const ProductCatalog = () => {
                             onError={(e) => { e.target.onerror = null; e.target.src = '/kamti-logo.png'; }}
                           />
                           
-                          <span className="absolute top-2 left-2 bg-[#FF5722] text-white font-black text-[10px] px-2 py-0.5 rounded uppercase shadow-md flex items-center gap-1">
-                            <ShieldCheck className="w-3 h-3" /> 100% Fitment
-                          </span>
+                          {fitCheck.isVerified && fitCheck.compatible ? (
+                            <span className="absolute top-2 left-2 bg-emerald-600 text-white font-black text-[10px] px-2 py-0.5 rounded uppercase shadow-md flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3" /> Guaranteed Fit
+                            </span>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsVehicleModalOpen(true);
+                              }}
+                              className="absolute top-2 left-2 bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-black text-[10px] px-2 py-0.5 rounded uppercase shadow-md flex items-center gap-1 transition"
+                            >
+                              <AlertTriangle className="w-3 h-3" /> Compatibility Not Verified
+                            </button>
+                          )}
 
                           <button
                             onClick={(e) => {
@@ -603,13 +636,24 @@ export const ProductCatalog = () => {
                         </h4>
 
                         {/* Rating Stars */}
-                        <div className="flex items-center gap-1.5 mt-2 text-amber-400 text-xs font-extrabold">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="w-3 h-3 fill-current text-amber-400" />
-                            ))}
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-1.5 text-amber-400 text-xs font-extrabold">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-3 h-3 fill-current text-amber-400" />
+                              ))}
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-bold">({prod.rating || 4.8})</span>
                           </div>
-                          <span className="text-[10px] text-slate-400 font-bold">({prod.rating || 4.8} • Verified Fit)</span>
+
+                          {!fitCheck.isVerified && (
+                            <button
+                              onClick={() => setIsVehicleModalOpen(true)}
+                              className="text-[10px] font-bold text-amber-400 hover:underline flex items-center gap-1"
+                            >
+                              Check Fit <Wrench className="w-3 h-3" />
+                            </button>
+                          )}
                         </div>
                       </div>
 

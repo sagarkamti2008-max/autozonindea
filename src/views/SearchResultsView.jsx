@@ -213,17 +213,29 @@ export default function SearchResultsView() {
                       <p className="text-xs text-slate-500 font-mono mb-3">SKU: {p.sku || 'AZI-SKU-VERIFIED'}</p>
 
                       {/* Compatibility Badge (Explicit Verification Rule) */}
-                      {selectedVehicle && (
+                      {selectedVehicle ? (
                         <div className="mb-4">
                           {fitStatus === 'compatible' ? (
                             <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold inline-flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> Fits {selectedVehicle.model || selectedVehicle.modelName}
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Guaranteed Fit for {selectedVehicle.makeName || selectedVehicle.make} {selectedVehicle.modelName || selectedVehicle.model}
                             </span>
                           ) : (
-                            <span className="px-2.5 py-1 bg-slate-950 border border-slate-800 text-slate-400 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5">
-                              <AlertCircle className="w-3.5 h-3.5 text-amber-500" /> Compatibility not confirmed
-                            </span>
+                            <button
+                              onClick={() => navigateTo('car-select')}
+                              className="px-2.5 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition rounded-lg text-xs font-bold inline-flex items-center gap-1.5"
+                            >
+                              <AlertCircle className="w-3.5 h-3.5 text-amber-400" /> Compatibility Not Verified • Check Fit
+                            </button>
                           )}
+                        </div>
+                      ) : (
+                        <div className="mb-4">
+                          <button
+                            onClick={() => navigateTo('car-select')}
+                            className="px-2.5 py-1 bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-500 hover:text-amber-400 transition rounded-lg text-xs font-bold inline-flex items-center gap-1.5"
+                          >
+                            <Car className="w-3.5 h-3.5 text-amber-500" /> Select Vehicle to Verify Fitment
+                          </button>
                         </div>
                       )}
                     </div>

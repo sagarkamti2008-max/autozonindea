@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { X, Star, ShoppingCart, ShieldCheck, CheckCircle2, Truck, RefreshCw, Car, Wrench } from 'lucide-react';
 
 export const ProductModal = () => {
-  const { activeProductModal, setActiveProductModal, addToCart, buyNow, selectedVehicle, navigateTo } = useStore();
+  const { activeProductModal, setActiveProductModal, addToCart, buyNow, selectedVehicle, setIsVehicleModalOpen, navigateTo } = useStore();
   const [qty, setQty] = useState(1);
 
   if (!activeProductModal) return null;
@@ -61,20 +61,31 @@ export const ProductModal = () => {
             </div>
 
             {/* Vehicle Compatibility Banner */}
-            <div className="detail-fitment-box">
-              <Car size={20} className="fitment-icon" />
-              <div>
-                <h4>Vehicle Compatibility Check</h4>
-                <p>
-                  {product.isUniversal ? (
-                    '✅ Universal Fit – Compatible with all Cars & SUVs.'
-                  ) : selectedVehicle ? (
-                    `Compatible with ${selectedVehicle.makeName} ${selectedVehicle.modelName} ${selectedVehicle.year}`
-                  ) : (
-                    'Fits Maruti Suzuki Swift, Baleno, Hyundai Creta, Tata Nexon & more.'
-                  )}
-                </p>
+            <div className="detail-fitment-box flex items-center justify-between">
+              <div className="flex items-start gap-3">
+                <Car size={20} className="fitment-icon shrink-0 mt-1" />
+                <div>
+                  <h4>Vehicle Compatibility Check</h4>
+                  <p>
+                    {product.isUniversal ? (
+                      '✅ Universal Fit – Compatible with all Cars & SUVs.'
+                    ) : selectedVehicle ? (
+                      `Compatible with ${selectedVehicle.makeName} ${selectedVehicle.modelName} ${selectedVehicle.year}`
+                    ) : (
+                      'Fits Maruti Suzuki, Hyundai, Tata, Toyota, Honda, Mahindra & more.'
+                    )}
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={() => {
+                  setActiveProductModal(null);
+                  setIsVehicleModalOpen(true);
+                }}
+                className="text-xs font-bold text-orange-400 hover:text-orange-300 underline shrink-0 ml-2 cursor-pointer"
+              >
+                Change / Check Fit
+              </button>
             </div>
 
             {/* Product Description */}

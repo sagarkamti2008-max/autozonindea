@@ -426,9 +426,17 @@ export const ProductDetailView = () => {
 
               {/* Vehicle Compatibility & Warranty Guarantee Card */}
               <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-2.5 mt-1">
-                <div className="flex items-center gap-2 text-xs font-black text-slate-900 border-b border-slate-100 pb-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Fitment & Quality Guarantee</span>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div className="flex items-center gap-2 text-xs font-black text-slate-900">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Fitment & Quality Guarantee</span>
+                  </div>
+                  <button
+                    onClick={() => setIsVehicleModalOpen(true)}
+                    className="text-[11px] font-bold text-[#0B5394] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Car className="w-3.5 h-3.5" /> Check Fit
+                  </button>
                 </div>
                 
                 <div className="space-y-2 text-xs">
@@ -709,6 +717,60 @@ export const ProductDetailView = () => {
                           </tbody>
                         </table>
                       </div>
+
+                      {/* Structured Vehicle Fitment Matrix */}
+                      {(product.fitments || product.compatibleVehicles) && (
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="font-black text-sm text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                              <Car className="w-4 h-4 text-[#FF5722]" /> Detailed Vehicle Fitment Matrix
+                            </h4>
+                            <button
+                              onClick={() => setIsVehicleModalOpen(true)}
+                              className="text-xs font-extrabold text-[#0B5394] hover:underline flex items-center gap-1"
+                            >
+                              Check My Vehicle <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="bg-slate-100 text-slate-700 font-black uppercase text-[10px] tracking-wider border-b border-slate-200">
+                                  <th className="p-3">Make</th>
+                                  <th className="p-3">Model</th>
+                                  <th className="p-3">Years</th>
+                                  <th className="p-3">Variant</th>
+                                  <th className="p-3">Engine / Fuel</th>
+                                  <th className="p-3 text-right">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
+                                {(product.fitments || product.compatibleVehicles || []).map((fit, idx) => {
+                                  const make = typeof fit === 'string' ? fit : (fit.make || fit.carBrand || 'All Makes');
+                                  const model = typeof fit === 'string' ? fit : (fit.model || fit.carModel || 'All Models');
+                                  const years = typeof fit === 'string' ? 'All Years' : `${fit.yearFrom || '2016'} – ${fit.yearTo || '2026'}`;
+                                  const variant = typeof fit === 'string' ? 'All Variants' : (fit.variant || fit.trim || 'All Variants');
+                                  const engine = typeof fit === 'string' ? 'Standard' : (fit.engine || fit.fuelType || 'Petrol / Diesel');
+                                  return (
+                                    <tr key={idx} className="hover:bg-slate-50 transition">
+                                      <td className="p-3 font-bold text-slate-900">{make}</td>
+                                      <td className="p-3 font-bold text-[#0B5394]">{model}</td>
+                                      <td className="p-3 font-mono text-slate-600">{years}</td>
+                                      <td className="p-3 text-slate-700">{variant}</td>
+                                      <td className="p-3 text-slate-600">{engine}</td>
+                                      <td className="p-3 text-right">
+                                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">
+                                          ✓ Verified Fit
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
 
                       {/* What's Included Box */}
                       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
