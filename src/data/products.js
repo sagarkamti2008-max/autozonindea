@@ -508,6 +508,122 @@ export const PRODUCTS = [
       'Supports AHD Night Vision Reverse Camera input'
     ],
     warranty: '1 Year Replacement Warranty'
+  },
+  {
+    id: 'prod-021',
+    title: 'Toyota Genuine Engine Air Filter Element for Innova & Fortuner 2.4L / 2.8L Diesel',
+    category: 'cat-filters',
+    subCategory: 'Engine Air Filter',
+    brand: 'Toyota',
+    price: 950,
+    originalPrice: 1350,
+    discount: '30% OFF',
+    rating: 4.9,
+    reviewsCount: 185,
+    oemPartNumber: '17801-0L040',
+    stock: 60,
+    isUniversal: false,
+    compatibleVehicles: ['toyota-innova', 'toyota-fortuner', 'toyota-innova-crysta', 'toyota-hilux'],
+    fitments: [
+      { make: 'Toyota', model: 'Innova', yearFrom: '2005', yearTo: '2024', variant: 'All Variants', engine: '2.4L / 2.8L Diesel' },
+      { make: 'Toyota', model: 'Fortuner', yearFrom: '2009', yearTo: '2024', variant: 'All Variants', engine: '2.8L Diesel' }
+    ],
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=600&auto=format&fit=crop&q=80',
+    description: '100% Genuine Toyota factory air filter element for Innova and Fortuner diesel engines. Micro-pleated synthetic fiber captures 99.8% dust and particulate pollution.',
+    features: [
+      'Genuine Toyota Sealed Pack (OEM # 17801-0L040)',
+      'High-capacity dust retention media',
+      'Ensures optimum air-fuel ratio for diesel turbochargers',
+      'Recommended replacement every 15,000 KM'
+    ],
+    warranty: 'Toyota Genuine Parts Guarantee'
+  },
+  {
+    id: 'prod-022',
+    title: 'Toyota Genuine Heavy-Duty Spin-On Engine Oil Filter (Innova, Fortuner, Camry, Hilux)',
+    category: 'cat-filters',
+    subCategory: 'Oil Filter',
+    brand: 'Toyota',
+    price: 499,
+    originalPrice: 750,
+    discount: '33% OFF',
+    rating: 4.9,
+    reviewsCount: 240,
+    oemPartNumber: '90915-YZZD2',
+    stock: 90,
+    isUniversal: false,
+    compatibleVehicles: ['toyota-innova', 'toyota-fortuner', 'toyota-camry', 'toyota-corolla', 'toyota-innova-crysta'],
+    fitments: [
+      { make: 'Toyota', model: 'Innova', yearFrom: '2005', yearTo: '2024', variant: 'All Variants' },
+      { make: 'Toyota', model: 'Camry', yearFrom: '2012', yearTo: '2024', variant: 'All Variants' },
+      { make: 'Toyota', model: 'Fortuner', yearFrom: '2009', yearTo: '2024', variant: 'All Variants' }
+    ],
+    image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=600&auto=format&fit=crop&q=80',
+    description: 'Original Toyota OEM spin-on oil filter. Dual-stage synthetic media filters soot, metal wear particles, and sludge to keep engine lubricated.',
+    features: [
+      'Original Toyota Hologram Pack (OEM # 90915-YZZD2)',
+      'Heavy duty anti-drainback silicone valve',
+      'High pressure bypass valve prevents dry cold starts',
+      'Direct factory fitment for all Toyota D-4D diesel & VVTi petrol engines'
+    ],
+    warranty: 'Toyota Genuine Warranty'
+  },
+  {
+    id: 'prod-023',
+    title: 'Bosch Low-Metallic Front Axle Brake Pad Set for Toyota Innova & Innova Crysta',
+    category: 'cat-brakes',
+    subCategory: 'Brake Pad',
+    brand: 'BOSCH',
+    price: 1850,
+    originalPrice: 2600,
+    discount: '29% OFF',
+    rating: 4.8,
+    reviewsCount: 175,
+    oemPartNumber: '0986AB2019',
+    stock: 40,
+    isUniversal: false,
+    compatibleVehicles: ['toyota-innova', 'toyota-innova-crysta'],
+    fitments: [
+      { make: 'Toyota', model: 'Innova', yearFrom: '2005', yearTo: '2024', variant: 'All Variants', position: 'Front' }
+    ],
+    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&auto=format&fit=crop&q=80',
+    description: 'Bosch low-metallic premium front brake pads for Toyota Innova. Shim-damped construction eliminates brake squeal and provides high stopping friction.',
+    features: [
+      'Low noise multi-layer rubberized shims',
+      'Asbestos-free eco friction lining formulation',
+      'Resistant to thermal fade up to 500°C',
+      'Includes front wear indicator clips'
+    ],
+    warranty: '6 Months Bosch Warranty'
+  },
+  {
+    id: 'prod-024',
+    title: 'Toyota Genuine PM2.5 Carbon Activated Cabin AC Filter for Innova & Fortuner',
+    category: 'cat-filters',
+    subCategory: 'Cabin Air Filter',
+    brand: 'Toyota',
+    price: 650,
+    originalPrice: 990,
+    discount: '34% OFF',
+    rating: 4.9,
+    reviewsCount: 160,
+    oemPartNumber: '87139-F4010',
+    stock: 55,
+    isUniversal: false,
+    compatibleVehicles: ['toyota-innova', 'toyota-fortuner', 'toyota-innova-crysta', 'toyota-camry'],
+    fitments: [
+      { make: 'Toyota', model: 'Innova', yearFrom: '2005', yearTo: '2024', variant: 'All Variants' },
+      { make: 'Toyota', model: 'Fortuner', yearFrom: '2009', yearTo: '2024', variant: 'All Variants' }
+    ],
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=600&auto=format&fit=crop&q=80',
+    description: 'Activated carbon PM2.5 fresh air cabin AC filter element. Absorbs unpleasant odors, diesel exhaust gases, and allergen pollen.',
+    features: [
+      'Activated carbon layer traps odor & exhaust fumes',
+      'Filters fine dust particles down to PM2.5 microns',
+      'Maintains maximum cabin AC cooling blower airflow',
+      'Easy 5-minute glovebox DIY installation'
+    ],
+    warranty: 'Genuine Toyota Sealed Pack'
   }
 ];
 

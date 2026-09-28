@@ -259,21 +259,21 @@ export const ProductCatalog = () => {
 
       {/* Vehicle Fitment Switch */}
       {selectedVehicle && (
-        <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-1.5">
-              <Car className="w-4 h-4 text-[#FF5722]" /> 100% Fit {selectedVehicle.makeName}
+        <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-white flex items-center gap-1.5 truncate">
+              <Car className="w-4 h-4 text-[#FF5722] shrink-0" /> 100% Fit {selectedVehicle.makeName || selectedVehicle.make}
             </span>
             <input 
               type="checkbox"
               id="fitCheck"
               checked={filterFitsVehicle}
               onChange={(e) => setFilterFitsVehicle(e.target.checked)}
-              className="w-4 h-4 accent-[#FF5722] rounded cursor-pointer"
+              className="w-4 h-4 accent-[#FF5722] rounded cursor-pointer shrink-0"
             />
           </div>
-          <p className="text-[10px] text-slate-400 font-medium leading-normal">
-            Strict mode: Hide unverified parts for {selectedVehicle.makeName} {selectedVehicle.modelName}.
+          <p className="text-[11px] text-slate-400 font-medium leading-normal">
+            Show only verified parts for {selectedVehicle.makeName || selectedVehicle.make} {selectedVehicle.modelName || selectedVehicle.model}.
           </p>
         </div>
       )}
@@ -561,7 +561,7 @@ export const ProductCatalog = () => {
         )}
 
         {/* Category Horizontal Bar (29 Main Categories) */}
-        <div className="flex overflow-x-auto gap-2 py-3 px-1 mb-6 border-b border-slate-800/80 scrollbar-none">
+        <div className="flex overflow-x-auto gap-2 py-3 px-1 mb-6 border-b border-slate-800/80 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             onClick={() => setSelectedCategory('all')}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap transition cursor-pointer shrink-0 ${
@@ -574,34 +574,35 @@ export const ProductCatalog = () => {
             <span>All Categories ({products.length})</span>
           </button>
 
-          {MASTER_CATEGORIES_DATA.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.slug || cat.name)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
-                selectedCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase()
-                  ? 'bg-[#FF5722] text-white shadow-md shadow-orange-500/20 scale-[1.02]'
-                  : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <span>{cat.icon}</span>
-              <span>{cat.name}</span>
-              <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${selectedCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase() ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
-                {dynamicCategoryCounts[cat.name] || dynamicCategoryCounts[cat.slug] || 0}
-              </span>
-            </button>
-          ))}
+          {MASTER_CATEGORIES_DATA.map(cat => {
+            const cnt = dynamicCategoryCounts[cat.name] || dynamicCategoryCounts[cat.slug] || 0;
+            const isSelected = selectedCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase();
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.slug || cat.name)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                  isSelected
+                    ? 'bg-[#FF5722] text-white shadow-md shadow-orange-500/20 scale-[1.02]'
+                    : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white hover:bg-slate-900'
+                }`}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.name}</span>
+                {cnt > 0 && (
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                    {cnt}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Page Title & Mobile Trigger / Sort Controls */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6 border-b border-slate-800 pb-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-[#FF5722]/15 text-[#FF5722] border border-[#FF5722]/30 font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">
-                System 4 Advanced Filter Engine
-              </span>
-            </div>
-            <h1 className="font-black text-2xl md:text-4xl text-white tracking-tight uppercase">
+            <h1 className="font-black text-2xl md:text-3xl text-white tracking-tight uppercase">
               {searchQuery ? `Search Results for "${searchQuery}"` : selectedCategory !== 'all' ? selectedCategory.replace(/-/g, ' ').toUpperCase() : 'AUTOMOTIVE PARTS CATALOG'}
             </h1>
             <p className="text-slate-400 font-medium text-xs sm:text-sm mt-1">
