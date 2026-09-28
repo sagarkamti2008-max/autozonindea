@@ -58,7 +58,6 @@ export const Footer = () => {
               <li><button onClick={() => navigateTo('privacy-policy')} className="hover:text-white transition-colors duration-200">Privacy Policy</button></li>
               <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors duration-200">Terms & Conditions</button></li>
               <li><button onClick={() => navigateTo('faq')} className="hover:text-white transition-colors duration-200">FAQ</button></li>
-              <li><button onClick={() => navigateTo('admin-login')} className="text-slate-500 hover:text-slate-300 text-xs transition-colors duration-200">Staff / Admin Portal 🔒</button></li>
               <li>
                 <a 
                   href="https://www.thesagartravels.com" 
