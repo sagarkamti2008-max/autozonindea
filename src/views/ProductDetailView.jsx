@@ -230,36 +230,52 @@ export const ProductDetailView = () => {
   };
 
   const handleSubmitReviewForm = async (e) => {
-    e.preventDefault();
-    setRevSubmitting(true);
+    if (e && e.preventDefault) e.preventDefault();
     setRevFeedback(null);
 
-    const res = await submitProductReview({
-      productId: product.id,
-      customerId: user?.id,
-      customerName: user?.name || user?.email?.split('@')[0] || 'Verified Buyer',
-      customerEmail: user?.email,
-      orderId: reviewEligibility?.orders?.[0]?.id || null,
-      rating: revRating,
-      title: revTitle,
-      reviewText: revText,
-      imageFiles: revImages
-    });
-
-    if (res.success) {
-      setRevFeedback({ type: 'success', text: res.message });
-      setTimeout(() => {
-        setIsWriteReviewOpen(false);
-        setRevTitle('');
-        setRevText('');
-        setRevRating(5);
-        setRevImages([]);
-        loadEngagementData();
-      }, 1500);
-    } else {
-      setRevFeedback({ type: 'error', text: res.message });
+    if (!revTitle || !revTitle.trim()) {
+      setRevFeedback({ type: 'error', text: '⚠️ Please enter a review title.' });
+      return;
     }
-    setRevSubmitting(false);
+    if (!revText || !revText.trim() || revText.trim().length < 3) {
+      setRevFeedback({ type: 'error', text: '⚠️ Please write at least 3 characters in your review comment.' });
+      return;
+    }
+
+    setRevSubmitting(true);
+
+    try {
+      const res = await submitProductReview({
+        productId: product.id,
+        customerId: user?.id,
+        customerName: user?.name || user?.email?.split('@')[0] || 'Verified Customer',
+        customerEmail: user?.email,
+        orderId: reviewEligibility?.orders?.[0]?.id || null,
+        rating: revRating,
+        title: revTitle.trim(),
+        reviewText: revText.trim(),
+        imageFiles: revImages
+      });
+
+      if (res && res.success) {
+        setRevFeedback({ type: 'success', text: res.message || '🎉 Thank you! Your review has been published successfully.' });
+        setTimeout(() => {
+          setIsWriteReviewOpen(false);
+          setRevTitle('');
+          setRevText('');
+          setRevRating(5);
+          setRevImages([]);
+          loadEngagementData();
+        }, 1200);
+      } else {
+        setRevFeedback({ type: 'error', text: res?.message || 'Could not submit review. Please try again.' });
+      }
+    } catch (err) {
+      console.error('Review submit exception:', err);
+      setRevFeedback({ type: 'error', text: 'An unexpected error occurred while submitting your review.' });
+    } finally {
+      setRevSubmitting(false);
+    }
   };
 
   const handleSubmitQuestionForm = async (e) => {
@@ -1229,7 +1245,6 @@ export const ProductDetailView = () => {
                   </label>
                   <input
                     type="text"
-                    required
                     placeholder="e.g. 100% Genuine OES Part - Perfect Fitment!"
                     value={revTitle}
                     onChange={(e) => setRevTitle(e.target.value)}
@@ -1241,10 +1256,9 @@ export const ProductDetailView = () => {
                 <div>
                   <label className="block text-xs font-black uppercase text-slate-700 mb-1.5 flex items-center justify-between">
                     <span>Detailed Review <span className="text-rose-500">*</span></span>
-                    <span className="text-[10px] text-slate-400 font-normal">Min 10 characters</span>
+                    <span className="text-[10px] text-slate-400 font-normal">Min 3 characters</span>
                   </label>
                   <textarea
-                    required
                     rows={4}
                     placeholder="Describe product performance, build quality, installation fitment, and seller packaging..."
                     value={revText}
@@ -1295,6 +1309,7 @@ export const ProductDetailView = () => {
                 <button
                   type="submit"
                   disabled={revSubmitting}
+                  onClick={handleSubmitReviewForm}
                   className="w-full py-4 bg-gradient-to-r from-[#0B5394] to-[#073763] hover:from-[#094378] hover:to-[#052848] text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-[#0B5394]/20 hover:shadow-xl active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
                 >
                   {revSubmitting ? (

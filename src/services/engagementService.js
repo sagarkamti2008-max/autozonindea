@@ -273,8 +273,8 @@ export const submitProductReview = async ({
   if (!title || !title.trim()) {
     return { success: false, message: 'Review title is required.' };
   }
-  if (!reviewText || reviewText.trim().length < 10) {
-    return { success: false, message: 'Please write at least 10 characters in your review.' };
+  if (!reviewText || reviewText.trim().length < 3) {
+    return { success: false, message: 'Please write a review comment (min 3 characters).' };
   }
 
   // Server-side verification of purchase ownership
