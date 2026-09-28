@@ -192,7 +192,7 @@ const RenderBrandLogo = ({ brand, logoUrl }) => {
 };
 
 export const ModernAutomotiveHomepage = () => {
-  const { navigateTo, addToCart, buyNow, wishlist, cartItemCount, products, showToast, setSelectedBrand: setGlobalSelectedBrand, setSelectedVehicle, setSearchQuery } = useStore();
+  const { navigateTo, addToCart, buyNow, wishlist, cartItemCount, products, showToast, setSelectedCategory, setSelectedBrand: setGlobalSelectedBrand, setSelectedVehicle, setSearchQuery } = useStore();
   const profileData = getCustomerProfile();
 
   // Search Mode state (Vehicle vs Number Plate)
@@ -982,7 +982,11 @@ export const ModernAutomotiveHomepage = () => {
           {topCategories.map((cat) => (
             <div
               key={cat.id}
-              onClick={() => navigateTo('catalog')}
+              onClick={() => {
+                if (setSelectedCategory) setSelectedCategory(cat.id);
+                if (showToast) showToast(`Filtered parts for: ${cat.title}`);
+                navigateTo('catalog');
+              }}
               className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col justify-between"
             >
               <div className="relative w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">

@@ -257,34 +257,41 @@ export const isProductMatchingVehicleAndCategory = (
 
     let catMatch = false;
 
-    if (catLower === 'engine-parts' || catLower === 'cat-engine' || catLower === 'engine_parts' || catLower === 'engine parts') {
-      catMatch = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') || pTitle.includes('spark') || pTitle.includes('clutch') || pTitle.includes('piston') || pTitle.includes('gasket');
-    } else if (catLower === 'brake-parts' || catLower === 'cat-brakes' || catLower === 'braking_system' || catLower === 'brake parts') {
-      catMatch = pCat.includes('brake') || pCat.includes('suspension') || pSub.includes('brake') || pSub.includes('shock') || pTitle.includes('brake') || pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('absorber');
-    } else if (catLower === 'filters' || catLower === 'cat-filters' || catLower === 'filters_oils') {
+    if (catLower === 'engine-parts' || catLower === 'cat-engine' || catLower === 'engine_parts' || catLower === 'engine parts' || catLower === 'engine') {
+      // ENGINE PARTS STRICT: pistons, spark plugs, belts, mounts, gaskets, timing chain, cylinder head (EXCLUDES filters, EXCLUDES fluids)
+      const isFilter = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
+      const isOilFluid = (pCat.includes('oil') || pTitle.includes('engine oil') || pTitle.includes('fluid') || pTitle.includes('coolant')) && !pTitle.includes('sump') && !pTitle.includes('pump') && !pTitle.includes('pan');
+      if (isFilter || isOilFluid) {
+        catMatch = false;
+      } else {
+        catMatch = pCat.includes('engine') || pSub.includes('engine') || pTitle.includes('engine') || pTitle.includes('spark') || pTitle.includes('clutch') || pTitle.includes('piston') || pTitle.includes('gasket') || pTitle.includes('belt') || pTitle.includes('mount') || pTitle.includes('valve') || pTitle.includes('camshaft') || pTitle.includes('crankshaft');
+      }
+    } else if (catLower === 'oils-fluids' || catLower === 'lubricants' || catLower === 'engine-oil-fluids' || catLower === 'oils & fluids') {
+      catMatch = pCat.includes('oil') || pCat.includes('fluid') || pCat.includes('lubricant') || pSub.includes('oil') || pSub.includes('fluid') || pTitle.includes('engine oil') || pTitle.includes('synthetic') || pTitle.includes('brake fluid') || pTitle.includes('coolant') || pTitle.includes('transmission fluid');
+    } else if (catLower === 'brake-parts' || catLower === 'cat-brakes' || catLower === 'braking_system' || catLower === 'brake parts' || catLower === 'brake-system' || catLower === 'brakes') {
+      catMatch = pCat.includes('brake') || pSub.includes('brake') || pTitle.includes('brake') || pTitle.includes('pad') || pTitle.includes('disc') || pTitle.includes('rotor') || pTitle.includes('caliper');
+    } else if (catLower === 'filters' || catLower === 'cat-filters' || catLower === 'filters_oils' || catLower === 'filter') {
       catMatch = pCat.includes('filter') || pSub.includes('filter') || pTitle.includes('filter');
-    } else if (catLower === 'body-parts' || catLower === 'cat-body' || catLower === 'body-bumper' || catLower === 'body parts') {
-      catMatch = pCat.includes('body') || pCat.includes('bumper') || pSub.includes('bumper') || pTitle.includes('bumper') || pTitle.includes('fender') || pTitle.includes('door') || pTitle.includes('mirror');
-    } else if (catLower === 'electrical-parts' || catLower === 'cat-electrical' || catLower === 'lighting_electrical' || catLower === 'electrical parts') {
-      catMatch = pCat.includes('electric') || pCat.includes('lighting') || pSub.includes('electric') || pSub.includes('light') || pTitle.includes('light') || pTitle.includes('headlight') || pTitle.includes('battery') || pTitle.includes('switch');
-    } else if (catLower === 'oils-fluids' || catLower === 'lubricants') {
-      catMatch = pCat.includes('oil') || pCat.includes('fluid') || pSub.includes('oil') || pTitle.includes('oil') || pTitle.includes('fluid') || pTitle.includes('coolant');
-    } else if (catLower === 'ac-parts' || catLower === 'cat-ac' || catLower === 'air-conditioning' || catLower === 'ac parts') {
+    } else if (catLower === 'body-parts' || catLower === 'cat-body' || catLower === 'body-bumper' || catLower === 'body parts' || catLower === 'body & bumper') {
+      catMatch = pCat.includes('body') || pCat.includes('bumper') || pSub.includes('bumper') || pTitle.includes('bumper') || pTitle.includes('fender') || pTitle.includes('door') || pTitle.includes('mirror') || pTitle.includes('grille');
+    } else if (catLower === 'electrical-parts' || catLower === 'cat-electrical' || catLower === 'lighting_electrical' || catLower === 'electrical parts' || catLower === 'electrical') {
+      catMatch = pCat.includes('electric') || pCat.includes('lighting') || pSub.includes('electric') || pSub.includes('light') || pTitle.includes('light') || pTitle.includes('headlight') || pTitle.includes('battery') || pTitle.includes('switch') || pTitle.includes('alternator') || pTitle.includes('starter') || pTitle.includes('fuse');
+    } else if (catLower === 'ac-parts' || catLower === 'cat-ac' || catLower === 'air-conditioning' || catLower === 'ac parts' || catLower === 'ac') {
       catMatch = pCat.includes('ac') || pCat.includes('air-condition') || pSub.includes('ac') || pTitle.includes('ac') || pTitle.includes('compressor') || pTitle.includes('condenser') || pTitle.includes('cooling coil');
-    } else if (catLower === 'clutch-parts' || catLower === 'cat-clutch' || catLower === 'clutch parts') {
+    } else if (catLower === 'clutch-parts' || catLower === 'cat-clutch' || catLower === 'clutch parts' || catLower === 'clutch') {
       catMatch = pCat.includes('clutch') || pSub.includes('clutch') || pTitle.includes('clutch') || pTitle.includes('friction disc') || pTitle.includes('pressure plate');
-    } else if (catLower === 'suspension-parts' || catLower === 'cat-suspension' || catLower === 'suspension parts') {
-      catMatch = pCat.includes('suspension') || pSub.includes('suspension') || pTitle.includes('shock') || pTitle.includes('strut') || pTitle.includes('arm') || pTitle.includes('bushing');
-    } else if (catLower === 'transmission-parts' || catLower === 'cat-transmission' || catLower === 'transmission parts') {
+    } else if (catLower === 'suspension-parts' || catLower === 'cat-suspension' || catLower === 'suspension parts' || catLower === 'suspension') {
+      catMatch = pCat.includes('suspension') || pSub.includes('suspension') || pTitle.includes('shock') || pTitle.includes('strut') || pTitle.includes('arm') || pTitle.includes('bushing') || pTitle.includes('absorber');
+    } else if (catLower === 'transmission-parts' || catLower === 'cat-transmission' || catLower === 'transmission parts' || catLower === 'transmission') {
       catMatch = pCat.includes('transmission') || pSub.includes('transmission') || pTitle.includes('gear') || pTitle.includes('cv axle') || pTitle.includes('drive shaft');
-    } else if (catLower === 'steering-parts' || catLower === 'cat-steering' || catLower === 'steering parts') {
+    } else if (catLower === 'steering-parts' || catLower === 'cat-steering' || catLower === 'steering parts' || catLower === 'steering') {
       catMatch = pCat.includes('steering') || pSub.includes('steering') || pTitle.includes('steering') || pTitle.includes('tie rod') || pTitle.includes('rack end');
-    } else if (catLower === 'cooling-system' || catLower === 'cat-cooling' || catLower === 'cooling system') {
+    } else if (catLower === 'cooling-system' || catLower === 'cat-cooling' || catLower === 'cooling system' || catLower === 'cooling') {
       catMatch = pCat.includes('cool') || pSub.includes('cool') || pTitle.includes('radiator') || pTitle.includes('water pump') || pTitle.includes('thermostat');
-    } else if (catLower === 'fuel-system' || catLower === 'cat-fuel' || catLower === 'fuel system') {
+    } else if (catLower === 'fuel-system' || catLower === 'cat-fuel' || catLower === 'fuel system' || catLower === 'fuel') {
       catMatch = pCat.includes('fuel') || pSub.includes('fuel') || pTitle.includes('fuel pump') || pTitle.includes('injector');
-    } else if (catLower === 'interior-parts' || catLower === 'cat-interior' || catLower === 'accessories' || catLower === 'cat-accessories' || catLower === 'interior parts') {
-      catMatch = pCat.includes('interior') || pCat.includes('accessori') || pSub.includes('accessori') || pTitle.includes('holder') || pTitle.includes('mat') || pTitle.includes('cover') || pTitle.includes('seat');
+    } else if (catLower === 'interior-parts' || catLower === 'cat-interior' || catLower === 'accessories' || catLower === 'cat-accessories' || catLower === 'car-accessories' || catLower === 'interior parts') {
+      catMatch = pCat.includes('interior') || pCat.includes('accessori') || pSub.includes('accessori') || pTitle.includes('holder') || pTitle.includes('mat') || pTitle.includes('cover') || pTitle.includes('seat') || pTitle.includes('dash cam');
     } else {
       catMatch = pCat.includes(catLower) || pSub.includes(catLower) || pTitle.includes(catLower);
     }
