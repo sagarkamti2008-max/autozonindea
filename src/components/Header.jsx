@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
 import { Search, ShoppingCart, Heart, User, Mic, Crown, Car, Clock, X, Menu, Settings, PhoneCall, MessageCircle, ChevronDown, Wrench, ShieldCheck } from 'lucide-react';
 import { rankProductSearch } from '../services/searchDiscoveryEngine';
@@ -25,6 +25,26 @@ export const Header = () => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileData = getCustomerProfile();
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const cartItemCount = cart ? cart.length : 0;
   const wishlistItemCount = wishlist ? wishlist.length : 0;
@@ -135,7 +155,7 @@ export const Header = () => {
 
           {/* Search Bar Container */}
           <div className="hidden md:flex items-center gap-2 flex-1 max-w-2xl">
-            <div className="relative flex-1">
+            <div className="relative flex-1" ref={searchRef}>
               <form onSubmit={handleSearchSubmit} className="flex items-center bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 shadow-inner focus-within:ring-2 focus-within:ring-[#FF5722]/30 focus-within:border-[#FF5722]">
                 <input
                   type="text"
