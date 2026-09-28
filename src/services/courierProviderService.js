@@ -365,7 +365,7 @@ export class ShiprocketCourierProvider extends CourierProvider {
 
       const res = await callShiprocketApi(endpoint, 'GET');
 
-      if (res.ok && res.data?.data?.available_courier_companies) {
+      if (res.ok && res.data?.data?.available_courier_companies && res.data.data.available_courier_companies.length > 0) {
         const couriers = res.data.data.available_courier_companies.map(c => ({
           id: c.courier_company_id,
           name: c.courier_name,
@@ -381,6 +381,7 @@ export class ShiprocketCourierProvider extends CourierProvider {
 
         return {
           success: true,
+          isLiveApi: true,
           pincode: pin,
           isServiceable,
           couriers,
@@ -392,6 +393,7 @@ export class ShiprocketCourierProvider extends CourierProvider {
 
       return {
         success: true,
+        isLiveApi: false,
         pincode: pin,
         isServiceable: true,
         couriers: [{ name: 'Standard Express', rate: 150, etd: '3-5 Days' }],

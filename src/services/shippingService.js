@@ -75,7 +75,7 @@ export async function checkPincodeServiceability(pincode) {
     const provider = getCourierProvider('shiprocket');
     const srRes = await provider.getServiceability({ deliveryPincode: cleanPin });
 
-    if (srRes && srRes.success && srRes.couriers && srRes.couriers.length > 0) {
+    if (srRes && srRes.success && srRes.isLiveApi && srRes.couriers && srRes.couriers.length > 0) {
       const topCouriers = srRes.couriers.slice(0, 3).map(c => c.name).join(', ');
       const minDays = srRes.estimatedDays || 3;
       const codAvail = srRes.couriers.some(c => c.codAvailable);
