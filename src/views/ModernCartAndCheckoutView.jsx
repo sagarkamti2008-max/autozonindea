@@ -1240,7 +1240,20 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
                   </div>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-2 space-y-2">
+                  <button
+                    onClick={() => {
+                      const ordNum = confirmedOrderResult?.orderNumber || 'ORD-AZI';
+                      const amount = totals?.grandTotal ? `₹${totals.grandTotal.toLocaleString('en-IN')}` : '';
+                      const msg = `Hi KAMTI AUTOMOTIVE / AutoZon India!\nI just placed an order on your website:\n\n📋 Order Number: ${ordNum}\n💰 Total Amount: ${amount}\n👤 Name: ${customerInfo.fullName || addressForm.fullName || 'Customer'}\n📍 Address: ${addressForm.address_line || ''}, ${addressForm.city || ''} (${addressForm.pincode || ''})\n\nPlease confirm & send me live tracking updates on WhatsApp!`;
+                      window.open(`https://wa.me/918591719499?text=${encodeURIComponent(msg)}`, '_blank');
+                    }}
+                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-xs py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-white text-white" />
+                    <span>Track Order &amp; Get Updates on WhatsApp</span>
+                  </button>
+
                   <button
                     onClick={() => navigateTo('catalog')}
                     className="w-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-xs py-2.5 rounded-xl transition cursor-pointer"

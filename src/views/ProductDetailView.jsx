@@ -534,6 +534,18 @@ export const ProductDetailView = () => {
                   >
                     Buy Now
                   </button>
+
+                  <button
+                    onClick={() => {
+                      const carInfo = selectedVehicle ? `${selectedVehicle.makeName || selectedVehicle.make || ''} ${selectedVehicle.modelName || selectedVehicle.model || ''} (${selectedVehicle.year || ''})` : (product.specs?.['Fits'] || '');
+                      const msg = `Hi KAMTI AUTOMOTIVE / AutoZon India!\nI want to inquire / order this spare part:\n\n📦 Part: ${product.name}\n🏷️ OEM/Part No: ${product.oemPartNumber || product.sku || 'N/A'}\n💰 Price: ₹${product.price}\n🔢 Qty: ${quantity}\n🚗 Vehicle: ${carInfo || 'Not specified'}\n\nPlease confirm availability & order details.`;
+                      window.open(`https://wa.me/918591719499?text=${encodeURIComponent(msg)}`, '_blank');
+                    }}
+                    className="w-full py-3.5 px-6 rounded-full font-black bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] text-sm tracking-wide cursor-pointer"
+                  >
+                    <MessageSquare className="w-5 h-5 fill-white text-white" />
+                    <span>Order / Inquire via WhatsApp (+91 8591719499)</span>
+                  </button>
                 </div>
 
                 {/* Secondary Action Links (WISHLIST & SHARE) */}
