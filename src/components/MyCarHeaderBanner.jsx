@@ -38,13 +38,18 @@ export const MyCarHeaderBanner = () => {
           <div className="w-6 h-6 rounded-lg bg-amber-500/20 border border-amber-500/50 flex items-center justify-center shrink-0">
             <Car className="w-3.5 h-3.5 text-amber-400" />
           </div>
-          <div className="truncate">
-            <span className="font-black text-amber-400 uppercase text-[10px] tracking-widest mr-2">
+          <div className="truncate flex items-center gap-2">
+            <span className="font-black text-amber-400 uppercase text-[10px] tracking-widest">
               🚗 MY CAR:
             </span>
             <span className="font-bold text-white text-xs">
               {brand} {model} {year} {variant ? `(${variant})` : ''}
             </span>
+            {selectedVehicle.isVinDecoded && (
+              <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                ✓ VIN VERIFIED: {selectedVehicle.vin}
+              </span>
+            )}
           </div>
         </div>
 
