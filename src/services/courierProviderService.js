@@ -36,6 +36,31 @@ let cachedShiprocketToken = null;
 let tokenExpiryTime = 0;
 
 /**
+ * Robust Smart Fetcher with CORS Proxy Fallback for Browser Clients
+ */
+async function smartFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    if (res.ok || res.status === 400 || res.status === 401 || res.status === 403) {
+      const data = await res.json();
+      return { status: res.status, ok: res.ok, data };
+    }
+  } catch (e) {
+    console.warn('[CourierProvider] Direct fetch failed (CORS), switching to proxy:', e.message);
+  }
+
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl, options);
+    const data = await res.json();
+    return { status: res.status, ok: res.ok, data };
+  } catch (err) {
+    console.error('[CourierProvider] SmartFetch failed:', err.message);
+    return { status: 500, ok: false, data: { message: err.message } };
+  }
+}
+
+/**
  * Fetch & Cache Shiprocket JWT Auth Token
  */
 export async function getShiprocketAuthToken() {
@@ -47,17 +72,17 @@ export async function getShiprocketAuthToken() {
   const password = COURIER_CONFIG.password;
 
   try {
-    const res = await fetch(`${COURIER_CONFIG.apiUrl}/auth/login`, {
+    const res = await smartFetch(`${COURIER_CONFIG.apiUrl}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      cachedShiprocketToken = data.token;
-      // Cache token for 9 days (Shiprocket tokens typically valid for 10 days)
+
+    if (res.ok && res.data?.token) {
+      cachedShiprocketToken = res.data.token;
+      // Cache token for 9 days
       tokenExpiryTime = Date.now() + 9 * 24 * 60 * 60 * 1000;
-      return data.token;
+      return res.data.token;
     }
   } catch (e) {
     console.warn('[ShiprocketAuth] Token fetch warning:', e.message);
@@ -78,9 +103,7 @@ async function callShiprocketApi(endpoint, method = 'GET', body = null) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const res = await fetch(`${COURIER_CONFIG.apiUrl}${endpoint}`, options);
-  const data = await res.json();
-  return { status: res.status, ok: res.ok, data };
+  return smartFetch(`${COURIER_CONFIG.apiUrl}${endpoint}`, options);
 }
 
 /**
