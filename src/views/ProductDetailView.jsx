@@ -16,6 +16,7 @@ import {
   Car, ShieldCheck, Truck, RefreshCw, Star, ArrowRight,
   CheckCircle, ShoppingBag, Heart, Wrench, AlertTriangle, MapPin,
   ChevronRight, Share2, Tag, FileText, Check, Lock, MessageSquare,
+  HelpCircle, Bell, TrendingDown, Camera, ThumbsUp, Filter, Send, AlertCircle, X, Phone
 } from 'lucide-react';
 
 const RATING_LABELS = {
