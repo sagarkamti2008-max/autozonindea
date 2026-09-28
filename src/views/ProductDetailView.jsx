@@ -461,63 +461,6 @@ export const ProductDetailView = () => {
                   </button>
                 </div>
 
-                {/* Size Selector */}
-                <div className="mb-6">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">SIZE / VARIANT</span>
-                  <div className="inline-flex items-center px-4 py-2 bg-[#0F172A] text-white rounded-full text-xs font-bold shadow-sm">
-                    {product.specs?.['Quantity'] || product.specs?.['Size'] || '100ml'}
-                  </div>
-                </div>
-
-                {/* Purchase Options Radio Box (Integrated with Site Theme) */}
-                <div className="mb-6 bg-[#0F172A] border border-slate-800 rounded-3xl p-4 text-white space-y-3 shadow-xl">
-                  {/* One-Time Purchase */}
-                  <label 
-                    onClick={() => setPurchaseType('onetime')}
-                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
-                      purchaseType === 'onetime' 
-                        ? 'border-amber-400 bg-slate-800/90 ring-1 ring-amber-400/50' 
-                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${purchaseType === 'onetime' ? 'border-amber-400 bg-amber-400' : 'border-slate-500'}`}>
-                        {purchaseType === 'onetime' && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
-                      </div>
-                      <div>
-                        <div className="font-bold text-sm text-white">One-Time Purchase</div>
-                        <div className="text-xs text-slate-400 mt-0.5">Standard direct checkout</div>
-                      </div>
-                    </div>
-                    <span className="font-sans text-lg font-black text-white tracking-tight">
-                      ₹{Number(product.price).toLocaleString('en-IN')}
-                    </span>
-                  </label>
-
-                  {/* Subscribe & Save */}
-                  <label 
-                    onClick={() => setPurchaseType('subscribe')}
-                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
-                      purchaseType === 'subscribe' 
-                        ? 'border-amber-400 bg-slate-800/90 ring-1 ring-amber-400/50' 
-                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${purchaseType === 'subscribe' ? 'border-amber-400 bg-amber-400' : 'border-slate-500'}`}>
-                        {purchaseType === 'subscribe' && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
-                      </div>
-                      <div>
-                        <div className="font-bold text-sm text-amber-400">Subscribe & Save 15%</div>
-                        <div className="text-xs text-slate-400 mt-0.5">Auto-delivered on your schedule. Cancel anytime.</div>
-                      </div>
-                    </div>
-                    <span className="font-sans text-lg font-black text-amber-400 tracking-tight">
-                      ₹{Math.round(product.price * 0.85).toLocaleString('en-IN')}
-                    </span>
-                  </label>
-                </div>
-
                 {/* Quantity Row */}
                 <div className="flex items-center gap-4 mb-6">
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">QUANTITY</span>
@@ -534,8 +477,7 @@ export const ProductDetailView = () => {
                     <button
                       onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
-                        const finalPrice = purchaseType === 'subscribe' ? Math.round(product.price * 0.85) : product.price;
-                        addToCart({ ...product, price: finalPrice }, quantity);
+                        addToCart({ ...product, price: product.price }, quantity);
                         setIsCartDrawerOpen(true);
                         setFlyInfo({ src: galleryImages[0], startRect: rect });
                       }}
@@ -557,8 +499,7 @@ export const ProductDetailView = () => {
                   
                   <button
                     onClick={() => {
-                      const finalPrice = purchaseType === 'subscribe' ? Math.round(product.price * 0.85) : product.price;
-                      buyNow({ ...product, price: finalPrice }, quantity);
+                      buyNow({ ...product, price: product.price }, quantity);
                     }}
                     className="w-full py-4 px-6 rounded-full font-black bg-slate-950 hover:bg-black text-white shadow-xl flex items-center justify-center gap-2 transition-all border border-slate-900 active:scale-[0.98] text-sm tracking-wider uppercase"
                   >
