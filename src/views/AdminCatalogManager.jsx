@@ -1497,7 +1497,7 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                   value={productForm.category}
                   onChange={(e) => {
                     const newCat = e.target.value;
-                    const catObj = CATEGORIES_DATABASE.find(c => c.name === newCat);
+                    const catObj = CATEGORIES_DATABASE.find(c => c.name.toLowerCase() === newCat.toLowerCase());
                     const firstSub = catObj?.subcategories?.[0] || '';
                     setProductForm({
                       ...productForm,
@@ -1505,10 +1505,10 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                       subCategory: firstSub
                     });
                   }}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none cursor-pointer"
                 >
                   {CATEGORIES_DATABASE.map(cat => (
-                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    <option key={cat.id || cat.name} value={cat.name} className="bg-slate-900 text-slate-100 font-medium">{cat.name}</option>
                   ))}
                 </select>
               </div>
@@ -1520,13 +1520,13 @@ export const AdminCatalogManager = ({ defaultTab = 'catalog-list' }) => {
                 <select
                   value={productForm.subCategory}
                   onChange={(e) => setProductForm({ ...productForm, subCategory: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-orange-500 focus:outline-none cursor-pointer"
                 >
                   {(() => {
-                    const selectedCatObj = CATEGORIES_DATABASE.find(c => c.name === productForm.category);
-                    const subs = selectedCatObj?.subcategories || ['General'];
+                    const selectedCatObj = CATEGORIES_DATABASE.find(c => c.name.toLowerCase() === (productForm.category || '').toLowerCase());
+                    const subs = selectedCatObj?.subcategories?.length ? selectedCatObj.subcategories : (CATEGORIES_DATABASE[0]?.subcategories || []);
                     return subs.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
+                      <option key={sub} value={sub} className="bg-slate-900 text-slate-100 font-medium">{sub}</option>
                     ));
                   })()}
                 </select>

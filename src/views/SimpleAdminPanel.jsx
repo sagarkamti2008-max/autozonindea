@@ -1194,14 +1194,14 @@ export const SimpleAdminPanel = () => {
                     value={productForm.category} 
                     onChange={e => {
                       const selectedCat = e.target.value;
-                      const catObj = CATEGORIES_DATABASE.find(c => c.name === selectedCat);
+                      const catObj = CATEGORIES_DATABASE.find(c => c.name.toLowerCase() === selectedCat.toLowerCase());
                       const firstSub = catObj?.subcategories?.[0] || '';
                       setProductForm({ ...productForm, category: selectedCat, subcategory: firstSub });
                     }} 
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500 cursor-pointer"
                   >
                     {CATEGORIES_DATABASE.map(cat => (
-                      <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
+                      <option key={cat.id || cat.name} value={cat.name} className="bg-slate-900 text-slate-100 font-medium">{cat.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1213,9 +1213,13 @@ export const SimpleAdminPanel = () => {
                     onChange={e => setProductForm({ ...productForm, subcategory: e.target.value })} 
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500 cursor-pointer"
                   >
-                    {(CATEGORIES_DATABASE.find(c => c.name === productForm.category)?.subcategories || []).map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
+                    {(() => {
+                      const selectedCatObj = CATEGORIES_DATABASE.find(c => c.name.toLowerCase() === (productForm.category || '').toLowerCase());
+                      const subs = selectedCatObj?.subcategories?.length ? selectedCatObj.subcategories : (CATEGORIES_DATABASE[0]?.subcategories || []);
+                      return subs.map(sub => (
+                        <option key={sub} value={sub} className="bg-slate-900 text-slate-100 font-medium">{sub}</option>
+                      ));
+                    })()}
                   </select>
                 </div>
 
