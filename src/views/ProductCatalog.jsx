@@ -502,13 +502,6 @@ export const ProductCatalog = () => {
                     >
                       Clear Search & Filters
                     </button>
-                    <button 
-                      onClick={() => navigateTo('enquiry')}
-                      className="bg-[#FF5722] text-white hover:bg-orange-600 font-bold text-xs py-3 px-6 rounded-xl flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-orange-500/20"
-                    >
-                      <AlertTriangle size={16} />
-                      Request a Part Directly
-                    </button>
                   </div>
                 </div>
 
