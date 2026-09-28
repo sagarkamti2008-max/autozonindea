@@ -123,7 +123,10 @@ export const StoreProvider = ({ children }) => {
   const [activeProductId, setActiveProductId] = useState(null);
   const [activeOrderId, setActiveOrderId] = useState(null);
 
-  const [products, setProducts] = useState(() => safeGetStorage('autozon_products', []));
+  const [products, setProducts] = useState(() => {
+    const stored = safeGetStorage('autozon_products', INITIAL_PRODUCTS);
+    return (Array.isArray(stored) && stored.length > 0) ? stored : INITIAL_PRODUCTS;
+  });
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [cars] = useState(mockCars);
@@ -225,7 +228,7 @@ export const StoreProvider = ({ children }) => {
   // Firebase Realtime Synchronization (Admin <-> Customer Storefront Live Sync)
   useEffect(() => {
     const unsubProducts = subscribeProductsRealtime((fireProducts) => {
-      const fireList = Array.isArray(fireProducts) ? fireProducts : [];
+      const fireList = (Array.isArray(fireProducts) && fireProducts.length > 0) ? fireProducts : INITIAL_PRODUCTS;
       setProducts(fireList);
       safeSetStorage('autozon_products', fireList);
     });

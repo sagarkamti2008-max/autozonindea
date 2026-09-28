@@ -488,7 +488,9 @@ export const ProductCatalog = () => {
                   <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-800">
                     <Search size={32} className="text-slate-500" />
                   </div>
-                  <h3 className="font-black text-2xl text-white mb-3">0 Parts Found for "{searchQuery || localSearch}"</h3>
+                  <h3 className="font-black text-2xl text-white mb-3">
+                    0 Parts Found {(searchQuery || localSearch) ? `for "${searchQuery || localSearch}"` : (selectedCategory !== 'all' ? `in "${selectedCategory.replace(/-/g, ' ').toUpperCase()}"` : '')}
+                  </h3>
                   <p className="text-slate-400 font-medium text-xs sm:text-sm max-w-md mx-auto mb-8 leading-relaxed">
                     We couldn't find an exact match for your active filters. Try clearing your search term, resetting price range, or speak to our live fitment team.
                   </p>
