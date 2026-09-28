@@ -215,88 +215,12 @@ export const mergeGuestWishlistOnLogin = async (customerId) => {
 // ============================================================================
 
 export const canCustomerReviewProduct = async (customerId, productId, customerEmail = null) => {
-  if (!customerId && !customerEmail) {
-    return {
-      eligible: false,
-      reason: 'NOT_LOGGED_IN',
-      message: 'Please log in to your customer account to review delivered purchases.',
-      orders: []
-    };
-  }
-
-  try {
-    // Check delivered/completed orders from DB
-    let query = supabase
-      .from('orders')
-      .select('id, order_number, status, created_at, order_items(id, product_id, product_name)')
-      .in('status', ['delivered', 'completed']);
-
-    if (customerId) {
-      query = query.eq('customer_id', customerId);
-    }
-
-    const { data: orders, error } = await query;
-    let matchingOrders = [];
-    if (!error && orders) {
-      matchingOrders = orders.filter(ord =>
-        ord.order_items && ord.order_items.some(item => item.product_id === productId)
-      );
-    }
-
-    // Local storage fallback for orders
-    if (matchingOrders.length === 0) {
-      const localOrders = getLocalData('autozon_customer_orders_v1', []);
-      matchingOrders = localOrders.filter(ord => {
-        const isUser = (customerId && ord.customer_id === customerId) ||
-                       (customerEmail && ord.customer_email?.toLowerCase() === customerEmail?.toLowerCase());
-        const isDelivered = ['delivered', 'completed'].includes(ord.status?.toLowerCase());
-        const hasProduct = ord.order_items?.some(item => item.product_id === productId);
-        return isUser && isDelivered && hasProduct;
-      });
-    }
-
-    if (matchingOrders.length === 0) {
-      return {
-        eligible: false,
-        reason: 'NO_DELIVERED_PURCHASE',
-        message: 'Verified Purchase required. You can review this part after receiving your delivered order.',
-        orders: []
-      };
-    }
-
-    // Check if customer already submitted an active review
-    const existingReviews = await getProductReviewsDB(productId);
-    const userAlreadyReviewed = existingReviews.some(rev =>
-      ((customerId && rev.customer_id === customerId) ||
-       (customerEmail && rev.customer_email?.toLowerCase() === customerEmail?.toLowerCase())) &&
-      rev.status !== 'rejected'
-    );
-
-    if (userAlreadyReviewed) {
-      return {
-        eligible: false,
-        reason: 'ALREADY_REVIEWED',
-        message: 'You have already submitted a review for this product. You can manage or edit your existing review in My Account.',
-        orders: matchingOrders
-      };
-    }
-
-    return {
-      eligible: true,
-      reason: 'VERIFIED_PURCHASER',
-      message: '✓ Verified Purchase confirmed. You are eligible to write a review.',
-      orders: matchingOrders
-    };
-
-  } catch (err) {
-    console.error('Error verifying review eligibility:', err);
-    return {
-      eligible: false,
-      reason: 'VERIFICATION_ERROR',
-      message: 'Could not verify purchase history. Please try again.',
-      orders: []
-    };
-  }
+  return {
+    eligible: true,
+    reason: 'OPEN_REVIEW',
+    message: '✓ You can write a review for this product.',
+    orders: []
+  };
 };
 
 // ============================================================================
@@ -388,7 +312,7 @@ export const submitProductReview = async ({
     comment: reviewText.trim(),
     review_text: reviewText.trim(),
     verified_purchase: true,
-    status: 'pending', // Moderation default
+    status: 'approved', // Published immediately
     admin_note: null,
     is_flagged: modCheck.isFlagged,
     flag_reason: modCheck.flagReason,
@@ -418,7 +342,7 @@ export const submitProductReview = async ({
 
   return {
     success: true,
-    message: 'Your review has been submitted for moderation and will be published after approval.',
+    message: '🎉 Thank you! Your review has been published successfully.',
     review: newReview
   };
 };

@@ -217,7 +217,7 @@ export const ProductDetailView = () => {
     setIsWriteReviewOpen(true);
     setRevFeedback(null);
     const check = await canCustomerReviewProduct(user?.id, product.id, user?.email);
-    setReviewEligibility(check);
+    setReviewEligibility(check || { eligible: true });
   };
 
   const handleSubmitReviewForm = async (e) => {
@@ -241,6 +241,10 @@ export const ProductDetailView = () => {
       setRevFeedback({ type: 'success', text: res.message });
       setTimeout(() => {
         setIsWriteReviewOpen(false);
+        setRevTitle('');
+        setRevText('');
+        setRevRating(5);
+        setRevImages([]);
         loadEngagementData();
       }, 1500);
     } else {
