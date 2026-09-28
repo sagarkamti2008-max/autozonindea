@@ -440,7 +440,7 @@ export const getProductReviewSummary = async (productId, sortOption = 'newest', 
 
   const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
   approved.forEach(r => {
-    const rate = Math.min(5, Math.max(1, r.rating || 5));
+    const rate = Math.min(5, Math.max(1, Number(r.rating) || 5));
     starCounts[rate] = (starCounts[rate] || 0) + 1;
   });
 
@@ -459,14 +459,14 @@ export const getProductReviewSummary = async (productId, sortOption = 'newest', 
       filtered = filtered.filter(r => r.verified_purchase);
     } else {
       const starNum = parseInt(filterStar, 10);
-      filtered = filtered.filter(r => r.rating === starNum);
+      filtered = filtered.filter(r => Number(r.rating) === starNum);
     }
   }
 
   // Server-side sorting
   filtered.sort((a, b) => {
-    if (sortOption === 'highest') return (b.rating || 0) - (a.rating || 0);
-    if (sortOption === 'lowest') return (a.rating || 0) - (b.rating || 0);
+    if (sortOption === 'highest') return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+    if (sortOption === 'lowest') return (Number(a.rating) || 0) - (Number(b.rating) || 0);
     if (sortOption === 'verified') return (b.verified_purchase ? 1 : 0) - (a.verified_purchase ? 1 : 0);
     return new Date(b.created_at || 0) - new Date(a.created_at || 0);
   });
@@ -477,6 +477,7 @@ export const getProductReviewSummary = async (productId, sortOption = 'newest', 
 
   return {
     reviews: paginated,
+    totalReviews: totalReviews,
     totalApproved: totalReviews,
     filteredCount: filtered.length,
     averageRating,

@@ -807,21 +807,22 @@ export const ProductDetailView = () => {
                 ))}
               </div>
               <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Based on {reviewSummary.totalReviews} approved reviews
+                Based on {reviewSummary.totalReviews || reviewSummary.totalApproved || 0} approved reviews
               </div>
             </div>
 
             {/* Histogram Bars */}
             <div className="md:col-span-8 space-y-3 pl-0 md:pl-6">
               {[5, 4, 3, 2, 1].map((star) => {
-                const count = reviewSummary.starCounts[star] || 0;
-                const pct = reviewSummary.totalReviews > 0 ? (count / reviewSummary.totalReviews) * 100 : 0;
+                const totalCount = reviewSummary.totalReviews || reviewSummary.totalApproved || 0;
+                const count = reviewSummary.starCounts?.[star] || 0;
+                const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
                 return (
                   <div key={star} className="flex items-center space-x-4 text-sm font-bold">
                     <span className="w-16 text-slate-500">{star} Stars</span>
                     <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-amber-400 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                        className="h-full bg-amber-400 rounded-full transition-all duration-500 ease-out relative overflow-hidden"
                         style={{ width: `${pct}%` }}
                       >
                         <div className="absolute inset-0 bg-white/20 w-full h-full"></div>
