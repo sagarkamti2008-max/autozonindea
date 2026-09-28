@@ -1255,6 +1255,14 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
                   </button>
 
                   <button
+                    onClick={() => setIsInvoiceModalOpen(true)}
+                    className="w-full bg-[#0B5394] hover:bg-[#094378] text-white font-extrabold text-xs py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#0B5394]/20"
+                  >
+                    <FileText className="w-4 h-4 text-white" />
+                    <span>View &amp; Print GST Tax Invoice (PDF)</span>
+                  </button>
+
+                  <button
                     onClick={() => navigateTo('catalog')}
                     className="w-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold text-xs py-2.5 rounded-xl transition cursor-pointer"
                   >

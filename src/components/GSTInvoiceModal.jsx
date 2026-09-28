@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { FileText, Printer, Download, Mail, X, ShieldCheck } from 'lucide-react';
+import { FileText, Printer, Download, Mail, X, ShieldCheck, MessageCircle } from 'lucide-react';
 
 export const GSTInvoiceModal = ({ isOpen, onClose, orderData }) => {
   const printRef = useRef(null);
@@ -11,19 +11,19 @@ export const GSTInvoiceModal = ({ isOpen, onClose, orderData }) => {
     { title: 'Ceramic Front Brake Pads (Pair)', partNumber: 'BP-SWIFT-FR', hsn: '8708', quantity: 1, price: 999 }
   ];
 
-  const totalAmount = orderData.totalAmount || items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = orderData.totalAmount || items.reduce((sum, item) => sum + (item.price || item.unit_price || 0) * (item.quantity || 1), 0);
   const taxableAmount = Math.round(totalAmount / 1.18);
   const totalGst = totalAmount - taxableAmount;
   const cgst = Math.round(totalGst / 2);
   const sgst = totalGst - cgst;
 
-  const invoiceNum = orderData.invoiceNumber || `AZI/INV/2026/${orderData.id || '8942'}`;
+  const invoiceNum = orderData.invoiceNumber || `AZI/INV/2026/${orderData.id || orderData.orderNumber || '8942'}`;
   const invoiceDate = orderData.date || new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const handlePrint = () => {
     const printContent = printRef.current.innerHTML;
     const win = window.open('', '', 'height=800,width=900');
-    win.document.write('<html><head><title>GST Invoice - AutoZon India</title>');
+    win.document.write('<html><head><title>GST Invoice - KAMTI AUTOMOTIVE AutoZon India</title>');
     win.document.write('<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">');
     win.document.write('<style>');
     win.document.write(`
@@ -54,19 +54,28 @@ export const GSTInvoiceModal = ({ isOpen, onClose, orderData }) => {
               <FileText className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white leading-tight">Tax Invoice</h3>
+              <h3 className="text-base font-bold text-white leading-tight">GST Tax Invoice</h3>
               <span className="text-xs text-slate-400 font-medium">Invoice #: {invoiceNum}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const msg = `Hi KAMTI AUTOMOTIVE / AutoZon India!\nHere is my Tax Invoice details:\n\n📄 Invoice #: ${invoiceNum}\n📋 Order Ref: ${orderData.id || orderData.orderNumber || 'ORD-AZI'}\n💰 Total Amount: ₹${totalAmount.toLocaleString('en-IN')}\n\nPlease confirm dispatch status.`;
+                window.open(`https://wa.me/918591719499?text=${encodeURIComponent(msg)}`, '_blank');
+              }}
+              className="bg-[#25D366] text-white hover:bg-[#20bd5a] px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4 fill-white text-white" /> Share Invoice
+            </button>
             <button
               onClick={handlePrint}
-              className="bg-white text-slate-900 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors"
+              className="bg-white text-slate-900 hover:bg-slate-100 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" /> Print PDF
             </button>
-            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors bg-slate-800 p-2 rounded-lg">
+            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors bg-slate-800 p-2 rounded-lg cursor-pointer">
               <X className="w-5 h-5" />
             </button>
           </div>
