@@ -49,6 +49,7 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
   const [showRazorpayMock, setShowRazorpayMock] = useState(false);
   const [paymentProcessingState, setPaymentProcessingState] = useState('idle'); // idle | processing | success | failed
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Cart Validation State
   const [validationWarning, setValidationWarning] = useState(null);
@@ -361,21 +362,17 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
     try {
       const res = await createOrderAtomic(payload, products);
       
-      // Save Order to Firebase Firestore (non-blocking if error)
-      try {
-        await saveOrderToFirestore({
-          orderNumber: res.orderNumber || `ORD-${Date.now()}`,
-          customerInfo: activeCust,
-          addressForm: deliveryAddress,
-          cartItems,
-          totals,
-          paymentMethod,
-          deliveryPreference,
-          vehicleDetail: addressForm.vehicleNote || selectedVehicle?.modelName || ''
-        });
-      } catch (fbErr) {
-        console.warn('Firestore order save notice:', fbErr);
-      }
+      // Save Order to Firebase Firestore asynchronously (non-blocking)
+      saveOrderToFirestore({
+        orderNumber: res?.orderNumber || `ORD-${Date.now()}`,
+        customerInfo: activeCust,
+        addressForm: deliveryAddress,
+        cartItems,
+        totals,
+        paymentMethod,
+        deliveryPreference,
+        vehicleDetail: addressForm.vehicleNote || selectedVehicle?.modelName || ''
+      }).catch(fbErr => console.warn('Firestore order save notice:', fbErr));
 
       setIsSubmittingOrder(false);
 
@@ -392,6 +389,7 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
       }
       clearCart();
       setCurrentMode('confirmation');
+      setShowSuccessModal(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       showToast(`🎉 Order Placed! Number: ${res.orderNumber}`);
     } catch (err) {
@@ -406,6 +404,7 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
       setConfirmedOrderResult(fallbackRes);
       clearCart();
       setCurrentMode('confirmation');
+      setShowSuccessModal(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       showToast(`🎉 Order Placed! Number: ${fallbackOrderNumber}`);
     }
@@ -491,9 +490,118 @@ export const ModernCartAndCheckoutView = ({ initialMode = 'cart' }) => {
     );
   };
 
+  // Order Booked Success Modal Component
+  const renderOrderSuccessModal = () => {
+    if (!showSuccessModal || !confirmedOrderResult) return null;
+
+    const ordNum = confirmedOrderResult.orderNumber || confirmedOrderResult.order?.order_number || `AZI-${Date.now()}`;
+    const custName = (customerInfo.fullName || addressForm.fullName || 'Customer').split(' ')[0];
+    const finalTotal = totals.grandTotal || confirmedOrderResult.order?.total_amount || 0;
+
+    return (
+      <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[250] flex items-center justify-center p-4 animate-in fade-in duration-300">
+        <div className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-slate-900">
+          
+          {/* Top Banner */}
+          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-center text-white relative rounded-t-3xl overflow-hidden">
+            <button 
+              onClick={() => setShowSuccessModal(false)}
+              className="absolute top-4 right-4 text-white/80 hover:text-white bg-black/20 hover:bg-black/40 p-2 rounded-full transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-900/40">
+              <CheckCircle2 size={38} className="text-emerald-600" />
+            </div>
+            <div className="inline-block bg-white/20 backdrop-blur-sm text-white text-[11px] font-black px-3.5 py-1 rounded-full uppercase tracking-wider mb-2">
+              🎉 ORDER BOOKED & CONFIRMED
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+              Thank You, {custName}!
+            </h2>
+            <p className="text-emerald-100 text-xs sm:text-sm mt-1 max-w-sm mx-auto font-medium">
+              Your order has been registered in our system and sent to our warehouse team for dispatch.
+            </p>
+          </div>
+
+          {/* Body Info */}
+          <div className="p-6 space-y-5">
+            {/* Order Number & Delivery Box */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 block tracking-wider">ORDER NUMBER</span>
+                <span className="text-lg font-black text-[#0B5394] font-mono">#{ordNum}</span>
+              </div>
+              <div className="sm:text-right">
+                <span className="text-[10px] font-black uppercase text-slate-400 block tracking-wider">EXPECTED DELIVERY</span>
+                <span className="text-xs font-black text-emerald-600 flex items-center gap-1">
+                  <Truck className="w-3.5 h-3.5" /> 3 - 5 Business Days
+                </span>
+              </div>
+            </div>
+
+            {/* Address & Payment Info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-1">
+                <span className="font-black text-slate-500 uppercase text-[10px] block">DELIVERY ADDRESS</span>
+                <p className="font-bold text-slate-900">{addressForm.fullName || customerInfo.fullName || 'Sagar Kamti'}</p>
+                <p className="text-slate-600 font-medium line-clamp-2">{addressForm.address_line || 'METASH MIDECAL, AGRE PADA'}, {addressForm.city || 'Mumbai'}, {addressForm.state || 'Maharashtra'} - {addressForm.pincode || '400055'}</p>
+                <p className="text-slate-500 font-bold">📞 {customerInfo.phone || addressForm.phone || '8591719499'}</p>
+              </div>
+
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-1">
+                <span className="font-black text-slate-500 uppercase text-[10px] block">PAYMENT & TOTAL</span>
+                <p className="font-bold text-slate-900">Mode: <span className="uppercase text-emerald-600 font-black">{paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Paid'}</span></p>
+                <p className="font-black text-slate-900 text-base mt-1">Total: ₹{finalTotal.toLocaleString('en-IN')}</p>
+                <p className="text-emerald-600 font-bold text-[10px] flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3" /> AutoZon Genuine Parts Guarantee
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2.5 pt-2">
+              <a
+                href={`https://wa.me/918591719499?text=${encodeURIComponent(`Hello Kamti Automotive, I placed Order #${ordNum} for ₹${finalTotal}. Please send me the dispatch & tracking updates on WhatsApp.`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer transition"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" /> Get Order Updates on WhatsApp
+              </a>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    navigateTo('delivery-status');
+                  }}
+                  className="w-full bg-[#0B5394] hover:bg-blue-700 text-white font-bold text-xs py-3 px-3 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Truck className="w-3.5 h-3.5" /> Track Status
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    navigateTo('catalog');
+                  }}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 px-3 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" /> Continue Shopping
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-32">
       {renderRazorpayMock()}
+      {renderOrderSuccessModal()}
 
       {/* Checkout Progress Stepper */}
       <div className="bg-white border-b border-slate-200 py-4 px-4 sm:px-8 sticky top-0 z-10 shadow-sm">
