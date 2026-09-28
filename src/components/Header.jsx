@@ -17,6 +17,7 @@ export const Header = () => {
     addRecentSearch, 
     clearRecentSearches,
     selectedVehicle,
+    setSelectedVehicle,
     setIsVehicleModalOpen,
     setActiveProductId
   } = useStore();
@@ -249,8 +250,45 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Right Action Icons (Wishlist, Cart, Garage, Admin) */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          {/* Right Action Icons (My Car Badge, Wishlist, Cart) */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            
+            {/* "My Car" Persistent Badge */}
+            {selectedVehicle ? (
+              <div className="flex items-center gap-1.5 bg-[#0b192c] text-white px-2.5 sm:px-3 py-1.5 rounded-full border border-amber-500/40 text-xs shadow-sm">
+                <Car className="w-4 h-4 text-amber-400 shrink-0" />
+                <div className="flex flex-col text-left leading-tight min-w-0">
+                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">My Car</span>
+                  <span className="font-extrabold text-xs text-amber-300 truncate max-w-[120px] sm:max-w-[160px]">
+                    {selectedVehicle.makeName || selectedVehicle.make} {selectedVehicle.modelName || selectedVehicle.model} {selectedVehicle.year}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsVehicleModalOpen(true)}
+                  className="ml-1 px-2 py-0.5 text-[10px] font-black uppercase rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition-colors cursor-pointer"
+                  title="Change Selected Car"
+                >
+                  Change
+                </button>
+                <button
+                  onClick={() => setSelectedVehicle(null)}
+                  className="p-1 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+                  title="Clear Car Filter"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsVehicleModalOpen(true)}
+                className="flex items-center gap-1.5 bg-[#0B5394] hover:bg-[#073763] text-white px-3 sm:px-4 py-1.5 rounded-full text-xs font-black transition-all shadow-md shadow-blue-900/20 cursor-pointer active:scale-95"
+              >
+                <Car className="w-4 h-4 text-amber-300" />
+                <span className="hidden sm:inline">Select Your Car</span>
+                <span className="sm:hidden">My Car</span>
+              </button>
+            )}
+
             <button 
               onClick={() => navigateTo('wishlist')}
               className="relative p-2 text-slate-700 hover:text-[#FF5722] transition-colors rounded-xl hover:bg-slate-100"
@@ -276,9 +314,6 @@ export const Header = () => {
                 </span>
               )}
             </button>
-
-
-
           </div>
 
         </div>

@@ -145,7 +145,16 @@ export const StoreProvider = ({ children }) => {
     { id: 'gar-01', makeId: 'maruti', makeName: 'Maruti Suzuki', modelId: 'swift', modelName: 'Swift', year: '2020-2024', variant: 'ZXi Plus (1.2L K12N DualJet Petrol)', isPrimary: true }
   ]));
 
-  const [selectedVehicle, setSelectedVehicle] = useState(() => safeGetStorage('autozon_selected_vehicle', savedGarage[0] || null));
+  const [selectedVehicle, setSelectedVehicleState] = useState(() => safeGetStorage('autozon_selected_vehicle', null));
+
+  const setSelectedVehicle = (vehicle) => {
+    setSelectedVehicleState(vehicle);
+    if (vehicle) {
+      safeSetStorage('autozon_selected_vehicle', vehicle);
+    } else {
+      try { localStorage.removeItem('autozon_selected_vehicle'); } catch(e){}
+    }
+  };
   // New state for car selection and compatible parts
   const [selectedCar, setSelectedCar] = useState(null);
   const [compatibleParts, setCompatibleParts] = useState([]);
