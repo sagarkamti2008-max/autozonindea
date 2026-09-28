@@ -14,11 +14,42 @@
 import { supabase } from './supabaseClient';
 
 const COURIER_CONFIG = {
-  provider: import.meta.env.VITE_COURIER_PROVIDER || 'manual',
+  provider: import.meta.env.VITE_COURIER_PROVIDER || 'shiprocket',
   apiUrl: import.meta.env.COURIER_API_URL || 'https://apiv2.shiprocket.in/v1/external',
-  apiKey: import.meta.env.COURIER_API_KEY || '',
+  email: import.meta.env.VITE_SHIPROCKET_EMAIL || '',
+  password: import.meta.env.VITE_SHIPROCKET_PASSWORD || 'QboWsfRFNk*!D8f5BemFmL0&0v372SMn',
+  apiKey: import.meta.env.COURIER_API_KEY || 'QboWsfRFNk*!D8f5BemFmL0&0v372SMn',
   defaultCourier: 'AutoZon Express Logistics'
 };
+
+let cachedShiprocketToken = null;
+let tokenExpiryTime = 0;
+
+export async function getShiprocketAuthToken() {
+  if (cachedShiprocketToken && Date.now() < tokenExpiryTime) {
+    return cachedShiprocketToken;
+  }
+
+  const email = COURIER_CONFIG.email || 'kamtiautomotive@gmail.com';
+  const password = COURIER_CONFIG.password || COURIER_CONFIG.apiKey;
+
+  try {
+    const res = await fetch(`${COURIER_CONFIG.apiUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      cachedShiprocketToken = data.token;
+      tokenExpiryTime = Date.now() + 8 * 24 * 60 * 60 * 1000;
+      return data.token;
+    }
+  } catch (e) {
+    console.warn('[ShiprocketAuth] Login token fallback:', e.message);
+  }
+  return COURIER_CONFIG.apiKey;
+}
 
 /**
  * Interface / Base Courier Provider
