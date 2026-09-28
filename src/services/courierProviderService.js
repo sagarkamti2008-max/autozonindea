@@ -26,8 +26,8 @@ const COURIER_CONFIG = {
   provider: import.meta.env.VITE_COURIER_PROVIDER || 'shiprocket',
   apiUrl: import.meta.env.COURIER_API_URL || 'https://apiv2.shiprocket.in/v1/external',
   email: import.meta.env.VITE_SHIPROCKET_EMAIL || 'kamtiautomotive@gmail.com',
-  password: import.meta.env.VITE_SHIPROCKET_PASSWORD || 'QboWsfRFNk*!D8f5BemFmL0&0v372SMn',
-  apiKey: import.meta.env.COURIER_API_KEY || 'QboWsfRFNk*!D8f5BemFmL0&0v372SMn',
+  password: import.meta.env.VITE_SHIPROCKET_PASSWORD || 'h!47Zj6PBOTz1K70Yb0!7qXLE7gc1V&1',
+  apiKey: import.meta.env.COURIER_API_KEY || 'h!47Zj6PBOTz1K70Yb0!7qXLE7gc1V&1',
   defaultCourier: 'AutoZon Express Logistics',
   defaultPickupPincode: '201301' // Noida / HQ Warehouse Pincode
 };
